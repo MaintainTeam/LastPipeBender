@@ -154,7 +154,7 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
 
     private FragmentSearchBinding searchBinding;
 
-    private View searchToolbarContainer;
+    protected View searchToolbarContainer;
     private EditText searchEditText;
     private View searchClear;
 
@@ -171,7 +171,19 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
     ArrayList<Integer> userSelectedSortFilterList = null;
 
     public static SearchFragment getInstance(final int serviceId, final String searchString) {
-        final SearchFragment searchFragment = new SearchFragment();
+        final SearchFragment searchFragment;
+        final App app = App.getApp();
+
+
+        final String searchUi = PreferenceManager.getDefaultSharedPreferences(app)
+                .getString(app.getString(R.string.search_filter_ui_key),
+                        app.getString(R.string.search_filter_ui_value));
+        if (app.getString(R.string.search_filter_ui_option_menu_legacy_key).equals(searchUi)) {
+            searchFragment = new SearchFragmentLegacy();
+        } else {
+            searchFragment = new SearchFragment();
+        }
+
         searchFragment.setQuery(serviceId, searchString, null, null);
 
         if (!TextUtils.isEmpty(searchString)) {
@@ -667,7 +679,7 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
         KeyboardUtil.showKeyboard(activity, searchEditText);
     }
 
-    private void hideKeyboardSearch() {
+    protected void hideKeyboardSearch() {
         if (DEBUG) {
             Log.d(TAG, "hideKeyboardSearch() called");
         }
