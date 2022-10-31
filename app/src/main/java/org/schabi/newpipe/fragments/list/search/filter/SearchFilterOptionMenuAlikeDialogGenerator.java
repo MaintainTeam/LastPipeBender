@@ -115,7 +115,7 @@ public class SearchFilterOptionMenuAlikeDialogGenerator extends BaseSearchFilter
         globalLayout.addView(separatorLine);
         viewsWrapper.add(separatorLine);
 
-        if (filterGroup.getName() != null) {
+        if (filterGroup.getNameId() != null) {
             final TextView filterLabel =
                     createFilterGroupLabel(filterGroup, getLayoutParamsLabelLeft());
             globalLayout.addView(filterLabel);
@@ -251,7 +251,7 @@ public class SearchFilterOptionMenuAlikeDialogGenerator extends BaseSearchFilter
         final TextView filterLabel = new TextView(context);
         filterLabel.setId(filterGroup.getIdentifier());
         filterLabel.setText(ServiceHelper
-                .getTranslatedFilterString(filterGroup.getName(), context));
+                .getTranslatedFilterString(filterGroup.getNameId(), context));
         filterLabel.setGravity(Gravity.TOP);
         // resizing not needed as view is not selectable
         filterLabel.setTag(NO_RESIZE_VIEW_TAG);
@@ -264,7 +264,7 @@ public class SearchFilterOptionMenuAlikeDialogGenerator extends BaseSearchFilter
         final CheckBox checkBox = new CheckBox(context);
         checkBox.setLayoutParams(layoutParams);
         checkBox.setText(ServiceHelper.getTranslatedFilterString(
-                item.getName(), context));
+                item.getNameId(), context));
         checkBox.setId(item.getIdentifier());
         checkBox.setTextSize(COMPLEX_UNIT_DIP, FONT_SIZE_SELECTABLE_VIEW_ITEMS_IN_DIP);
         return checkBox;
@@ -275,7 +275,7 @@ public class SearchFilterOptionMenuAlikeDialogGenerator extends BaseSearchFilter
         final TextView view = new TextView(context);
         view.setEnabled(true);
         final String menuDividerTitle =
-                ServiceHelper.getTranslatedFilterString(item.getName(), context);
+                ServiceHelper.getTranslatedFilterString(item.getNameId(), context);
         view.setText(menuDividerTitle);
         view.setGravity(Gravity.TOP);
         view.setLayoutParams(layoutParams);
@@ -286,7 +286,7 @@ public class SearchFilterOptionMenuAlikeDialogGenerator extends BaseSearchFilter
                                             final ViewGroup.LayoutParams layoutParams) {
         final RadioButton view = new RadioButton(context);
         view.setId(item.getIdentifier());
-        view.setText(ServiceHelper.getTranslatedFilterString(item.getName(), context));
+        view.setText(ServiceHelper.getTranslatedFilterString(item.getNameId(), context));
         view.setLayoutParams(layoutParams);
         view.setTextSize(COMPLEX_UNIT_DIP, FONT_SIZE_SELECTABLE_VIEW_ITEMS_IN_DIP);
         return view;

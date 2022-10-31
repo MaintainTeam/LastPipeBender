@@ -84,7 +84,7 @@ public class SearchFilterDialogSpinnerAdapter extends BaseAdapter {
         Objects.requireNonNull(wrappedView);
 
         view.setId(item.getIdentifier());
-        view.setText(ServiceHelper.getTranslatedFilterString(item.getName(), context));
+        view.setText(ServiceHelper.getTranslatedFilterString(item.getNameId(), context));
         view.setVisibility(wrappedView.getVisibility());
         view.setEnabled(wrappedView.isEnabled());
 
@@ -92,7 +92,7 @@ public class SearchFilterDialogSpinnerAdapter extends BaseAdapter {
             wrappedView.setEnabled(false);
             view.setEnabled(wrappedView.isEnabled());
             final String menuDividerTitle = ">>>"
-                    + ServiceHelper.getTranslatedFilterString(item.getName(), context) + "<<<";
+                    + ServiceHelper.getTranslatedFilterString(item.getNameId(), context) + "<<<";
             view.setText(menuDividerTitle);
         }
     }

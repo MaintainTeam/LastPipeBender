@@ -14,6 +14,7 @@ import org.schabi.newpipe.extractor.StreamingService;
 import org.schabi.newpipe.extractor.search.filter.FilterContainer;
 import org.schabi.newpipe.extractor.search.filter.FilterGroup;
 import org.schabi.newpipe.extractor.search.filter.FilterItem;
+import org.schabi.newpipe.extractor.search.filter.LibraryStringIds;
 import org.schabi.newpipe.util.ServiceHelper;
 
 import java.util.ArrayList;
@@ -216,19 +217,20 @@ public class SearchFilterUIOptionMenu extends BaseSearchFilterUiGenerator {
         @Override
         public void createFilterGroupBeforeItems(
                 final FilterGroup filterGroup) {
-            if (filterGroup.getName() != null) {
+            if (filterGroup.getNameId() != null) {
                 createNotEnabledAndUncheckableGroupTitleMenuItem(
-                        FilterContainer.ITEM_IDENTIFIER_UNKNOWN, filterGroup.getName());
+                        FilterContainer.ITEM_IDENTIFIER_UNKNOWN, filterGroup.getNameId());
             }
         }
 
-        protected MenuItem createNotEnabledAndUncheckableGroupTitleMenuItem(final int identifier,
-                                                                            final String name) {
+        protected MenuItem createNotEnabledAndUncheckableGroupTitleMenuItem(
+                final int identifier,
+                final LibraryStringIds nameId) {
             final MenuItem item = menu.add(
                     newLastUsedGroupId,
                     identifier,
                     0,
-                    ServiceHelper.getTranslatedFilterString(name, context));
+                    ServiceHelper.getTranslatedFilterString(nameId, context));
             item.setEnabled(false);
 
             nonCheckableMenuItems.add(item);
@@ -244,7 +246,7 @@ public class SearchFilterUIOptionMenu extends BaseSearchFilterUiGenerator {
 
             if (filterItem instanceof FilterItem.DividerItem) {
                 final String menuDividerTitle = ">>>"
-                        + ServiceHelper.getTranslatedFilterString(filterItem.getName(), context)
+                        + ServiceHelper.getTranslatedFilterString(filterItem.getNameId(), context)
                         + "<<<";
                 item.setTitle(menuDividerTitle);
                 item.setEnabled(false);
@@ -259,7 +261,7 @@ public class SearchFilterUIOptionMenu extends BaseSearchFilterUiGenerator {
             return menu.add(newLastUsedGroupId,
                     filterItem.getIdentifier(),
                     0,
-                    ServiceHelper.getTranslatedFilterString(filterItem.getName(), context));
+                    ServiceHelper.getTranslatedFilterString(filterItem.getNameId(), context));
         }
 
         @Override
@@ -294,9 +296,9 @@ public class SearchFilterUIOptionMenu extends BaseSearchFilterUiGenerator {
         @Override
         public void createFilterGroupBeforeItems(
                 final FilterGroup filterGroup) {
-            if (filterGroup.getName() != null) {
+            if (filterGroup.getNameId() != null) {
                 final MenuItem item = createNotEnabledAndUncheckableGroupTitleMenuItem(
-                        filterGroup.getIdentifier(), filterGroup.getName());
+                        filterGroup.getIdentifier(), filterGroup.getNameId());
                 addSortFilterUiToItemMap(filterGroup.getIdentifier(), item);
             }
         }
