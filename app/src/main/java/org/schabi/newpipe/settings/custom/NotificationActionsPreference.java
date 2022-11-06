@@ -1,9 +1,11 @@
 package org.schabi.newpipe.settings.custom;
 
+import static org.schabi.newpipe.player.notification.NotificationConstants.ACTION_RECREATE_NOTIFICATION;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
+import android.content.res.ColorStateList;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,20 +21,21 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.content.res.AppCompatResources;
-import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.core.widget.TextViewCompat;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceViewHolder;
 
+import org.schabi.newpipe.App;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.databinding.ListRadioIconItemBinding;
 import org.schabi.newpipe.databinding.SingleChoiceDialogViewBinding;
-import org.schabi.newpipe.player.MainPlayer;
-import org.schabi.newpipe.player.NotificationConstants;
+import org.schabi.newpipe.player.notification.NotificationConstants;
 import org.schabi.newpipe.util.DeviceUtils;
 import org.schabi.newpipe.util.ThemeHelper;
 import org.schabi.newpipe.views.FocusOverlayView;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
 public class NotificationActionsPreference extends Preference {
 
@@ -61,7 +64,9 @@ public class NotificationActionsPreference extends Preference {
     public void onDetached() {
         super.onDetached();
         saveChanges();
-        getContext().sendBroadcast(new Intent(MainPlayer.ACTION_RECREATE_NOTIFICATION));
+        // set package to this app's package to prevent the intent from being seen outside
+        getContext().sendBroadcast(new Intent(ACTION_RECREATE_NOTIFICATION)
+                .setPackage(App.PACKAGE_NAME));
     }
 
 
@@ -70,13 +75,11 @@ public class NotificationActionsPreference extends Preference {
     ////////////////////////////////////////////////////////////////////////////
 
     private void setupActions(@NonNull final View view) {
-        compactSlots =
-                NotificationConstants.getCompactSlotsFromPreferences(
-                        getContext(), getSharedPreferences(), 5);
-        notificationSlots = new NotificationSlot[5];
-        for (int i = 0; i < 5; i++) {
-            notificationSlots[i] = new NotificationSlot(i, view);
-        }
+        compactSlots = NotificationConstants.getCompactSlotsFromPreferences(getContext(),
+                getSharedPreferences(), 5);
+        notificationSlots = IntStream.range(0, 5)
+                .mapToObj(i -> new NotificationSlot(i, view))
+                .toArray(NotificationSlot[]::new);
     }
 
 
@@ -211,17 +214,13 @@ public class NotificationActionsPreference extends Preference {
                         .getRoot();
 
                 // if present set action icon with correct color
-                if (NotificationConstants.ACTION_ICONS[action] != 0) {
-                    Drawable drawable = AppCompatResources.getDrawable(getContext(),
-                            NotificationConstants.ACTION_ICONS[action]);
-                    if (drawable != null) {
-                        final int color = ThemeHelper.resolveColorFromAttr(getContext(),
-                                android.R.attr.textColorPrimary);
-                        drawable = DrawableCompat.wrap(drawable).mutate();
-                        DrawableCompat.setTint(drawable, color);
-                        radioButton.setCompoundDrawablesRelativeWithIntrinsicBounds(null,
-                                null, drawable, null);
-                    }
+                final int iconId = NotificationConstants.ACTION_ICONS[action];
+                if (iconId != 0) {
+                    radioButton.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, iconId, 0);
+
+                    final var color = ColorStateList.valueOf(ThemeHelper
+                            .resolveColorFromAttr(getContext(), android.R.attr.textColorPrimary));
+                    TextViewCompat.setCompoundDrawableTintList(radioButton, color);
                 }
 
                 radioButton.setText(NotificationConstants.getActionName(getContext(), action));

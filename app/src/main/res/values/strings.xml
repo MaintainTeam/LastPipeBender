@@ -15,6 +15,7 @@
     <string name="download">Download</string>
     <string name="controls_download_desc">Download stream file</string>
     <string name="search">Search</string>
+    <string name="filter">Filter</string>
     <string name="settings">Settings</string>
     <string name="did_you_mean">Did you mean \"%1$s\"?</string>
     <string name="search_showing_result_for">Showing results for: %s</string>
@@ -50,8 +51,8 @@
     <string name="show_play_with_kodi_title">Show \"Play with Kodi\" option</string>
     <string name="show_play_with_kodi_summary">Display an option to play a video via Kodi media center</string>
     <string name="crash_the_player">Crash the player</string>
-    <string name="notification_scale_to_square_image_title">Scale thumbnail to 1:1 aspect ratio</string>
-    <string name="notification_scale_to_square_image_summary">Scale the video thumbnail shown in the notification from 16:9 to 1:1 aspect ratio (may introduce distortions)</string>
+    <string name="notification_scale_to_square_image_title">Crop thumbnail to 1:1 aspect ratio</string>
+    <string name="notification_scale_to_square_image_summary">Crop the video thumbnail shown in the notification from 16:9 to 1:1 aspect ratio</string>
     <string name="notification_action_0_title">First action button</string>
     <string name="notification_action_1_title">Second action button</string>
     <string name="notification_action_2_title">Third action button</string>
@@ -79,7 +80,7 @@
     <string name="use_inexact_seek_summary">Inexact seek allows the player to seek to positions faster with reduced precision. Seeking for 5, 15 or 25 seconds doesn\'t work with this</string>
     <string name="seek_duration_title">Fast-forward/-rewind seek duration</string>
     <string name="progressive_load_interval_title">Playback load interval size</string>
-    <string name="progressive_load_interval_summary">Change the load interval size (currently %s). A lower value may speed up initial video loading. Changes require a player restart.</string>
+    <string name="progressive_load_interval_summary">Change the load interval size (currently %s). A lower value may speed up initial video loading. Changes require a player restart</string>
     <string name="clear_queue_confirmation_title">Ask for confirmation before clearing a queue</string>
     <string name="clear_queue_confirmation_summary">Switching from one player to another may replace your queue</string>
     <string name="clear_queue_confirmation_description">The active player queue will be replaced</string>
@@ -348,7 +349,7 @@
     <string name="title_activity_about">About NewPipe</string>
     <string name="title_licenses">Third-party Licenses</string>
     <string name="copyright">© %1$s by %2$s under %3$s</string>
-    <string name="tab_about">About</string>
+    <string name="tab_about">About \u0026 FAQ</string>
     <string name="tab_licenses">Licenses</string>
     <string name="app_description">Libre lightweight streaming on Android.</string>
     <string name="contribution_title">Contribute</string>
@@ -365,6 +366,9 @@
     <string name="app_license_title">NewPipe\'s License</string>
     <string name="app_license">NewPipe is copyleft libre software: You can use, study, share, and improve it at will. Specifically you can redistribute and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</string>
     <string name="read_full_license">Read license</string>
+    <string name="faq_title">Frequently asked questions</string>
+    <string name="faq_description">If you are having trouble using the app, be sure to check out these answers to common questions!</string>
+    <string name="faq">View on website</string>
     <!-- History -->
     <string name="title_activity_history">History</string>
     <string name="action_history">History</string>
@@ -545,6 +549,10 @@
     <string name="list">List</string>
     <string name="grid">Grid</string>
     <string name="auto">Auto</string>
+    <string name="search_filter_ui">Select Search Filter UI</string>
+    <string name="search_filter_ui_dialog">Simple Dialog (default)</string>
+    <string name="search_filter_ui_style">Action Menu styled Dialog</string>
+    <string name="search_filter_ui_legacy">Action Menu (legacy)</string>
     <!-- Seekbar Preview Thumbnail-->
     <string name="seekbar_preview_thumbnail_title">Seekbar thumbnail preview</string>
     <string name="high_quality_larger">High quality (larger)</string>
@@ -615,7 +623,6 @@
     <string name="downloads_storage_ask_summary_no_saf_notice">You will be asked where to save each download</string>
     <string name="downloads_storage_use_saf_title">Use system folder picker (SAF)</string>
     <string name="downloads_storage_use_saf_summary">The \'Storage Access Framework\' allows downloads to an external SD card</string>
-    <string name="downloads_storage_use_saf_summary_api_19">The \'Storage Access Framework\' is not supported on Android KitKat and below</string>
     <string name="downloads_storage_use_saf_summary_api_29">Starting from Android 10 only \'Storage Access Framework\' is supported</string>
     <string name="choose_instance_prompt">Choose an instance</string>
     <string name="app_language_title">App language</string>
@@ -685,6 +692,7 @@
 \n
 \nSo the choice boils down to what you prefer: speed or precise information.</string>
     <string name="feed_toggle_show_played_items">Show watched items</string>
+    <string name="feed_toggle_hide_played_items">Hide watched items</string>
     <string name="content_not_supported">This content is not yet supported by NewPipe.\n\nIt will hopefully be supported in a future version.</string>
     <string name="detail_sub_channel_thumbnail_view_description">Channel\'s avatar thumbnail</string>
     <string name="channel_created_by">Created by %s</string>
@@ -695,8 +703,10 @@
     <string name="recent">Recent</string>
     <string name="chapters">Chapters</string>
     <string name="no_app_to_open_intent">No app on your device can open this</string>
-    <string name="no_appropriate_file_manager_message">No appropriate file manager was found for this action.\nPlease install a file manager or try to disable \'%s\' in the download settings.</string>
-    <string name="no_appropriate_file_manager_message_android_10">No appropriate file manager was found for this action.\nPlease install a Storage Access Framework compatible file manager.</string>
+    <string name="no_appropriate_file_manager_message">No appropriate file manager was found for this action.
+\nPlease install a file manager or try to disable \'%s\' in the download settings</string>
+    <string name="no_appropriate_file_manager_message_android_10">No appropriate file manager was found for this action.
+\nPlease install a Storage Access Framework compatible file manager</string>
     <string name="georestricted_content">This content is not available in your country.</string>
     <string name="soundcloud_go_plus_content">This is a SoundCloud Go+ track, at least in your country, so it cannot be streamed or downloaded by NewPipe.</string>
     <string name="private_content">This content is private, so it cannot be streamed or downloaded by NewPipe.</string>
@@ -747,4 +757,69 @@
     <string name="select_quality_external_players">Select quality for external players</string>
     <string name="unknown_format">Unknown format</string>
     <string name="unknown_quality">Unknown quality</string>
+    <string name="feed_toggle_show_future_items">Show future items</string>
+    <string name="feed_toggle_hide_future_items">Hide future items</string>
+    <string name="sort">Sort</string>
+    <string name="filter_search_sort_filters">Sort filters</string>
+    <string name="filter_search_content_filters">Content filters</string>
+    <!-- strings for search filter names -->
+    <string name="search_filters_10_30_min">10–30 min</string>
+    <string name="search_filters_2_10_min">2–10 min</string>
+    <string name="search_filters_360">360°</string>
+    <string name="search_filters_3d">3d</string>
+    <string name="search_filters_4_20_min">4–20 min</string>
+    <string name="search_filters_4k">4k</string>
+    <string name="search_filters_added">Added</string>
+    <string name="search_filters_artists_and_labels">artists &amp; labels</string>
+    <string name="search_filters_any_time">Any time</string>
+    <string name="search_filters_ascending">Ascending</string>
+    <string name="search_filters_ccommons">Ccommons</string>
+    <string name="search_filters_creation_date">Creation date</string>
+    <string name="search_filters_date">Date</string>
+    <string name="search_filters_duration">Duration</string>
+    <string name="search_filters_features">Features</string>
+    <string name="search_filters_greater_30_min">&gt; 30 min</string>
+    <string name="search_filters_hd">HD</string>
+    <string name="search_filters_hdr">Hdr</string>
+    <string name="search_filters_kind">Kind</string>
+    <string name="search_filters_last_30_days">Last 30 days</string>
+    <string name="search_filters_last_7_days">Last 7 days</string>
+    <string name="search_filters_last_hour">Last hour</string>
+    <string name="search_filters_last_year">last year</string>
+    <string name="search_filters_length">Length</string>
+    <string name="search_filters_less_2_min">&lt; 2 min</string>
+    <string name="search_filters_license">License</string>
+    <string name="search_filters_location">Location</string>
+    <string name="search_filters_long_greater_10_min">Long (&gt; 10 min)</string>
+    <string name="search_filters_medium_4_10_min">Medium (4–10 min)</string>
+    <string name="search_filters_no">No</string>
+    <string name="search_filters_over_20_min">Over 20 min</string>
+    <string name="search_filters_past_day">Past day</string>
+    <string name="search_filters_past_hour">Past hour</string>
+    <string name="search_filters_past_month">Past month</string>
+    <string name="search_filters_past_week">Past week</string>
+    <string name="search_filters_past_year">Past year</string>
+    <string name="search_filters_publish_date">Publish date</string>
+    <string name="search_filters_published">Published</string>
+    <string name="search_filters_purchased">Purchased</string>
+    <string name="search_filters_rating">Rating</string>
+    <string name="search_filters_relevance">Relevance</string>
+    <string name="search_filters_sensitive">Sensitive</string>
+    <string name="search_filters_sepiasearch">SepiaSearch</string>
+    <string name="search_filters_short_less_4_min">Short (&lt; 4 min)</string>
+    <string name="search_filters_sort_by">Sort by</string>
+    <string name="search_filters_sort_order">Sort order</string>
+    <string name="search_filters_subtitles">Subtitles</string>
+    <string name="search_filters_to_modify_commercially">To modify commercially</string>
+    <string name="search_filters_today">Today</string>
+    <string name="search_filters_under_4_min">Under 4 min</string>
+    <string name="search_filters_upload_date">Upload Date</string>
+    <string name="search_filters_views">Views</string>
+    <string name="search_filters_vod_videos">VOD videos</string>
+    <string name="search_filters_vr180">VR180</string>
+    <string name="search_filters_this_month">This month</string>
+    <string name="search_filters_this_week">This week</string>
+    <string name="search_filters_this_year">This year</string>
+    <string name="search_filters_yes">Yes</string>
+    <string name="search_filters_youtube_music">YouTube Music</string>
 </resources>

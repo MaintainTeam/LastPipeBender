@@ -1,5 +1,9 @@
 package org.schabi.newpipe.download;
 
+import static org.schabi.newpipe.extractor.stream.DeliveryMethod.PROGRESSIVE_HTTP;
+import static org.schabi.newpipe.util.ListHelper.getStreamsOfSpecifiedDelivery;
+import static org.schabi.newpipe.util.Localization.assureCorrectAppLanguage;
+
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -82,10 +86,6 @@ import us.shandian.giga.service.DownloadManagerService;
 import us.shandian.giga.service.DownloadManagerService.DownloadManagerBinder;
 import us.shandian.giga.service.MissionState;
 
-import static org.schabi.newpipe.extractor.stream.DeliveryMethod.PROGRESSIVE_HTTP;
-import static org.schabi.newpipe.util.ListHelper.getStreamsOfSpecifiedDelivery;
-import static org.schabi.newpipe.util.Localization.assureCorrectAppLanguage;
-
 public class DownloadDialog extends DialogFragment
         implements RadioGroup.OnCheckedChangeListener, AdapterView.OnItemSelectedListener {
     private static final String TAG = "DialogFragment";
@@ -145,6 +145,12 @@ public class DownloadDialog extends DialogFragment
     // Instance creation
     //////////////////////////////////////////////////////////////////////////*/
 
+    public DownloadDialog() {
+        // Just an empty default no-arg ctor to keep Fragment.instantiate() happy
+        // otherwise InstantiationException will be thrown when fragment is recreated
+        // TODO: Maybe use a custom FragmentFactory instead?
+    }
+
     /**
      * Create a new download dialog with the video, audio and subtitle streams from the provided
      * stream info. Video streams and video-only streams will be put into a single list menu,
@@ -153,7 +159,7 @@ public class DownloadDialog extends DialogFragment
      * @param context the context to use just to obtain preferences and strings (will not be stored)
      * @param info    the info from which to obtain downloadable streams and other info (e.g. title)
      */
-    public DownloadDialog(final Context context, @NonNull final StreamInfo info) {
+    public DownloadDialog(@NonNull final Context context, @NonNull final StreamInfo info) {
         this.currentInfo = info;
 
         // TODO: Adapt this code when the downloader support other types of stream deliveries
@@ -205,8 +211,8 @@ public class DownloadDialog extends DialogFragment
         setStyle(STYLE_NO_TITLE, ThemeHelper.getDialogTheme(context));
         Icepick.restoreInstanceState(this, savedInstanceState);
 
-        final SparseArray<SecondaryStreamHelper<AudioStream>> secondaryStreams
-                = new SparseArray<>(4);
+        final SparseArray<SecondaryStreamHelper<AudioStream>> secondaryStreams =
+                new SparseArray<>(4);
         final List<VideoStream> videoStreams = wrappedVideoStreams.getStreamsList();
 
         for (int i = 0; i < videoStreams.size(); i++) {

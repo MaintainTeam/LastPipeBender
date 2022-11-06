@@ -284,6 +284,7 @@
     <string name="feed_update_threshold_key">feed_update_threshold_key</string>
     <string name="feed_update_threshold_default_value">300</string>
     <string name="feed_show_played_items_key">feed_show_played_items</string>
+    <string name="feed_show_future_items_key">feed_show_future_items</string>
 
     <string name="show_thumbnail_key">show_thumbnail_key</string>
 
@@ -455,7 +456,6 @@
         <item>tr</item>
         <item>bg</item>
         <item>ky</item>
-        <item>kk</item>
         <item>mk</item>
         <item>mn</item>
         <item>ru</item>
@@ -534,7 +534,6 @@
         <item>Türkçe</item>
         <item>Български</item>
         <item>Кыргызча</item>
-        <item>Қазақ Тілі</item>
         <item>Македонски</item>
         <item>Монгол</item>
         <item>Русский</item>
@@ -1110,6 +1109,7 @@
         <item>hy</item>
         <item>ia</item>
         <item>in</item>
+        <item>is</item>
         <item>it</item>
         <item>ja</item>
         <item>jv</item>
@@ -1118,7 +1118,9 @@
         <item>ko</item>
         <item>ku</item>
         <item>lt</item>
+        <item>lv</item>
         <item>mk</item>
+        <item>ml</item>
         <item>ms</item>
         <item>nb-no</item>
         <item>ne</item>
@@ -1189,6 +1191,7 @@
         <item>Հայերեն</item>
         <item>Interlingua</item>
         <item>Bahasa Indonesia</item>
+        <item>Íslenska</item>
         <item>Italiano</item>
         <item>日本語</item>
         <item>ꦧꦱꦗꦮ</item>
@@ -1197,7 +1200,9 @@
         <item>한국어</item>
         <item>کوردی</item>
         <item>Lietuvių kalba</item>
+        <item>latviski</item>
         <item>македонски јазик</item>
+        <item>മലയാളം</item>
         <item>Bahasa Melayu</item>
         <item>Norsk bokmål</item>
         <item>Nनेपाली</item>
@@ -1266,6 +1271,25 @@
         <item>@string/auto</item>
         <item>@string/list</item>
         <item>@string/grid</item>
+    </string-array>
+
+    <string name="search_filter_ui_key">search_filter_ui</string>
+    <string name="search_filter_ui_value">@string/search_filter_ui_dialog_key</string>
+
+    <string name="search_filter_ui_dialog_key">dialog</string>
+    <string name="search_filter_ui_option_menu_style_key">style</string>
+    <string name="search_filter_ui_option_menu_legacy_key">legacy</string>
+
+    <string-array name="search_filter_ui_values">
+        <item>@string/search_filter_ui_dialog_key</item>
+        <item>@string/search_filter_ui_option_menu_style_key</item>
+        <item>@string/search_filter_ui_option_menu_legacy_key</item>
+    </string-array>
+
+    <string-array name="search_filter_ui_description">
+        <item>@string/search_filter_ui_dialog</item>
+        <item>@string/search_filter_ui_style</item>
+        <item>@string/search_filter_ui_legacy</item>
     </string-array>
 
     <string name="tablet_mode_key">tablet_mode</string>

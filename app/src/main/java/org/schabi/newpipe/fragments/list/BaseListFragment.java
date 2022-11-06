@@ -5,7 +5,6 @@ import static org.schabi.newpipe.ktx.ViewUtils.animateHideRecyclerViewAllowingSc
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,17 +22,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.error.ErrorUtil;
 import org.schabi.newpipe.extractor.InfoItem;
-import org.schabi.newpipe.extractor.channel.ChannelInfoItem;
-import org.schabi.newpipe.extractor.comments.CommentsInfoItem;
-import org.schabi.newpipe.extractor.playlist.PlaylistInfoItem;
 import org.schabi.newpipe.extractor.stream.StreamInfoItem;
 import org.schabi.newpipe.fragments.BaseStateFragment;
 import org.schabi.newpipe.fragments.OnScrollBelowItemsListener;
-import org.schabi.newpipe.info_list.dialog.InfoItemDialog;
 import org.schabi.newpipe.info_list.InfoListAdapter;
+import org.schabi.newpipe.info_list.dialog.InfoItemDialog;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.OnClickGesture;
 import org.schabi.newpipe.util.StateSaver;
+import org.schabi.newpipe.util.ThemeHelper;
 import org.schabi.newpipe.views.SuperScrollLayoutManager;
 
 import java.util.List;
@@ -264,44 +261,27 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
             }
         });
 
-        infoListAdapter.setOnChannelSelectedListener(new OnClickGesture<>() {
-            @Override
-            public void selected(final ChannelInfoItem selectedItem) {
-                try {
-                    onItemSelected(selectedItem);
-                    NavigationHelper.openChannelFragment(getFM(),
-                            selectedItem.getServiceId(),
-                            selectedItem.getUrl(),
-                            selectedItem.getName());
-                } catch (final Exception e) {
-                    ErrorUtil.showUiErrorSnackbar(
-                            BaseListFragment.this, "Opening channel fragment", e);
-                }
-            }
-        });
-
-        infoListAdapter.setOnPlaylistSelectedListener(new OnClickGesture<>() {
-            @Override
-            public void selected(final PlaylistInfoItem selectedItem) {
-                try {
-                    onItemSelected(selectedItem);
-                    NavigationHelper.openPlaylistFragment(getFM(),
-                            selectedItem.getServiceId(),
-                            selectedItem.getUrl(),
-                            selectedItem.getName());
-                } catch (final Exception e) {
-                    ErrorUtil.showUiErrorSnackbar(BaseListFragment.this,
-                            "Opening playlist fragment", e);
-                }
-            }
-        });
-
-        infoListAdapter.setOnCommentsSelectedListener(new OnClickGesture<>() {
-            @Override
-            public void selected(final CommentsInfoItem selectedItem) {
+        infoListAdapter.setOnChannelSelectedListener(selectedItem -> {
+            try {
                 onItemSelected(selectedItem);
+                NavigationHelper.openChannelFragment(getFM(), selectedItem.getServiceId(),
+                        selectedItem.getUrl(), selectedItem.getName());
+            } catch (final Exception e) {
+                ErrorUtil.showUiErrorSnackbar(this, "Opening channel fragment", e);
             }
         });
+
+        infoListAdapter.setOnPlaylistSelectedListener(selectedItem -> {
+            try {
+                onItemSelected(selectedItem);
+                NavigationHelper.openPlaylistFragment(getFM(), selectedItem.getServiceId(),
+                        selectedItem.getUrl(), selectedItem.getName());
+            } catch (final Exception e) {
+                ErrorUtil.showUiErrorSnackbar(this, "Opening playlist fragment", e);
+            }
+        });
+
+        infoListAdapter.setOnCommentsSelectedListener(this::onItemSelected);
 
         // Ensure that there is always a scroll listener (e.g. when rotating the device)
         useNormalItemListScrollListener();
@@ -496,15 +476,6 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
     }
 
     protected boolean isGridLayout() {
-        final String listMode = PreferenceManager.getDefaultSharedPreferences(activity)
-                .getString(getString(R.string.list_view_mode_key),
-                        getString(R.string.list_view_mode_value));
-        if ("auto".equals(listMode)) {
-            final Configuration configuration = getResources().getConfiguration();
-            return configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-                    && configuration.isLayoutSizeAtLeast(Configuration.SCREENLAYOUT_SIZE_LARGE);
-        } else {
-            return "grid".equals(listMode);
-        }
+        return ThemeHelper.shouldUseGridLayout(activity);
     }
 }

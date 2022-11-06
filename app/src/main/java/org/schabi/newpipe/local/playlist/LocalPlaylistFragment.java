@@ -1,5 +1,6 @@
 package org.schabi.newpipe.local.playlist;
 
+import static org.schabi.newpipe.error.ErrorUtil.showUiErrorSnackbar;
 import static org.schabi.newpipe.ktx.ViewUtils.animate;
 import static org.schabi.newpipe.util.ThemeHelper.shouldUseGridLayout;
 
@@ -10,6 +11,7 @@ import android.os.Parcelable;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,6 +23,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewbinding.ViewBinding;
@@ -33,7 +36,6 @@ import org.schabi.newpipe.database.LocalItem;
 import org.schabi.newpipe.database.history.model.StreamHistoryEntry;
 import org.schabi.newpipe.database.playlist.PlaylistStreamEntry;
 import org.schabi.newpipe.database.stream.model.StreamEntity;
-import org.schabi.newpipe.database.stream.model.StreamStateEntity;
 import org.schabi.newpipe.databinding.DialogEditTextBinding;
 import org.schabi.newpipe.databinding.LocalPlaylistHeaderBinding;
 import org.schabi.newpipe.databinding.PlaylistControlBinding;
@@ -41,26 +43,27 @@ import org.schabi.newpipe.error.ErrorInfo;
 import org.schabi.newpipe.error.UserAction;
 import org.schabi.newpipe.extractor.stream.StreamInfoItem;
 import org.schabi.newpipe.info_list.dialog.InfoItemDialog;
+import org.schabi.newpipe.info_list.dialog.StreamDialogDefaultEntry;
 import org.schabi.newpipe.local.BaseLocalListFragment;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
-import org.schabi.newpipe.player.MainPlayer.PlayerType;
+import org.schabi.newpipe.player.PlayerType;
 import org.schabi.newpipe.player.playqueue.PlayQueue;
 import org.schabi.newpipe.player.playqueue.SinglePlayQueue;
 import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.OnClickGesture;
-import org.schabi.newpipe.info_list.dialog.StreamDialogDefaultEntry;
+import org.schabi.newpipe.util.external_communication.ShareUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 import icepick.State;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -163,7 +166,7 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
         itemTouchHelper = new ItemTouchHelper(getItemTouchCallback());
         itemTouchHelper.attachToRecyclerView(itemsList);
 
-        itemListAdapter.setSelectedListener(new OnClickGesture<LocalItem>() {
+        itemListAdapter.setSelectedListener(new OnClickGesture<>() {
             @Override
             public void selected(final LocalItem selectedItem) {
                 if (selectedItem instanceof PlaylistStreamEntry) {
@@ -305,7 +308,7 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
     ///////////////////////////////////////////////////////////////////////////
 
     private Subscriber<List<PlaylistStreamEntry>> getPlaylistObserver() {
-        return new Subscriber<List<PlaylistStreamEntry>>() {
+        return new Subscriber<>() {
             @Override
             public void onSubscribe(final Subscription s) {
                 showLoading();
@@ -345,7 +348,11 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
 
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
-        if (item.getItemId() == R.id.menu_item_remove_watched) {
+        if (item.getItemId() == R.id.menu_item_share_playlist) {
+            sharePlaylist();
+        } else if (item.getItemId() == R.id.menu_item_rename_playlist) {
+            createRenameDialog();
+        } else if (item.getItemId() == R.id.menu_item_remove_watched) {
             if (!isRemovingWatched) {
                 new AlertDialog.Builder(requireContext())
                         .setMessage(R.string.remove_watched_popup_warning)
@@ -360,12 +367,24 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
                         .create()
                         .show();
             }
-        } else if (item.getItemId() == R.id.menu_item_rename_playlist) {
-            createRenameDialog();
         } else {
             return super.onOptionsItemSelected(item);
         }
         return true;
+    }
+
+    /**
+     * Share the playlist as a newline-separated list of stream URLs.
+     */
+    public void sharePlaylist() {
+        disposables.add(playlistManager.getPlaylistStreams(playlistId)
+                .flatMapSingle(playlist -> Single.just(playlist.stream()
+                        .map(PlaylistStreamEntry::getStreamEntity)
+                        .map(StreamEntity::getUrl)
+                        .collect(Collectors.joining("\n"))))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(urlsText -> ShareUtils.shareText(requireContext(), name, urlsText),
+                        throwable -> showUiErrorSnackbar(this, "Sharing playlist", throwable)));
     }
 
     public void removeWatchedStreams(final boolean removePartiallyWatched) {
@@ -375,31 +394,21 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
         isRemovingWatched = true;
         showLoading();
 
-        disposables.add(playlistManager.getPlaylistStreams(playlistId)
-                .subscribeOn(Schedulers.io())
-                .map((List<PlaylistStreamEntry> playlist) -> {
-                    // Playlist data
-                    final Iterator<PlaylistStreamEntry> playlistIter = playlist.iterator();
-
-                    // History data
-                    final HistoryRecordManager recordManager
-                            = new HistoryRecordManager(getContext());
-                    final Iterator<StreamHistoryEntry> historyIter = recordManager
-                            .getStreamHistorySortedById().blockingFirst().iterator();
-
+        final var recordManager = new HistoryRecordManager(getContext());
+        final var historyIdsMaybe = recordManager.getStreamHistorySortedById()
+                .firstElement()
+                // already sorted by ^ getStreamHistorySortedById(), binary search can be used
+                .map(historyList -> historyList.stream().map(StreamHistoryEntry::getStreamId)
+                        .collect(Collectors.toList()));
+        final var streamsMaybe = playlistManager.getPlaylistStreams(playlistId)
+                .firstElement()
+                .zipWith(historyIdsMaybe, (playlist, historyStreamIds) -> {
                     // Remove Watched, Functionality data
                     final List<PlaylistStreamEntry> notWatchedItems = new ArrayList<>();
                     boolean thumbnailVideoRemoved = false;
 
-                    // already sorted by ^ getStreamHistorySortedById(), binary search can be used
-                    final ArrayList<Long> historyStreamIds = new ArrayList<>();
-                    while (historyIter.hasNext()) {
-                        historyStreamIds.add(historyIter.next().getStreamId());
-                    }
-
                     if (removePartiallyWatched) {
-                        while (playlistIter.hasNext()) {
-                            final PlaylistStreamEntry playlistItem = playlistIter.next();
+                        for (final var playlistItem : playlist) {
                             final int indexInHistory = Collections.binarySearch(historyStreamIds,
                                     playlistItem.getStreamId());
 
@@ -412,14 +421,15 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
                             }
                         }
                     } else {
-                        final Iterator<StreamStateEntity> streamStatesIter = recordManager
-                                .loadLocalStreamStateBatch(playlist).blockingGet().iterator();
+                        final var streamStates = recordManager
+                                .loadLocalStreamStateBatch(playlist).blockingGet();
 
-                        while (playlistIter.hasNext()) {
-                            final PlaylistStreamEntry playlistItem = playlistIter.next();
+                        for (int i = 0; i < playlist.size(); i++) {
+                            final var playlistItem = playlist.get(i);
+                            final var streamStateEntity = streamStates.get(i);
+
                             final int indexInHistory = Collections.binarySearch(historyStreamIds,
                                     playlistItem.getStreamId());
-                            final StreamStateEntity streamStateEntity = streamStatesIter.next();
                             final long duration = playlistItem.toStreamInfoItem().getDuration();
 
                             if (indexInHistory < 0 || (streamStateEntity != null
@@ -433,18 +443,18 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
                         }
                     }
 
-                    return Flowable.just(notWatchedItems, thumbnailVideoRemoved);
-                })
+                    return new Pair<>(notWatchedItems, thumbnailVideoRemoved);
+                });
+
+        disposables.add(streamsMaybe.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(flow -> {
-                    final List<PlaylistStreamEntry> notWatchedItems =
-                            (List<PlaylistStreamEntry>) flow.blockingFirst();
-                    final boolean thumbnailVideoRemoved = (Boolean) flow.blockingLast();
+                    final List<PlaylistStreamEntry> notWatchedItems = flow.first;
+                    final boolean thumbnailVideoRemoved = flow.second;
 
                     itemListAdapter.clearStreamItemList();
                     itemListAdapter.addItems(notWatchedItems);
                     saveChanges();
-
 
                     if (thumbnailVideoRemoved) {
                         updateThumbnailUrl();
@@ -483,13 +493,18 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
         }
         setVideoCount(itemListAdapter.getItemsList().size());
 
-        playlistControlBinding.playlistCtrlPlayAllButton.setOnClickListener(view ->
-                NavigationHelper.playOnMainPlayer(activity, getPlayQueue()));
-        playlistControlBinding.playlistCtrlPlayPopupButton.setOnClickListener(view ->
-                NavigationHelper.playOnPopupPlayer(activity, getPlayQueue(), false));
-        playlistControlBinding.playlistCtrlPlayBgButton.setOnClickListener(view ->
-                NavigationHelper.playOnBackgroundPlayer(activity, getPlayQueue(), false));
-
+        playlistControlBinding.playlistCtrlPlayAllButton.setOnClickListener(view -> {
+            NavigationHelper.playOnMainPlayer(activity, getPlayQueue());
+            showHoldToAppendTipIfNeeded();
+        });
+        playlistControlBinding.playlistCtrlPlayPopupButton.setOnClickListener(view -> {
+            NavigationHelper.playOnPopupPlayer(activity, getPlayQueue(), false);
+            showHoldToAppendTipIfNeeded();
+        });
+        playlistControlBinding.playlistCtrlPlayBgButton.setOnClickListener(view -> {
+            NavigationHelper.playOnBackgroundPlayer(activity, getPlayQueue(), false);
+            showHoldToAppendTipIfNeeded();
+        });
         playlistControlBinding.playlistCtrlPlayPopupButton.setOnLongClickListener(view -> {
             NavigationHelper.enqueueOnPlayer(activity, getPlayQueue(), PlayerType.POPUP);
             return true;
@@ -501,6 +516,13 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
         });
 
         hideLoading();
+    }
+
+    private void showHoldToAppendTipIfNeeded() {
+        if (PreferenceManager.getDefaultSharedPreferences(activity)
+                .getBoolean(getString(R.string.show_hold_to_append_key), true)) {
+            Toast.makeText(activity, R.string.hold_to_append, Toast.LENGTH_SHORT).show();
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -524,8 +546,8 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
             return;
         }
 
-        final DialogEditTextBinding dialogBinding
-                = DialogEditTextBinding.inflate(getLayoutInflater());
+        final DialogEditTextBinding dialogBinding =
+                DialogEditTextBinding.inflate(getLayoutInflater());
         dialogBinding.dialogEditText.setHint(R.string.name);
         dialogBinding.dialogEditText.setInputType(InputType.TYPE_CLASS_TEXT);
         dialogBinding.dialogEditText.setSelection(dialogBinding.dialogEditText.getText().length());
@@ -593,7 +615,7 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
             newThumbnailUrl = ((PlaylistStreamEntry) itemListAdapter.getItemsList().get(0))
                     .getStreamEntity().getThumbnailUrl();
         } else {
-            newThumbnailUrl = "drawable://" + R.drawable.dummy_thumbnail_playlist;
+            newThumbnailUrl = "drawable://" + R.drawable.placeholder_thumbnail_playlist;
         }
 
         changeThumbnailUrl(newThumbnailUrl);

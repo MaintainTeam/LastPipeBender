@@ -7,8 +7,6 @@ import org.schabi.newpipe.App
 import org.schabi.newpipe.error.ErrorInfo
 import org.schabi.newpipe.error.ErrorUtil.Companion.createNotification
 import org.schabi.newpipe.error.UserAction
-import java.io.ByteArrayInputStream
-import java.io.InputStream
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import java.security.cert.CertificateEncodingException
@@ -47,10 +45,8 @@ object ReleaseVersionUtil {
                 return ""
             }
             val x509cert = try {
-                val cert = signatures[0].toByteArray()
-                val input: InputStream = ByteArrayInputStream(cert)
                 val cf = CertificateFactory.getInstance("X509")
-                cf.generateCertificate(input) as X509Certificate
+                cf.generateCertificate(signatures[0].toByteArray().inputStream()) as X509Certificate
             } catch (e: CertificateException) {
                 showRequestError(app, e, "Certificate error")
                 return ""
@@ -104,13 +100,11 @@ object ReleaseVersionUtil {
      * @return Epoch second of expiry date time
      */
     fun coerceUpdateCheckExpiry(expiryString: String?): Long {
-        val now = ZonedDateTime.now()
-        return expiryString?.let {
-            var expiry =
-                ZonedDateTime.from(DateTimeFormatter.RFC_1123_DATE_TIME.parse(expiryString))
-            expiry = maxOf(expiry, now.plusHours(6))
-            expiry = minOf(expiry, now.plusHours(72))
-            expiry.toEpochSecond()
-        } ?: now.plusHours(6).toEpochSecond()
+        val nowPlus6Hours = ZonedDateTime.now().plusHours(6)
+        val expiry = expiryString?.let {
+            ZonedDateTime.from(DateTimeFormatter.RFC_1123_DATE_TIME.parse(it))
+                .coerceIn(nowPlus6Hours, nowPlus6Hours.plusHours(66))
+        } ?: nowPlus6Hours
+        return expiry.toEpochSecond()
     }
 }
