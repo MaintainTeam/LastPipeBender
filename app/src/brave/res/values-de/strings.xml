@@ -2,4 +2,14 @@
 <resources>
     <string name="brave_about_fork">Aufgrund restriktiver Projektrichtlinien weigert sich das NewPipeTeam, Plattformen hinzuzufügen, die sie als anstößig empfinden. Dieser Fork (BraveNewPipe) wird nicht so restriktiv sein. Solange die Plattformen im Sinne der freien Meinungsäußerung arbeiten, können sie integriert werden. Dennoch werden Plattformen, die Pornographie oder andere entwürdigende Dinge fördern, hier <b>NICHT</b> integriert werden. Dieser Fork wird sich nur auf die Integration anderer Plattformen konzentrieren. Nicht relevante Patches werden vorerst abgelehnt. Du kannst gerne vorschlagen, welche alternativen Plattformen unterstützt werden sollten. Jeder Beitrag (Entwicklung/Test/Fehlerbericht) ist sehr willkommen. Derzeit zusätzliche Plattformen im Vergleich zu NewPipe:</string>
     <string name="brave_about_title">Über diesen Fork</string>
+    <string name="search_filters_short">Kurz</string>
+    <string name="search_filters_long">Lang</string>
+    <string name="search_filters_rumbles">Rumbles</string>
+    <string name="search_filters_most_recent">Neueste</string>
+    <string name="search_filters_short_0_5_min">Kurz (0-5m)</string>
+    <string name="search_filters_medium_5_20_min">Mittel (5-20m)</string>
+    <string name="search_filters_long_20_min_plus"> Lang (20m+)</string>
+    <string name="search_filters_feature_45_min_plus">Filmlänge (45m+)</string>
+    <string name="search_filters_newest_first">Neuste zuerst</string>
+    <string name="search_filters_oldest_first">Älteste zuerst</string>
 </resources>
