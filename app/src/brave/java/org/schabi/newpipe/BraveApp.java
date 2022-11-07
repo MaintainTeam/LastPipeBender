@@ -1,6 +1,6 @@
 package org.schabi.newpipe;
 
-import androidx.multidex.MultiDexApplication;
+import android.app.Application;
 
-public class BraveApp extends MultiDexApplication {
+public class BraveApp extends Application {
 }

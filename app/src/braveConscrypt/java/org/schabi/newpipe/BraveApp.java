@@ -1,12 +1,12 @@
 package org.schabi.newpipe;
 
+import android.app.Application;
+
 import org.conscrypt.Conscrypt;
 
 import java.security.Security;
 
-import androidx.multidex.MultiDexApplication;
-
-public class BraveApp extends MultiDexApplication {
+public class BraveApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
