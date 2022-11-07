@@ -184,6 +184,26 @@ public final class ServiceHelper {
                 R.string.search_filters_yes);
         LIBRARY_STRING_ID_TO_RES_ID_MAP.put(LibraryStringIds.SEARCH_FILTERS_YOUTUBE_MUSIC,
                 R.string.search_filters_youtube_music);
+        LIBRARY_STRING_ID_TO_RES_ID_MAP.put(LibraryStringIds.SEARCH_FILTERS_SHORT,
+                R.string.search_filters_short /* Short */);
+        LIBRARY_STRING_ID_TO_RES_ID_MAP.put(LibraryStringIds.SEARCH_FILTERS_LONG,
+                R.string.search_filters_long /* Long */);
+        LIBRARY_STRING_ID_TO_RES_ID_MAP.put(LibraryStringIds.SEARCH_FILTERS_RUMBLES,
+                R.string.search_filters_rumbles /* Rumbles */);
+        LIBRARY_STRING_ID_TO_RES_ID_MAP.put(LibraryStringIds.SEARCH_FILTERS_MOST_RECENT,
+                R.string.search_filters_most_recent /* Most recent */);
+        LIBRARY_STRING_ID_TO_RES_ID_MAP.put(LibraryStringIds.SEARCH_FILTERS_SHORT_0_5M,
+                R.string.search_filters_short_0_5_min /* Short (0-5m) */);
+        LIBRARY_STRING_ID_TO_RES_ID_MAP.put(LibraryStringIds.SEARCH_FILTERS_MEDIUM_5_20M,
+                R.string.search_filters_medium_5_20_min /* Medium (5-20m) */);
+        LIBRARY_STRING_ID_TO_RES_ID_MAP.put(LibraryStringIds.SEARCH_FILTERS_LONG_20M_PLUS,
+                R.string.search_filters_long_20_min_plus /*  Long (20m+) */);
+        LIBRARY_STRING_ID_TO_RES_ID_MAP.put(LibraryStringIds.SEARCH_FILTERS_FEATURE_45M_PLUS,
+                R.string.search_filters_feature_45_min_plus /* Feature (45m+) */);
+        LIBRARY_STRING_ID_TO_RES_ID_MAP.put(LibraryStringIds.SEARCH_FILTERS_NEWEST_FIRST,
+                R.string.search_filters_newest_first /* Newest First */);
+        LIBRARY_STRING_ID_TO_RES_ID_MAP.put(LibraryStringIds.SEARCH_FILTERS_OLDEST_FIRST,
+                R.string.search_filters_oldest_first /* Oldest First */);
     }
 
     private ServiceHelper() {
