@@ -164,7 +164,7 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
     private TextWatcher textWatcher;
 
     @State
-    public ArrayList<Integer> userSelectedContentFilterList;
+    ArrayList<Integer> userSelectedContentFilterList;
 
     @State
     ArrayList<Integer> userSelectedSortFilterList = null;
@@ -1094,8 +1094,8 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
 
     @SuppressWarnings("checkstyle:HiddenField")
     @Override
-    public void onFinishSearchFilterDialog(final ArrayList<Integer> userSelectedContentFilterList,
-                                           final ArrayList<Integer> userSelectedSortFilterList,
+    public void onFinishSearchFilterDialog(final List<Integer> userSelectedContentFilterList,
+                                           final List<Integer> userSelectedSortFilterList,
                                            final List<FilterItem> selectedContentFilters,
                                            final List<FilterItem> selectedSortFilters) {
         selectedFilters(selectedContentFilters, selectedSortFilters);

@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import org.schabi.newpipe.databinding.SearchFilterDialogFragmentBinding;
 import org.schabi.newpipe.extractor.StreamingService;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
@@ -23,8 +23,8 @@ public class SearchFilterDialogFragment extends BaseSearchFilterDialogFragment {
 
     public static DialogFragment newInstance(
             final int serviceId,
-            final ArrayList<Integer> userSelectedContentFilter,
-            final ArrayList<Integer> userSelectedSortFilter) {
+            final List<Integer> userSelectedContentFilter,
+            final List<Integer> userSelectedSortFilter) {
         return initDialogArguments(
                 new SearchFilterDialogFragment(),
                 serviceId,

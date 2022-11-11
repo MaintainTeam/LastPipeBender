@@ -54,14 +54,14 @@ public class SearchFilterLogic {
      * It contains all the content filter ids that the user has selected. It
      * contains the same ids than {@link #userSelectedContentFilters}
      */
-    private ArrayList<Integer> selectedContentFilters = new ArrayList<>();
+    private List<Integer> selectedContentFilters = new ArrayList<>();
     /**
      * This list is used to store via Icepick and eventual store as preset
      * It contains all the sort filter ids that the user has selected and also
      * default id of none visible but selected sort filters.
      * It is a superset to {@link #userSelectedContentFilters}.
      */
-    private ArrayList<Integer> selectedSortFilters = new ArrayList<>();
+    private List<Integer> selectedSortFilters = new ArrayList<>();
 
     /**
      * Store a reference of the sort filters Ui creator. This is needed
@@ -90,7 +90,7 @@ public class SearchFilterLogic {
         showSortFilterContainerUI();
     }
 
-    private void reInitExclusiveFilterIds(final ArrayList<Integer> selectedFilters,
+    private void reInitExclusiveFilterIds(final List<Integer> selectedFilters,
                                           final ExclusiveGroups exclusive) {
         checkIfIdsAreValid(selectedFilters, exclusive);
 
@@ -100,8 +100,8 @@ public class SearchFilterLogic {
         }
     }
 
-    public void restorePreviouslySelectedFilters(final ArrayList<Integer> selectedContentFilterList,
-                                                 final ArrayList<Integer> selectedSortFilterList) {
+    public void restorePreviouslySelectedFilters(final List<Integer> selectedContentFilterList,
+                                                 final List<Integer> selectedSortFilterList) {
         if (selectedContentFilterList != null && selectedSortFilterList != null
                 && !selectedContentFilterList.isEmpty()) {
             reInitExclusiveFilterIds(selectedContentFilterList, contentFilterExclusive);
@@ -222,7 +222,7 @@ public class SearchFilterLogic {
     private void initFilters(
             final FilterGroup[] filterGroups,
             final ExclusiveGroups exclusive,
-            final ArrayList<Integer> selectedFilters,
+            final List<Integer> selectedFilters,
             @Nullable final Map<Integer, FilterContainer> fidToSupersetSortFilterMap) {
         selectedFilters.clear();
         exclusive.clear();
@@ -252,7 +252,7 @@ public class SearchFilterLogic {
         checkIfIdsAreValid(selectedFilters, exclusive);
     }
 
-    private void checkIfIdsAreValid(final ArrayList<Integer> selectedFilters,
+    private void checkIfIdsAreValid(final List<Integer> selectedFilters,
                                     final ExclusiveGroups exclusive) {
         for (final int id : selectedFilters) {
             if (!exclusive.filterIdToGroupIdMapContainsId(id)) {
@@ -472,7 +472,7 @@ public class SearchFilterLogic {
 
     private void selectFilter(final int id,
                               final Map<Integer, IUiItemWrapper> filterIdToUiItemMap,
-                              final ArrayList<Integer> selectedFilter,
+                              final List<Integer> selectedFilter,
                               final ExclusiveGroups exclusive) {
         final IUiItemWrapper uiItemWrapper =
                 filterIdToUiItemMap.get(id);

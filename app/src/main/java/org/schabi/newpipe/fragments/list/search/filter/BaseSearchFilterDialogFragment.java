@@ -30,24 +30,23 @@ public abstract class BaseSearchFilterDialogFragment extends DialogFragment {
     private static final String CONTENT_FILTERS = "CONTENT_FILTERS";
     private static final String SORT_FILTERS = "SORT_FILTERS";
     private static final String SERVICE_ID = "SERVICE_ID";
-
-    @State
-    public ArrayList<Integer> userSelectedContentFilterList;
     protected List<FilterItem> selectedContentFilters;
     protected List<FilterItem> selectedSortFilters;
     protected BaseSearchFilterUiGenerator dialogGenerator;
+    @State
+    ArrayList<Integer> userSelectedContentFilterList;
     @State
     ArrayList<Integer> userSelectedSortFilterList = null;
 
     protected static DialogFragment initDialogArguments(
             final DialogFragment dialogFragment,
             final int serviceId,
-            final ArrayList<Integer> userSelectedContentFilter,
-            final ArrayList<Integer> userSelectedSortFilter) {
+            final List<Integer> userSelectedContentFilter,
+            final List<Integer> userSelectedSortFilter) {
         final Bundle bundle = new Bundle(1);
         bundle.putInt(SERVICE_ID, serviceId);
-        bundle.putIntegerArrayList(CONTENT_FILTERS, userSelectedContentFilter);
-        bundle.putIntegerArrayList(SORT_FILTERS, userSelectedSortFilter);
+        bundle.putIntegerArrayList(CONTENT_FILTERS, new ArrayList<>(userSelectedContentFilter));
+        bundle.putIntegerArrayList(SORT_FILTERS, new ArrayList<>(userSelectedSortFilter));
         dialogFragment.setArguments(bundle);
 
         return dialogFragment;
@@ -167,8 +166,8 @@ public abstract class BaseSearchFilterDialogFragment extends DialogFragment {
      */
     public interface Listener {
 
-        void onFinishSearchFilterDialog(ArrayList<Integer> userSelectedContentFilterList,
-                                        ArrayList<Integer> userSelectedSortFilterList,
+        void onFinishSearchFilterDialog(List<Integer> userSelectedContentFilterList,
+                                        List<Integer> userSelectedSortFilterList,
                                         List<FilterItem> selectedContentFilters,
                                         List<FilterItem> selectedSortFilters);
     }
