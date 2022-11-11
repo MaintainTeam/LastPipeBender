@@ -4,6 +4,7 @@ package org.schabi.newpipe.fragments.list.search.filter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.util.SparseIntArray;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +29,7 @@ public class SearchFilterDialogSpinnerAdapter extends BaseAdapter {
     private final FilterGroup group;
     private final BaseSearchFilterUiGenerator.UiWrapperMapDelegate wrapperDelegate;
     private final Spinner spinner;
-    private final Map<Integer, Integer> id2PosMap = new HashMap<>();
+    private final SparseIntArray id2PosMap = new SparseIntArray();
     private final Map<Integer, UiItemWrapperSpinner>
             viewWrapperMap = new HashMap<>();
 

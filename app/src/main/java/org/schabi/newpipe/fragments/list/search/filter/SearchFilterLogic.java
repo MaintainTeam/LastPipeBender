@@ -2,6 +2,8 @@
 
 package org.schabi.newpipe.fragments.list.search.filter;
 
+import android.util.SparseIntArray;
+
 import org.schabi.newpipe.extractor.linkhandler.SearchQueryHandlerFactory;
 import org.schabi.newpipe.extractor.search.filter.FilterContainer;
 import org.schabi.newpipe.extractor.search.filter.FilterGroup;
@@ -638,7 +640,7 @@ public class SearchFilterLogic {
      */
     private static class ExclusiveGroups {
 
-        final Map<Integer, Integer> actualSelectedFilterIdInExclusiveGroupMap = new HashMap<>();
+        final SparseIntArray actualSelectedFilterIdInExclusiveGroupMap = new SparseIntArray();
         /**
          * To quickly determine if a content filter group supports
          * only one item selected (exclusiveness), we need a set that resembles that.
@@ -648,7 +650,7 @@ public class SearchFilterLogic {
          * To quickly determine if a content filter id belongs to an exclusive group.
          * This maps works in conjunction with {@link #exclusiveGroupsIdSet}
          */
-        private final Map<Integer, Integer> filterIdToGroupIdMap = new HashMap<>();
+        private final SparseIntArray filterIdToGroupIdMap = new SparseIntArray();
 
         /**
          * Clear {@link #exclusiveGroupsIdSet} and {@link #filterIdToGroupIdMap}.
@@ -666,7 +668,7 @@ public class SearchFilterLogic {
          * @return true if valid
          */
         public boolean filterIdToGroupIdMapContainsId(final int filterId) {
-            return filterIdToGroupIdMap.containsKey(filterId);
+            return filterIdToGroupIdMap.indexOfKey(filterId) >= 0;
         }
 
         public boolean isFilterIdPartOfAnExclusiveGroup(final int filterId) {
@@ -744,10 +746,10 @@ public class SearchFilterLogic {
             int previousFilterId = ITEM_IDENTIFIER_UNKNOWN;
             final int filterGroupId = filterIdToGroupIdMap.get(filterId);
 
-            if (exclusiveGroupsIdSet.contains(filterGroupId)
-                    && actualSelectedFilterIdInExclusiveGroupMap.containsKey(filterGroupId)) {
-                previousFilterId = actualSelectedFilterIdInExclusiveGroupMap.get(filterGroupId);
-                actualSelectedFilterIdInExclusiveGroupMap.remove(filterGroupId);
+            final int index = actualSelectedFilterIdInExclusiveGroupMap.indexOfKey(filterGroupId);
+            if (exclusiveGroupsIdSet.contains(filterGroupId) && index >= 0) {
+                previousFilterId = actualSelectedFilterIdInExclusiveGroupMap.valueAt(index);
+                actualSelectedFilterIdInExclusiveGroupMap.removeAt(index);
             }
             return previousFilterId;
         }
