@@ -428,14 +428,6 @@ public class SearchFilterLogicAndUiGeneratorTest {
         protected ICreateUiForFiltersWorker createContentFilterWorker() {
             return null;
         }
-
-        @Override
-        public void onResume() {
-        }
-
-        @Override
-        public void onPause() {
-        }
     }
 
     static class ElementsWrapper implements SearchFilterLogic.IUiItemWrapper {

@@ -124,16 +124,6 @@ public class SearchFilterUIOptionMenu extends BaseSearchFilterUiGenerator {
         return new CreateContentFilterUI();
     }
 
-    @Override
-    public void onResume() {
-        // Menu does not need a implementation here
-    }
-
-    @Override
-    public void onPause() {
-        // Menu does not need a implementation here
-    }
-
     private static class UiItemWrapper implements IUiItemWrapper {
 
         private final MenuItem item;

@@ -109,19 +109,6 @@ public abstract class BaseSearchFilterDialogFragment extends DialogFragment {
         return rootView;
     }
 
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        dialogGenerator.onResume();
-    }
-
-    @Override
-    public void onStop() {
-        dialogGenerator.onPause();
-        super.onStop();
-    }
-
     @Override
     public void onViewCreated(@NonNull final View view, final Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);

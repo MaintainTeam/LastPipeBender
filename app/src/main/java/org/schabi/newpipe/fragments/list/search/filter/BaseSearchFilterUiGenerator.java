@@ -67,18 +67,6 @@ public abstract class BaseSearchFilterUiGenerator extends SearchFilterLogic {
     }
 
     /**
-     * If UI is implemented within an fragment/activity this method has to be called from
-     * its corresponding lifecyle method manually.
-     */
-    public abstract void onResume();
-
-    /**
-     * If UI is implemented within an fragment/activity this method has to be called from
-     * its corresponding lifecyle method manually.
-     */
-    public abstract void onPause();
-
-    /**
      * Helper interface used as 'function pointer'.
      */
     protected interface UiWrapperMapDelegate {

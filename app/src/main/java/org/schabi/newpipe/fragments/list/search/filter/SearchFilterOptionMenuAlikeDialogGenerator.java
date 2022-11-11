@@ -164,7 +164,6 @@ public class SearchFilterOptionMenuAlikeDialogGenerator extends BaseSearchFilter
                     }
                 };
                 view.setOnClickListener(listener);
-                viewListeners.put(view, listener);
             }
             radioGroup.addView(view);
         }
@@ -191,7 +190,6 @@ public class SearchFilterOptionMenuAlikeDialogGenerator extends BaseSearchFilter
                     }
                 };
                 checkBox.setOnClickListener(listener);
-                viewListeners.put(checkBox, listener);
 
                 view = checkBox;
             }

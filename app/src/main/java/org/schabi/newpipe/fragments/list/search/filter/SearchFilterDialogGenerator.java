@@ -21,15 +21,12 @@ import org.schabi.newpipe.extractor.search.filter.FilterItem;
 import org.schabi.newpipe.util.DeviceUtils;
 import org.schabi.newpipe.util.ServiceHelper;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import androidx.appcompat.view.ContextThemeWrapper;
 
 public class SearchFilterDialogGenerator extends BaseSearchFilterUiDialogGenerator {
     private final GridLayout globalLayout;
-    private final Map<Spinner, AdapterView.OnItemSelectedListener> spinners = new HashMap<>();
 
     public SearchFilterDialogGenerator(final StreamingService service,
                                        final ViewGroup root,
@@ -38,24 +35,6 @@ public class SearchFilterDialogGenerator extends BaseSearchFilterUiDialogGenerat
         super(service.getSearchQHFactory(), callback, context);
         this.globalLayout = createGridLayout();
         root.addView(globalLayout);
-    }
-
-    @Override
-    public void onResume() {
-        for (final Map.Entry<Spinner, AdapterView.OnItemSelectedListener> spinner
-                : spinners.entrySet()) {
-            spinner.getKey().setOnItemSelectedListener(spinner.getValue());
-        }
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        for (final Map.Entry<Spinner, AdapterView.OnItemSelectedListener> spinner
-                : spinners.entrySet()) {
-            spinner.getKey().setOnItemSelectedListener(null);
-        }
-        super.onPause();
     }
 
     @Override
@@ -156,7 +135,6 @@ public class SearchFilterDialogGenerator extends BaseSearchFilterUiDialogGenerat
         };
 
         filterDataSpinner.setOnItemSelectedListener(listener);
-        spinners.put(filterDataSpinner, listener);
     }
 
     private void createUiElementsForMultipleSelectableItemsFilterGroup(
@@ -175,7 +153,6 @@ public class SearchFilterDialogGenerator extends BaseSearchFilterUiDialogGenerat
 
             chip.setOnClickListener(listener);
             chipGroup.addView(chip);
-            viewListeners.put(chip, listener);
             wrapperDelegate.put(item.getIdentifier(), new UiItemWrapperChip(
                     item, chip, chipGroup));
         }

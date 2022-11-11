@@ -10,16 +10,12 @@ import android.widget.TextView;
 import org.schabi.newpipe.extractor.linkhandler.SearchQueryHandlerFactory;
 import org.schabi.newpipe.extractor.search.filter.FilterGroup;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static android.util.TypedValue.COMPLEX_UNIT_DIP;
 
 public abstract class BaseSearchFilterUiDialogGenerator extends BaseSearchFilterUiGenerator {
     private static final float FONT_SIZE_TITLE_ITEMS_IN_DIP = 20f;
-
-    protected final Map<View, View.OnClickListener> viewListeners = new HashMap<>();
 
     protected BaseSearchFilterUiDialogGenerator(
             final SearchQueryHandlerFactory linkHandlerFactory,
@@ -42,20 +38,6 @@ public abstract class BaseSearchFilterUiDialogGenerator extends BaseSearchFilter
     @Override
     protected ICreateUiForFiltersWorker createSortFilterWorker() {
         return new BaseCreateSearchFilterUI.CreateSortFilterUI(this, context);
-    }
-
-    @Override
-    public void onResume() {
-        for (final Map.Entry<View, View.OnClickListener> view : viewListeners.entrySet()) {
-            view.getKey().setOnClickListener(view.getValue());
-        }
-    }
-
-    @Override
-    public void onPause() {
-        for (final Map.Entry<View, View.OnClickListener> view : viewListeners.entrySet()) {
-            view.getKey().setOnClickListener(null);
-        }
     }
 
     protected View createSeparatorLine(final ViewGroup.LayoutParams layoutParams) {
