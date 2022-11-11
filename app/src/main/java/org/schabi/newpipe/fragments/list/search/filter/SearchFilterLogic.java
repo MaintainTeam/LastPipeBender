@@ -13,14 +13,13 @@ import org.schabi.newpipe.fragments.list.search.SearchFragment;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
 import androidx.annotation.Nullable;
+import androidx.collection.SparseArrayCompat;
 
 import static org.schabi.newpipe.extractor.search.filter.FilterContainer.ITEM_IDENTIFIER_UNKNOWN;
 
@@ -46,10 +45,12 @@ public class SearchFilterLogic {
     private final SearchQueryHandlerFactory searchQHFactory;
     private final ExclusiveGroups contentFilterExclusive = new ExclusiveGroups();
     private final ExclusiveGroups sortFilterExclusive = new ExclusiveGroups();
-    private final Map<Integer, IUiItemWrapper> contentFilterIdToUiItemMap = new HashMap<>();
-    private final Map<Integer, IUiItemWrapper> sortFilterIdToUiItemMap = new HashMap<>();
-    private final Map<Integer, FilterContainer> contentFilterFidToSupersetSortFilterMap =
-            new HashMap<>();
+    private final SparseArrayCompat<IUiItemWrapper> contentFilterIdToUiItemMap =
+            new SparseArrayCompat<>();
+    private final SparseArrayCompat<IUiItemWrapper> sortFilterIdToUiItemMap =
+            new SparseArrayCompat<>();
+    private final SparseArrayCompat<FilterContainer> contentFilterFidToSupersetSortFilterMap =
+            new SparseArrayCompat<>();
     private final Callback callback;
     /**
      * This list is used to store via Icepick and eventual store as preset
@@ -118,7 +119,7 @@ public class SearchFilterLogic {
     }
 
     private void reselectUiItems(final List<Integer> selectedFilters,
-                                 final Map<Integer, IUiItemWrapper> filterIdToUiItemMap) {
+                                 final SparseArrayCompat<IUiItemWrapper> filterIdToUiItemMap) {
         for (final int id : selectedFilters) {
             final IUiItemWrapper iUiItemWrapper = filterIdToUiItemMap.get(id);
             if (iUiItemWrapper != null) {
@@ -127,10 +128,10 @@ public class SearchFilterLogic {
         }
     }
 
-    private void deselectUiItems(final Map<Integer, IUiItemWrapper> filterIdToUiItemMap) {
-        for (final Map.Entry<Integer, IUiItemWrapper> entry : filterIdToUiItemMap.entrySet()) {
-            if (entry != null && entry.getValue() != null) {
-                final IUiItemWrapper iUiItemWrapper = entry.getValue();
+    private void deselectUiItems(final SparseArrayCompat<IUiItemWrapper> filterIdToUiItemMap) {
+        for (int index = 0; index < filterIdToUiItemMap.size(); index++) {
+            final IUiItemWrapper iUiItemWrapper = filterIdToUiItemMap.valueAt(index);
+            if (iUiItemWrapper != null) {
                 iUiItemWrapper.setChecked(false);
             }
         }
@@ -190,7 +191,7 @@ public class SearchFilterLogic {
      * @param createUiForFiltersWorker the implementation how to create the UI.
      */
     private void initFiltersUi(final FilterGroup[] filterGroups,
-                               final Map<Integer, IUiItemWrapper> filterIdToUiItemMap,
+                               final SparseArrayCompat<IUiItemWrapper> filterIdToUiItemMap,
                                final ICreateUiForFiltersWorker createUiForFiltersWorker) {
 
         filterIdToUiItemMap.clear();
@@ -225,7 +226,7 @@ public class SearchFilterLogic {
             final FilterGroup[] filterGroups,
             final ExclusiveGroups exclusive,
             final List<Integer> selectedFilters,
-            @Nullable final Map<Integer, FilterContainer> fidToSupersetSortFilterMap) {
+            @Nullable final SparseArrayCompat<FilterContainer> fidToSupersetSortFilterMap) {
         selectedFilters.clear();
         exclusive.clear();
 
@@ -389,16 +390,18 @@ public class SearchFilterLogic {
      * See {@link SearchFilterOptionMenuAlikeDialogGenerator}
      */
     protected void showAllAvailableSortFilters() {
-        contentFilterFidToSupersetSortFilterMap.values().stream()
-                .filter(Objects::nonNull)
-                .distinct()
-                .forEach(container ->
-                        setUiItemsVisibility(container, true, sortFilterIdToUiItemMap));
+        for (int index = 0; index < contentFilterFidToSupersetSortFilterMap.size(); index++) {
+            final FilterContainer container =
+                    contentFilterFidToSupersetSortFilterMap.valueAt(index);
+            if (container != null) {
+                setUiItemsVisibility(container, true, sortFilterIdToUiItemMap);
+            }
+        }
     }
 
     private void setUiItemsVisibility(final FilterContainer filters,
                                       final boolean isVisible,
-                                      final Map<Integer, IUiItemWrapper> filterIdToUiItemMap) {
+                                      final SparseArrayCompat<IUiItemWrapper> filterIdToUiItemMap) {
         if (filters != null && filters.getFilterGroups() != null) {
             for (final FilterGroup filterGroup : filters.getFilterGroups()) {
                 setUiItemVisible(isVisible, filterIdToUiItemMap, filterGroup.getIdentifier());
@@ -410,7 +413,7 @@ public class SearchFilterLogic {
     }
 
     private void setUiItemVisible(final boolean isVisible,
-                                  final Map<Integer, IUiItemWrapper> filterIdToUiItemMap,
+                                  final SparseArrayCompat<IUiItemWrapper> filterIdToUiItemMap,
                                   final int id) {
         final IUiItemWrapper uiWrapper = filterIdToUiItemMap.get(id);
         if (uiWrapper != null) {
@@ -473,7 +476,7 @@ public class SearchFilterLogic {
     }
 
     private void selectFilter(final int id,
-                              final Map<Integer, IUiItemWrapper> filterIdToUiItemMap,
+                              final SparseArrayCompat<IUiItemWrapper> filterIdToUiItemMap,
                               final List<Integer> selectedFilter,
                               final ExclusiveGroups exclusive) {
         final IUiItemWrapper uiItemWrapper =

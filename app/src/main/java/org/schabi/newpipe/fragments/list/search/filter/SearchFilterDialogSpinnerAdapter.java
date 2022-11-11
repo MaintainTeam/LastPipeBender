@@ -18,10 +18,9 @@ import org.schabi.newpipe.extractor.search.filter.FilterItem;
 import org.schabi.newpipe.util.DeviceUtils;
 import org.schabi.newpipe.util.ServiceHelper;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
+import androidx.collection.SparseArrayCompat;
 
 public class SearchFilterDialogSpinnerAdapter extends BaseAdapter {
 
@@ -30,8 +29,8 @@ public class SearchFilterDialogSpinnerAdapter extends BaseAdapter {
     private final BaseSearchFilterUiGenerator.UiWrapperMapDelegate wrapperDelegate;
     private final Spinner spinner;
     private final SparseIntArray id2PosMap = new SparseIntArray();
-    private final Map<Integer, UiItemWrapperSpinner>
-            viewWrapperMap = new HashMap<>();
+    private final SparseArrayCompat<UiItemWrapperSpinner>
+            viewWrapperMap = new SparseArrayCompat<>();
 
     public SearchFilterDialogSpinnerAdapter(
             final Context context,
