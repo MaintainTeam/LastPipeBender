@@ -2,8 +2,6 @@
 
 package org.schabi.newpipe.fragments.list.search.filter;
 
-import android.util.SparseIntArray;
-
 import org.schabi.newpipe.extractor.linkhandler.SearchQueryHandlerFactory;
 import org.schabi.newpipe.extractor.search.filter.FilterContainer;
 import org.schabi.newpipe.extractor.search.filter.FilterGroup;
@@ -643,7 +641,8 @@ public class SearchFilterLogic {
      */
     private static class ExclusiveGroups {
 
-        final SparseIntArray actualSelectedFilterIdInExclusiveGroupMap = new SparseIntArray();
+        final SparseArrayCompat<Integer> actualSelectedFilterIdInExclusiveGroupMap =
+                new SparseArrayCompat<>();
         /**
          * To quickly determine if a content filter group supports
          * only one item selected (exclusiveness), we need a set that resembles that.
@@ -653,7 +652,8 @@ public class SearchFilterLogic {
          * To quickly determine if a content filter id belongs to an exclusive group.
          * This maps works in conjunction with {@link #exclusiveGroupsIdSet}
          */
-        private final SparseIntArray filterIdToGroupIdMap = new SparseIntArray();
+        private final SparseArrayCompat<Integer> filterIdToGroupIdMap =
+                new SparseArrayCompat<>();
 
         /**
          * Clear {@link #exclusiveGroupsIdSet} and {@link #filterIdToGroupIdMap}.
