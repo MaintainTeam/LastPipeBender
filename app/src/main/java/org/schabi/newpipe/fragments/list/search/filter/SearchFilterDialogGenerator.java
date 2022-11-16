@@ -23,23 +23,25 @@ import org.schabi.newpipe.util.ServiceHelper;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.view.ContextThemeWrapper;
 
 public class SearchFilterDialogGenerator extends BaseSearchFilterUiDialogGenerator {
     private final GridLayout globalLayout;
 
-    public SearchFilterDialogGenerator(final StreamingService service,
-                                       final ViewGroup root,
-                                       final Context context,
-                                       final SearchFilterLogic.Callback callback) {
+    public SearchFilterDialogGenerator(@NonNull final StreamingService service,
+                                       @NonNull final ViewGroup root,
+                                       @NonNull final Context context,
+                                       @Nullable final SearchFilterLogic.Callback callback) {
         super(service.getSearchQHFactory(), callback, context);
         this.globalLayout = createGridLayout();
         root.addView(globalLayout);
     }
 
     @Override
-    protected void createTitle(final String name,
-                               final List<View> titleViewElements) {
+    protected void createTitle(@NonNull final String name,
+                               @NonNull final List<View> titleViewElements) {
         final TextView titleView = createTitleText(name);
         final View separatorLine = createSeparatorLine();
         final View separatorLine2 = createSeparatorLine();
@@ -54,9 +56,9 @@ public class SearchFilterDialogGenerator extends BaseSearchFilterUiDialogGenerat
     }
 
     @Override
-    protected void createFilterGroup(final FilterGroup filterGroup,
-                                     final UiWrapperMapDelegate wrapperDelegate,
-                                     final UiSelectorDelegate selectorDelegate) {
+    protected void createFilterGroup(@NonNull final FilterGroup filterGroup,
+                                     @NonNull final UiWrapperMapDelegate wrapperDelegate,
+                                     @NonNull final UiSelectorDelegate selectorDelegate) {
         final GridLayout.LayoutParams layoutParams = getLayoutParamsViews();
         boolean doSpanDataOverMultipleCells = false;
         final UiItemWrapperViews viewsWrapper = new UiItemWrapperViews(
@@ -111,10 +113,10 @@ public class SearchFilterDialogGenerator extends BaseSearchFilterUiDialogGenerat
     }
 
     private void createUiElementsForSingleSelectableItemsFilterGroup(
-            final FilterGroup filterGroup,
-            final UiWrapperMapDelegate wrapperDelegate,
-            final UiSelectorDelegate selectorDelegate,
-            final Spinner filterDataSpinner) {
+            @NonNull final FilterGroup filterGroup,
+            @NonNull final UiWrapperMapDelegate wrapperDelegate,
+            @NonNull final UiSelectorDelegate selectorDelegate,
+            @NonNull final Spinner filterDataSpinner) {
         filterDataSpinner.setAdapter(new SearchFilterDialogSpinnerAdapter(
                 context, filterGroup, wrapperDelegate, filterDataSpinner));
 
@@ -138,10 +140,10 @@ public class SearchFilterDialogGenerator extends BaseSearchFilterUiDialogGenerat
     }
 
     private void createUiElementsForMultipleSelectableItemsFilterGroup(
-            final FilterGroup filterGroup,
-            final UiWrapperMapDelegate wrapperDelegate,
-            final UiSelectorDelegate selectorDelegate,
-            final ChipGroup chipGroup) {
+            @NonNull final FilterGroup filterGroup,
+            @NonNull final UiWrapperMapDelegate wrapperDelegate,
+            @NonNull final UiSelectorDelegate selectorDelegate,
+            @NonNull final ChipGroup chipGroup) {
         for (final FilterItem item : filterGroup.getFilterItems()) {
             final Chip chip = new Chip(new ContextThemeWrapper(
                     context, R.style.Theme_MaterialComponents_Light));
@@ -158,10 +160,12 @@ public class SearchFilterDialogGenerator extends BaseSearchFilterUiDialogGenerat
         }
     }
 
+    @NonNull
     private View createSeparatorLine() {
         return createSeparatorLine(clipFreeRightColumnLayoutParams(true));
     }
 
+    @NonNull
     private TextView createTitleText(final String name) {
         final TextView title = createTitleText(name,
                 clipFreeRightColumnLayoutParams(true));
@@ -169,6 +173,7 @@ public class SearchFilterDialogGenerator extends BaseSearchFilterUiDialogGenerat
         return title;
     }
 
+    @NonNull
     private GridLayout createGridLayout() {
         final GridLayout layout = new GridLayout(context);
 
@@ -183,6 +188,7 @@ public class SearchFilterDialogGenerator extends BaseSearchFilterUiDialogGenerat
         return layout;
     }
 
+    @NonNull
     private GridLayout.LayoutParams clipFreeRightColumnLayoutParams(final boolean doColumnSpan) {
         final GridLayout.LayoutParams layoutParams = new GridLayout.LayoutParams();
         // https://stackoverflow.com/questions/37744672/gridlayout-children-are-being-clipped
@@ -198,6 +204,7 @@ public class SearchFilterDialogGenerator extends BaseSearchFilterUiDialogGenerat
         return layoutParams;
     }
 
+    @NonNull
     private GridLayout.LayoutParams getLayoutParamsViews() {
         final GridLayout.LayoutParams layoutParams = new GridLayout.LayoutParams();
         layoutParams.setGravity(Gravity.TOP);
@@ -205,7 +212,9 @@ public class SearchFilterDialogGenerator extends BaseSearchFilterUiDialogGenerat
         return layoutParams;
     }
 
-    private GridLayout.LayoutParams setDefaultMargin(final GridLayout.LayoutParams layoutParams) {
+    @NonNull
+    private GridLayout.LayoutParams setDefaultMargin(
+            @NonNull final GridLayout.LayoutParams layoutParams) {
         layoutParams.setMargins(
                 DeviceUtils.dpToPx(4, context),
                 DeviceUtils.dpToPx(2, context),
@@ -215,18 +224,20 @@ public class SearchFilterDialogGenerator extends BaseSearchFilterUiDialogGenerat
         return layoutParams;
     }
 
-    private View setZeroPadding(final View view) {
+    @NonNull
+    private View setZeroPadding(@NonNull final View view) {
         view.setPadding(0, 0, 0, 0);
         return view;
     }
 
     public static class UiItemWrapperChip extends BaseUiItemWrapper {
 
+        @NonNull
         private final ChipGroup chipGroup;
 
-        public UiItemWrapperChip(final FilterItem item,
-                                 final View view,
-                                 final ChipGroup chipGroup) {
+        public UiItemWrapperChip(@NonNull final FilterItem item,
+                                 @NonNull final View view,
+                                 @NonNull final ChipGroup chipGroup) {
             super(item, view);
             this.chipGroup = chipGroup;
         }

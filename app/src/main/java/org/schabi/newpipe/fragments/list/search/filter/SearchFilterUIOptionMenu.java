@@ -19,8 +19,10 @@ import org.schabi.newpipe.util.ServiceHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.core.view.MenuCompat;
 
@@ -41,9 +43,9 @@ public class SearchFilterUIOptionMenu extends BaseSearchFilterUiGenerator {
     private int newLastUsedGroupId = MENU_GROUP_SEARCH_RESET_BUTTONS + 1;
     private int firstSortFilterGroupId;
 
-    public SearchFilterUIOptionMenu(final StreamingService service,
-                                    final Callback callback,
-                                    final Context context) {
+    public SearchFilterUIOptionMenu(@NonNull final StreamingService service,
+                                    @Nullable final Callback callback,
+                                    @NonNull final Context context) {
         super(service.getSearchQHFactory(), callback, context);
     }
 
@@ -53,8 +55,10 @@ public class SearchFilterUIOptionMenu extends BaseSearchFilterUiGenerator {
 
     @Override
     protected void handleIdInNonExclusiveGroup(final int filterId,
-                                               final IUiItemWrapper uiItemWrapper,
-                                               final List<Integer> selectedFilter) {
+                                               @Nullable final IUiItemWrapper uiItemWrapper,
+                                               @NonNull final List<Integer> selectedFilter) {
+        // here it should never be null as the UI is the action menu
+        Objects.requireNonNull(uiItemWrapper);
         uiItemWrapper.setChecked(!uiItemWrapper.isChecked()); // toggle
         super.handleIdInNonExclusiveGroup(filterId, uiItemWrapper, selectedFilter);
     }
@@ -206,7 +210,7 @@ public class SearchFilterUIOptionMenu extends BaseSearchFilterUiGenerator {
 
         @Override
         public void createFilterGroupBeforeItems(
-                final FilterGroup filterGroup) {
+                @NonNull final FilterGroup filterGroup) {
             if (filterGroup.getNameId() != null) {
                 createNotEnabledAndUncheckableGroupTitleMenuItem(
                         FilterContainer.ITEM_IDENTIFIER_UNKNOWN, filterGroup.getNameId());
@@ -230,8 +234,8 @@ public class SearchFilterUIOptionMenu extends BaseSearchFilterUiGenerator {
         }
 
         @Override
-        public void createFilterItem(final FilterItem filterItem,
-                                     final FilterGroup filterGroup) {
+        public void createFilterItem(@NonNull final FilterItem filterItem,
+                                     @NonNull final FilterGroup filterGroup) {
             final MenuItem item = createMenuItem(filterItem);
 
             if (filterItem instanceof FilterItem.DividerItem) {
@@ -255,7 +259,7 @@ public class SearchFilterUIOptionMenu extends BaseSearchFilterUiGenerator {
         }
 
         @Override
-        public void createFilterGroupAfterItems(final FilterGroup filterGroup) {
+        public void createFilterGroupAfterItems(@NonNull final FilterGroup filterGroup) {
             makeAllowedMenuItemInGroupCheckable(filterGroup.isOnlyOneCheckable(),
                     getLastUsedGroupIdThanIncrement());
         }
@@ -285,7 +289,7 @@ public class SearchFilterUIOptionMenu extends BaseSearchFilterUiGenerator {
 
         @Override
         public void createFilterGroupBeforeItems(
-                final FilterGroup filterGroup) {
+                @NonNull final FilterGroup filterGroup) {
             if (filterGroup.getNameId() != null) {
                 final MenuItem item = createNotEnabledAndUncheckableGroupTitleMenuItem(
                         filterGroup.getIdentifier(), filterGroup.getNameId());
@@ -294,8 +298,8 @@ public class SearchFilterUIOptionMenu extends BaseSearchFilterUiGenerator {
         }
 
         @Override
-        public void createFilterItem(final FilterItem filterItem,
-                                     final FilterGroup filterGroup) {
+        public void createFilterItem(@NonNull final FilterItem filterItem,
+                                     @NonNull final FilterGroup filterGroup) {
             final MenuItem item = createMenuItem(filterItem);
             addSortFilterUiToItemMap(filterItem.getIdentifier(), item);
         }

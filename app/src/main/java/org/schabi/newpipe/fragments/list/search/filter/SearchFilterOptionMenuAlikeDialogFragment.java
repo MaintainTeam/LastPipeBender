@@ -17,6 +17,7 @@ import org.schabi.newpipe.extractor.StreamingService;
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
 
@@ -27,10 +28,11 @@ public class SearchFilterOptionMenuAlikeDialogFragment extends BaseSearchFilterD
 
     private SearchFilterOptionMenuAlikeDialogFragmentBinding binding;
 
+    @NonNull
     public static DialogFragment newInstance(
             final int serviceId,
-            final ArrayList<Integer> userSelectedContentFilter,
-            final ArrayList<Integer> userSelectedSortFilter) {
+            @Nullable final ArrayList<Integer> userSelectedContentFilter,
+            @Nullable final ArrayList<Integer> userSelectedSortFilter) {
         return initDialogArguments(
                 new SearchFilterOptionMenuAlikeDialogFragment(),
                 serviceId,
@@ -47,12 +49,13 @@ public class SearchFilterOptionMenuAlikeDialogFragment extends BaseSearchFilterD
     }
 
     @Override
+    @Nullable
     protected Toolbar getToolbar() {
         return binding.toolbarLayout.toolbar;
     }
 
     @Override
-    protected View getRootView(final LayoutInflater inflater,
+    protected View getRootView(@NonNull final LayoutInflater inflater,
                                final ViewGroup container) {
         binding = SearchFilterOptionMenuAlikeDialogFragmentBinding
                 .inflate(inflater, container, false);
@@ -83,7 +86,8 @@ public class SearchFilterOptionMenuAlikeDialogFragment extends BaseSearchFilterD
         }
     }
 
-    protected void initToolbar(final Toolbar toolbar) {
+    @Override
+    protected void initToolbar(final @NonNull Toolbar toolbar) {
         super.initToolbar(toolbar);
         // no room for a title
         toolbar.setTitle("");

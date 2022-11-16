@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.collection.SparseArrayCompat;
 
@@ -73,8 +74,8 @@ public class SearchFilterLogic {
     private ICreateUiForFiltersWorker uiSortFilterWorker;
 
 
-    public SearchFilterLogic(final SearchQueryHandlerFactory searchQHFactory,
-                             final Callback callback) {
+    public SearchFilterLogic(@NonNull final SearchQueryHandlerFactory searchQHFactory,
+                             @Nullable final Callback callback) {
         this.searchQHFactory = searchQHFactory;
         this.callback = callback;
         initContentFilters();
@@ -91,8 +92,8 @@ public class SearchFilterLogic {
         showSortFilterContainerUI();
     }
 
-    private void reInitExclusiveFilterIds(final List<Integer> selectedFilters,
-                                          final ExclusiveGroups exclusive) {
+    private void reInitExclusiveFilterIds(@NonNull final List<Integer> selectedFilters,
+                                          @NonNull final ExclusiveGroups exclusive) {
         checkIfIdsAreValid(selectedFilters, exclusive);
 
         for (final int id : selectedFilters) {
@@ -101,8 +102,9 @@ public class SearchFilterLogic {
         }
     }
 
-    public void restorePreviouslySelectedFilters(final List<Integer> selectedContentFilterList,
-                                                 final List<Integer> selectedSortFilterList) {
+    public void restorePreviouslySelectedFilters(
+            @Nullable final List<Integer> selectedContentFilterList,
+            @Nullable final List<Integer> selectedSortFilterList) {
         if (selectedContentFilterList != null && selectedSortFilterList != null
                 && !selectedContentFilterList.isEmpty()) {
             reInitExclusiveFilterIds(selectedContentFilterList, contentFilterExclusive);
@@ -116,8 +118,9 @@ public class SearchFilterLogic {
         createSortFilterItemListFromIdentifiersList();
     }
 
-    private void reselectUiItems(final List<Integer> selectedFilters,
-                                 final SparseArrayCompat<IUiItemWrapper> filterIdToUiItemMap) {
+    private void reselectUiItems(
+            @NonNull final List<Integer> selectedFilters,
+            @NonNull final SparseArrayCompat<IUiItemWrapper> filterIdToUiItemMap) {
         for (final int id : selectedFilters) {
             final IUiItemWrapper iUiItemWrapper = filterIdToUiItemMap.get(id);
             if (iUiItemWrapper != null) {
@@ -126,7 +129,8 @@ public class SearchFilterLogic {
         }
     }
 
-    private void deselectUiItems(final SparseArrayCompat<IUiItemWrapper> filterIdToUiItemMap) {
+    private void deselectUiItems(
+            @NonNull final SparseArrayCompat<IUiItemWrapper> filterIdToUiItemMap) {
         for (int index = 0; index < filterIdToUiItemMap.size(); index++) {
             final IUiItemWrapper iUiItemWrapper = filterIdToUiItemMap.valueAt(index);
             if (iUiItemWrapper != null) {
@@ -136,26 +140,31 @@ public class SearchFilterLogic {
     }
 
     // get copy of internal list
+    @NonNull
     public ArrayList<Integer> getSelectedContentFilters() {
         return new ArrayList<>(this.selectedContentFilters);
     }
 
     // get copy of internal list
+    @NonNull
     public ArrayList<Integer> getSelectedSortFilters() {
         return new ArrayList<>(this.selectedSortFilters);
     }
 
     // get copy of internal list, elements are not copied
+    @NonNull
     public List<FilterItem> getSelectedContentFilterItems() {
         return new ArrayList<>(this.userSelectedContentFilters);
     }
 
     // get copy of internal list, elements are not copied
+    @NonNull
     public List<FilterItem> getSelectedSortFiltersItems() {
         return new ArrayList<>(this.userSelectedSortFilters);
     }
 
-    public void initContentFiltersUi(final ICreateUiForFiltersWorker createUiForFiltersWorker) {
+    public void initContentFiltersUi(
+            @NonNull final ICreateUiForFiltersWorker createUiForFiltersWorker) {
         final FilterContainer filters = searchQHFactory.getAvailableContentFilter();
 
         if (filters != null && filters.getFilterGroups() != null) {
@@ -167,7 +176,8 @@ public class SearchFilterLogic {
         reselectUiItems(selectedContentFilters, contentFilterIdToUiItemMap);
     }
 
-    public void initSortFiltersUi(final ICreateUiForFiltersWorker createUiForFiltersWorker) {
+    public void initSortFiltersUi(
+            @NonNull final ICreateUiForFiltersWorker createUiForFiltersWorker) {
         final FilterContainer filters = searchQHFactory.getAvailableContentFilter();
         final List<FilterGroup> sortGroups = getAllSortFilterGroups(filters);
         uiSortFilterWorker = createUiForFiltersWorker;
@@ -188,9 +198,10 @@ public class SearchFilterLogic {
      *                                 called clear() on here.
      * @param createUiForFiltersWorker the implementation how to create the UI.
      */
-    private void initFiltersUi(final FilterGroup[] filterGroups,
-                               final SparseArrayCompat<IUiItemWrapper> filterIdToUiItemMap,
-                               final ICreateUiForFiltersWorker createUiForFiltersWorker) {
+    private void initFiltersUi(
+            @NonNull final FilterGroup[] filterGroups,
+            @NonNull final SparseArrayCompat<IUiItemWrapper> filterIdToUiItemMap,
+            @NonNull final ICreateUiForFiltersWorker createUiForFiltersWorker) {
 
         filterIdToUiItemMap.clear();
         Objects.requireNonNull(createUiForFiltersWorker);
@@ -221,9 +232,9 @@ public class SearchFilterLogic {
      * @param fidToSupersetSortFilterMap null possible, only for content filters relevant
      */
     private void initFilters(
-            final FilterGroup[] filterGroups,
-            final ExclusiveGroups exclusive,
-            final List<Integer> selectedFilters,
+            @NonNull final FilterGroup[] filterGroups,
+            @NonNull final ExclusiveGroups exclusive,
+            @NonNull final List<Integer> selectedFilters,
             @Nullable final SparseArrayCompat<FilterContainer> fidToSupersetSortFilterMap) {
         selectedFilters.clear();
         exclusive.clear();
@@ -253,8 +264,8 @@ public class SearchFilterLogic {
         checkIfIdsAreValid(selectedFilters, exclusive);
     }
 
-    private void checkIfIdsAreValid(final List<Integer> selectedFilters,
-                                    final ExclusiveGroups exclusive) {
+    private void checkIfIdsAreValid(@NonNull final List<Integer> selectedFilters,
+                                    @NonNull final ExclusiveGroups exclusive) {
         for (final int id : selectedFilters) {
             if (!exclusive.filterIdToGroupIdMapContainsId(id)) {
                 throw new RuntimeException("The id " + id + " is invalid");
@@ -334,7 +345,7 @@ public class SearchFilterLogic {
      *
      * @param contentFilterIds content filter ids list
      */
-    private void showSortFilterIdsContainerUI(final List<Integer> contentFilterIds) {
+    private void showSortFilterIdsContainerUI(@NonNull final List<Integer> contentFilterIds) {
         for (final int contentFilterId : contentFilterIds) {
             showSortFilterIdContainerUI(contentFilterId);
         }
@@ -397,9 +408,10 @@ public class SearchFilterLogic {
         }
     }
 
-    private void setUiItemsVisibility(final FilterContainer filters,
-                                      final boolean isVisible,
-                                      final SparseArrayCompat<IUiItemWrapper> filterIdToUiItemMap) {
+    private void setUiItemsVisibility(
+            @Nullable final FilterContainer filters,
+            final boolean isVisible,
+            @NonNull final SparseArrayCompat<IUiItemWrapper> filterIdToUiItemMap) {
         if (filters != null && filters.getFilterGroups() != null) {
             for (final FilterGroup filterGroup : filters.getFilterGroups()) {
                 setUiItemVisible(isVisible, filterIdToUiItemMap, filterGroup.getIdentifier());
@@ -410,9 +422,10 @@ public class SearchFilterLogic {
         }
     }
 
-    private void setUiItemVisible(final boolean isVisible,
-                                  final SparseArrayCompat<IUiItemWrapper> filterIdToUiItemMap,
-                                  final int id) {
+    private void setUiItemVisible(
+            final boolean isVisible,
+            @NonNull final SparseArrayCompat<IUiItemWrapper> filterIdToUiItemMap,
+            final int id) {
         final IUiItemWrapper uiWrapper = filterIdToUiItemMap.get(id);
         if (uiWrapper != null) {
             uiWrapper.setVisible(isVisible);
@@ -427,7 +440,8 @@ public class SearchFilterLogic {
      * @return the sort filter groups. Empty list if either param filters or no
      * filter groups available
      */
-    private List<FilterGroup> getAllSortFilterGroups(final FilterContainer filters) {
+    @NonNull
+    private List<FilterGroup> getAllSortFilterGroups(@Nullable final FilterContainer filters) {
         if (filters != null && filters.getFilterGroups() != null) {
             final List<FilterGroup> sortGroups = new ArrayList<>();
             for (final FilterGroup filterGroup : filters.getFilterGroups()) {
@@ -442,8 +456,8 @@ public class SearchFilterLogic {
     }
 
     protected void handleIdInNonExclusiveGroup(final int filterId,
-                                               final IUiItemWrapper uiItemWrapper,
-                                               final List<Integer> selectedFilter) {
+                                               @Nullable final IUiItemWrapper uiItemWrapper,
+                                               @NonNull final List<Integer> selectedFilter) {
         if (uiItemWrapper != null) { // could be null if there is no UI
             if (uiItemWrapper.isChecked()) {
                 if (!selectedFilter.contains(filterId)) {
@@ -473,10 +487,11 @@ public class SearchFilterLogic {
         selectFilter(filterId, sortFilterIdToUiItemMap, selectedSortFilters, sortFilterExclusive);
     }
 
-    private void selectFilter(final int id,
-                              final SparseArrayCompat<IUiItemWrapper> filterIdToUiItemMap,
-                              final List<Integer> selectedFilter,
-                              final ExclusiveGroups exclusive) {
+    private void selectFilter(
+            final int id,
+            @NonNull final SparseArrayCompat<IUiItemWrapper> filterIdToUiItemMap,
+            @NonNull final List<Integer> selectedFilter,
+            @NonNull final ExclusiveGroups exclusive) {
         final IUiItemWrapper uiItemWrapper =
                 filterIdToUiItemMap.get(id);
 
@@ -518,8 +533,9 @@ public class SearchFilterLogic {
      * @param id            the id of a content filter
      * @param uiItemWrapper the wrapped UI {@link android.view.View} for that content filter
      */
-    protected void addContentFilterUiWrapperToItemMap(final int id,
-                                                      final IUiItemWrapper uiItemWrapper) {
+    protected void addContentFilterUiWrapperToItemMap(
+            final int id,
+            @NonNull final IUiItemWrapper uiItemWrapper) {
         contentFilterIdToUiItemMap.put(id, uiItemWrapper);
     }
 
@@ -533,8 +549,9 @@ public class SearchFilterLogic {
      * @param id            the id of a sort filter
      * @param uiItemWrapper the wrapped UI {@link android.view.View} for that sort filter
      */
-    protected void addSortFilterUiWrapperToItemMap(final int id,
-                                                   final IUiItemWrapper uiItemWrapper) {
+    protected void addSortFilterUiWrapperToItemMap(
+            final int id,
+            @NonNull final IUiItemWrapper uiItemWrapper) {
         sortFilterIdToUiItemMap.put(id, uiItemWrapper);
     }
 
@@ -591,7 +608,7 @@ public class SearchFilterLogic {
          *
          * @param filterGroup one group each time from {@link FilterContainer#getFilterGroups()}
          */
-        void createFilterGroupBeforeItems(FilterGroup filterGroup);
+        void createFilterGroupBeforeItems(@NonNull FilterGroup filterGroup);
 
         /**
          * Create Ui elements specifically related to a {@link FilterItem} itself.
@@ -600,7 +617,7 @@ public class SearchFilterLogic {
          * @param filterGroup (optional) one group each time from
          *                    {@link FilterContainer#getFilterGroups()}
          */
-        void createFilterItem(FilterItem filterItem, FilterGroup filterGroup);
+        void createFilterItem(@NonNull FilterItem filterItem, @NonNull FilterGroup filterGroup);
 
         /**
          * Create Ui elements specifically related to the {@link FilterGroup} itself.
@@ -610,7 +627,7 @@ public class SearchFilterLogic {
          *
          * @param filterGroup one group each time from {@link FilterContainer#getFilterGroups()}
          */
-        void createFilterGroupAfterItems(FilterGroup filterGroup);
+        void createFilterGroupAfterItems(@NonNull FilterGroup filterGroup);
 
         /**
          * do anything you might want to clean up or whatever.
@@ -629,8 +646,8 @@ public class SearchFilterLogic {
      * This callback will be called if a search with additional filters should occur.
      */
     public interface Callback {
-        void selectedFilters(List<FilterItem> userSelectedContentFilter,
-                             List<FilterItem> userSelectedSortFilter);
+        void selectedFilters(@NonNull List<FilterItem> userSelectedContentFilter,
+                             @NonNull List<FilterItem> userSelectedSortFilter);
     }
 
     /**
@@ -676,7 +693,8 @@ public class SearchFilterLogic {
 
         public boolean isFilterIdPartOfAnExclusiveGroup(final int filterId) {
             if (filterIdToGroupIdMapContainsId(filterId)) {
-                final int filterGroupId = filterIdToGroupIdMap.get(filterId);
+                final int filterGroupId =
+                        Objects.requireNonNull(filterIdToGroupIdMap.get(filterId));
                 return exclusiveGroupsIdSet.contains(filterGroupId);
             }
             return false;
@@ -688,7 +706,7 @@ public class SearchFilterLogic {
          * @return true if exclusive group
          */
         private boolean handleIdInExclusiveGroup(final int filterId,
-                                                 final List<Integer> selectedFilter) {
+                                                 @NonNull final List<Integer> selectedFilter) {
             // case exclusive group selection
             if (isFilterIdPartOfAnExclusiveGroup(filterId)) {
                 final int previousSelectedId =
@@ -729,7 +747,8 @@ public class SearchFilterLogic {
         }
 
         private void addIdIfBelongsToExclusiveGroup(final int filterId) {
-            final int filterGroupId = filterIdToGroupIdMap.get(filterId);
+            final int filterGroupId =
+                    Objects.requireNonNull(filterIdToGroupIdMap.get(filterId));
             if (exclusiveGroupsIdSet.contains(filterGroupId)) {
                 actualSelectedFilterIdInExclusiveGroupMap.put(filterGroupId, filterId);
             }
@@ -747,7 +766,8 @@ public class SearchFilterLogic {
 
         private int ifInExclusiveGroupRemovePreviouslySelectedId(final int filterId) {
             int previousFilterId = ITEM_IDENTIFIER_UNKNOWN;
-            final int filterGroupId = filterIdToGroupIdMap.get(filterId);
+            final int filterGroupId =
+                    Objects.requireNonNull(filterIdToGroupIdMap.get(filterId));
 
             final int index = actualSelectedFilterIdInExclusiveGroupMap.indexOfKey(filterGroupId);
             if (exclusiveGroupsIdSet.contains(filterGroupId) && index >= 0) {

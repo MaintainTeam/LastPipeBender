@@ -4,11 +4,13 @@ package org.schabi.newpipe.fragments.list.search.filter;
 
 import org.schabi.newpipe.extractor.search.filter.FilterItem;
 
-public abstract class BaseItemWrapper implements SearchFilterLogic.IUiItemWrapper {
+import androidx.annotation.NonNull;
 
+public abstract class BaseItemWrapper implements SearchFilterLogic.IUiItemWrapper {
+    @NonNull
     protected final FilterItem item;
 
-    protected BaseItemWrapper(final FilterItem item) {
+    protected BaseItemWrapper(@NonNull final FilterItem item) {
         this.item = item;
     }
 

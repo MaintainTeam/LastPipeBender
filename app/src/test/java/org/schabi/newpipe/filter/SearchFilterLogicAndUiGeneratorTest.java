@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import androidx.annotation.NonNull;
+
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -140,8 +142,8 @@ public class SearchFilterLogicAndUiGeneratorTest {
     public void contentFilterItemsIdsMatchIdsAndCallbackTest() throws ExtractionException {
         setupEach(false, new SearchFilterLogic.Callback() {
             @Override
-            public void selectedFilters(final List<FilterItem> userSelectedContentFilter,
-                                        final List<FilterItem> userSelectedSortFilter) {
+            public void selectedFilters(@NonNull final List<FilterItem> userSelectedContentFilter,
+                                        @NonNull final List<FilterItem> userSelectedSortFilter) {
                 fromCallbackContentFilterItems = userSelectedContentFilter;
                 fromCallbackSortFilterItems = userSelectedSortFilter;
             }
@@ -497,7 +499,7 @@ public class SearchFilterLogicAndUiGeneratorTest {
             }
 
             @Override
-            public void createFilterGroupBeforeItems(final FilterGroup filterGroup) {
+            public void createFilterGroupBeforeItems(@NonNull final FilterGroup filterGroup) {
                 for (final FilterItem item : filterGroup.getFilterItems()) {
                     final ElementsWrapper element =
                             new ElementsWrapper(item, filterGroup.getIdentifier());
@@ -511,12 +513,12 @@ public class SearchFilterLogicAndUiGeneratorTest {
             }
 
             @Override
-            public void createFilterItem(final FilterItem filterItem,
-                                         final FilterGroup filterGroup) {
+            public void createFilterItem(@NonNull final FilterItem filterItem,
+                                         @NonNull final FilterGroup filterGroup) {
             }
 
             @Override
-            public void createFilterGroupAfterItems(final FilterGroup filterGroup) {
+            public void createFilterGroupAfterItems(@NonNull final FilterGroup filterGroup) {
             }
 
             @Override

@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
 import icepick.Icepick;
@@ -39,7 +40,7 @@ public abstract class BaseSearchFilterDialogFragment extends DialogFragment {
     ArrayList<Integer> userSelectedSortFilterList = null;
 
     protected static DialogFragment initDialogArguments(
-            final DialogFragment dialogFragment,
+            @NonNull final DialogFragment dialogFragment,
             final int serviceId,
             final List<Integer> userSelectedContentFilter,
             final List<Integer> userSelectedSortFilter) {
@@ -92,16 +93,17 @@ public abstract class BaseSearchFilterDialogFragment extends DialogFragment {
     /**
      * As we have different bindings we need to get this sorted in a method.
      *
-     * @return the {@link Toolbar}
+     * @return the {@link Toolbar} null if there is no toolbar available.
      */
+    @Nullable
     protected abstract Toolbar getToolbar();
 
-    protected abstract View getRootView(LayoutInflater inflater,
-                                        ViewGroup container);
+    protected abstract View getRootView(@NonNull LayoutInflater inflater,
+                                        @Nullable ViewGroup container);
 
     @Override
     public View onCreateView(@NonNull final LayoutInflater inflater,
-                             final ViewGroup container,
+                             @Nullable final ViewGroup container,
                              final Bundle savedInstanceState) {
         final View rootView = getRootView(inflater, container);
         initializeFilterData();
@@ -113,10 +115,20 @@ public abstract class BaseSearchFilterDialogFragment extends DialogFragment {
         super.onViewCreated(view, savedInstanceState);
         Icepick.restoreInstanceState(this, savedInstanceState);
 
-        initToolbar(getToolbar());
+        final Toolbar toolbar = getToolbar();
+        if (toolbar != null) {
+            initToolbar(toolbar);
+        }
     }
 
-    protected void initToolbar(final Toolbar toolbar) {
+    /**
+     * Initialize the toolbar.
+     * <p>
+     * This method is only called if {@link #getToolbar()} is implemented to return a toolbar.
+     *
+     * @param toolbar the actual toolbar for this dialog fragment
+     */
+    protected void initToolbar(@NonNull final Toolbar toolbar) {
         toolbar.setTitle(R.string.filter);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
         toolbar.inflateMenu(R.menu.menu_search_filter_dialog_fragment);

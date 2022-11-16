@@ -6,12 +6,14 @@ import android.view.View;
 
 import org.schabi.newpipe.extractor.search.filter.FilterItem;
 
+import androidx.annotation.NonNull;
 
 public abstract class BaseUiItemWrapper extends BaseItemWrapper {
+    @NonNull
     protected final View view;
 
-    protected BaseUiItemWrapper(final FilterItem item,
-                                final View view) {
+    protected BaseUiItemWrapper(@NonNull final FilterItem item,
+                                @NonNull final View view) {
         super(item);
         this.view = view;
     }

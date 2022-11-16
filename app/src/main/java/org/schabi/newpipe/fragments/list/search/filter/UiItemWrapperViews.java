@@ -7,6 +7,8 @@ import android.view.View;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+
 /**
  * Wrapper for views that are either just labels or eg. a RadioGroup container
  * etc. that represent a {@link org.schabi.newpipe.extractor.search.filter.FilterGroup}.
@@ -20,7 +22,7 @@ final class UiItemWrapperViews implements SearchFilterLogic.IUiItemWrapper {
         this.itemId = itemId;
     }
 
-    public void add(final View view) {
+    public void add(@NonNull final View view) {
         this.views.add(view);
     }
 

@@ -21,6 +21,7 @@ import org.schabi.newpipe.util.ServiceHelper;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import static android.util.TypedValue.COMPLEX_UNIT_DIP;
 
@@ -30,10 +31,10 @@ public class SearchFilterOptionMenuAlikeDialogGenerator extends BaseSearchFilter
     private static final int VIEW_ITEMS_MIN_WIDTH_IN_DIP = 168;
     private final LinearLayout globalLayout;
 
-    public SearchFilterOptionMenuAlikeDialogGenerator(final StreamingService service,
-                                                      final ViewGroup root,
-                                                      final Context context,
-                                                      final Callback callback) {
+    public SearchFilterOptionMenuAlikeDialogGenerator(@NonNull final StreamingService service,
+                                                      @NonNull final ViewGroup root,
+                                                      @NonNull final Context context,
+                                                      @Nullable final Callback callback) {
         super(service.getSearchQHFactory(), callback, context);
         this.globalLayout = createLinearLayout();
         root.addView(globalLayout);
@@ -85,8 +86,8 @@ public class SearchFilterOptionMenuAlikeDialogGenerator extends BaseSearchFilter
     }
 
     @Override
-    protected void createTitle(final String name,
-                               final List<View> titleViewElements) {
+    protected void createTitle(@NonNull final String name,
+                               @NonNull final List<View> titleViewElements) {
         final TextView titleView = createTitleText(name);
         titleView.setTag(NO_RESIZE_VIEW_TAG);
         final View separatorLine = createSeparatorLine();
@@ -105,9 +106,9 @@ public class SearchFilterOptionMenuAlikeDialogGenerator extends BaseSearchFilter
     }
 
     @Override
-    protected void createFilterGroup(final FilterGroup filterGroup,
-                                     final UiWrapperMapDelegate wrapperDelegate,
-                                     final UiSelectorDelegate selectorDelegate) {
+    protected void createFilterGroup(@NonNull final FilterGroup filterGroup,
+                                     @NonNull final UiWrapperMapDelegate wrapperDelegate,
+                                     @NonNull final UiSelectorDelegate selectorDelegate) {
         final UiItemWrapperViews viewsWrapper = new UiItemWrapperViews(
                 filterGroup.getIdentifier());
 
@@ -142,10 +143,10 @@ public class SearchFilterOptionMenuAlikeDialogGenerator extends BaseSearchFilter
     }
 
     private void createUiElementsForSingleSelectableItemsFilterGroup(
-            final FilterGroup filterGroup,
-            final UiWrapperMapDelegate wrapperDelegate,
-            final UiSelectorDelegate selectorDelegate,
-            final RadioGroup radioGroup) {
+            @NonNull final FilterGroup filterGroup,
+            @NonNull final UiWrapperMapDelegate wrapperDelegate,
+            @NonNull final UiSelectorDelegate selectorDelegate,
+            @NonNull final RadioGroup radioGroup) {
         for (final FilterItem item : filterGroup.getFilterItems()) {
 
             final View view;
@@ -170,9 +171,9 @@ public class SearchFilterOptionMenuAlikeDialogGenerator extends BaseSearchFilter
     }
 
     private void createUiElementsForMultipleSelectableItemsFilterGroup(
-            final FilterGroup filterGroup,
-            final UiWrapperMapDelegate wrapperDelegate,
-            final UiSelectorDelegate selectorDelegate) {
+            @NonNull final FilterGroup filterGroup,
+            @NonNull final UiWrapperMapDelegate wrapperDelegate,
+            @NonNull final UiSelectorDelegate selectorDelegate) {
         for (final FilterItem item : filterGroup.getFilterItems()) {
             final View view;
             if (item instanceof FilterItem.DividerItem) {
@@ -197,6 +198,7 @@ public class SearchFilterOptionMenuAlikeDialogGenerator extends BaseSearchFilter
         }
     }
 
+    @NonNull
     private LinearLayout createLinearLayout() {
         final LinearLayout linearLayout = new LinearLayout(context);
 
@@ -215,6 +217,7 @@ public class SearchFilterOptionMenuAlikeDialogGenerator extends BaseSearchFilter
         return linearLayout;
     }
 
+    @NonNull
     private LinearLayout.LayoutParams getLayoutForSeparatorLine() {
         final LinearLayout.LayoutParams layoutParams = getLayoutParamsLabelLeft();
         layoutParams.width = 0;
@@ -222,10 +225,12 @@ public class SearchFilterOptionMenuAlikeDialogGenerator extends BaseSearchFilter
         return layoutParams;
     }
 
+    @NonNull
     private View createSeparatorLine() {
         return createSeparatorLine(getLayoutForSeparatorLine());
     }
 
+    @NonNull
     private TextView createTitleText(final String name) {
         final LinearLayout.LayoutParams layoutParams = getLayoutParamsLabelLeft();
         layoutParams.gravity = Gravity.CENTER_HORIZONTAL;
@@ -234,7 +239,8 @@ public class SearchFilterOptionMenuAlikeDialogGenerator extends BaseSearchFilter
         return title;
     }
 
-    private View setPadding(final View view, final int sizeInDip) {
+    @NonNull
+    private View setPadding(@NonNull final View view, final int sizeInDip) {
         final int sizeInPx = DeviceUtils.dpToPx(sizeInDip, context);
         view.setPadding(
                 sizeInPx,
@@ -244,8 +250,9 @@ public class SearchFilterOptionMenuAlikeDialogGenerator extends BaseSearchFilter
         return view;
     }
 
-    private TextView createFilterGroupLabel(final FilterGroup filterGroup,
-                                            final ViewGroup.LayoutParams layoutParams) {
+    @NonNull
+    private TextView createFilterGroupLabel(@NonNull final FilterGroup filterGroup,
+                                            @NonNull final ViewGroup.LayoutParams layoutParams) {
         final TextView filterLabel = new TextView(context);
         filterLabel.setId(filterGroup.getIdentifier());
         filterLabel.setText(ServiceHelper
@@ -257,8 +264,9 @@ public class SearchFilterOptionMenuAlikeDialogGenerator extends BaseSearchFilter
         return filterLabel;
     }
 
-    private CheckBox createCheckBox(final FilterItem item,
-                                    final ViewGroup.LayoutParams layoutParams) {
+    @NonNull
+    private CheckBox createCheckBox(@NonNull final FilterItem item,
+                                    @NonNull final ViewGroup.LayoutParams layoutParams) {
         final CheckBox checkBox = new CheckBox(context);
         checkBox.setLayoutParams(layoutParams);
         checkBox.setText(ServiceHelper.getTranslatedFilterString(
@@ -268,8 +276,9 @@ public class SearchFilterOptionMenuAlikeDialogGenerator extends BaseSearchFilter
         return checkBox;
     }
 
-    private TextView createDividerTextView(final FilterItem item,
-                                           final ViewGroup.LayoutParams layoutParams) {
+    @NonNull
+    private TextView createDividerTextView(@NonNull final FilterItem item,
+                                           @NonNull final ViewGroup.LayoutParams layoutParams) {
         final TextView view = new TextView(context);
         view.setEnabled(true);
         final String menuDividerTitle =
@@ -280,8 +289,9 @@ public class SearchFilterOptionMenuAlikeDialogGenerator extends BaseSearchFilter
         return view;
     }
 
-    private RadioButton createViewItemRadio(final FilterItem item,
-                                            final ViewGroup.LayoutParams layoutParams) {
+    @NonNull
+    private RadioButton createViewItemRadio(@NonNull final FilterItem item,
+                                            @NonNull final ViewGroup.LayoutParams layoutParams) {
         final RadioButton view = new RadioButton(context);
         view.setId(item.getIdentifier());
         view.setText(ServiceHelper.getTranslatedFilterString(item.getNameId(), context));
@@ -319,11 +329,12 @@ public class SearchFilterOptionMenuAlikeDialogGenerator extends BaseSearchFilter
     private static final class UiItemWrapperCheckBoxAndRadioButton
             extends BaseUiItemWrapper {
 
+        @Nullable
         private final View group;
 
-        private UiItemWrapperCheckBoxAndRadioButton(final FilterItem item,
-                                                    final View view,
-                                                    final View group) {
+        private UiItemWrapperCheckBoxAndRadioButton(@NonNull final FilterItem item,
+                                                    @NonNull final View view,
+                                                    @Nullable final View group) {
             super(item, view);
             this.group = group;
         }

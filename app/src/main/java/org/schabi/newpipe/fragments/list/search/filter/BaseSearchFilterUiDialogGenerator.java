@@ -12,23 +12,27 @@ import org.schabi.newpipe.extractor.search.filter.FilterGroup;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import static android.util.TypedValue.COMPLEX_UNIT_DIP;
 
 public abstract class BaseSearchFilterUiDialogGenerator extends BaseSearchFilterUiGenerator {
     private static final float FONT_SIZE_TITLE_ITEMS_IN_DIP = 20f;
 
     protected BaseSearchFilterUiDialogGenerator(
-            final SearchQueryHandlerFactory linkHandlerFactory,
-            final Callback callback,
-            final Context context) {
+            @NonNull final SearchQueryHandlerFactory linkHandlerFactory,
+            @Nullable final Callback callback,
+            @NonNull final Context context) {
         super(linkHandlerFactory, callback, context);
     }
 
-    protected abstract void createTitle(String name, List<View> titleViewElements);
+    protected abstract void createTitle(@NonNull String name,
+                                        @NonNull List<View> titleViewElements);
 
-    protected abstract void createFilterGroup(FilterGroup filterGroup,
-                                              UiWrapperMapDelegate wrapperDelegate,
-                                              UiSelectorDelegate selectorDelegate);
+    protected abstract void createFilterGroup(@NonNull FilterGroup filterGroup,
+                                              @NonNull UiWrapperMapDelegate wrapperDelegate,
+                                              @NonNull UiSelectorDelegate selectorDelegate);
 
     @Override
     protected ICreateUiForFiltersWorker createContentFilterWorker() {
@@ -40,7 +44,8 @@ public abstract class BaseSearchFilterUiDialogGenerator extends BaseSearchFilter
         return new BaseCreateSearchFilterUI.CreateSortFilterUI(this, context);
     }
 
-    protected View createSeparatorLine(final ViewGroup.LayoutParams layoutParams) {
+    @NonNull
+    protected View createSeparatorLine(@NonNull final ViewGroup.LayoutParams layoutParams) {
         final View separatorLine = new View(context);
         separatorLine.setBackgroundColor(getSeparatorLineColorFromTheme());
         layoutParams.height = 1; // always set the separator to the height of 1
@@ -48,8 +53,9 @@ public abstract class BaseSearchFilterUiDialogGenerator extends BaseSearchFilter
         return separatorLine;
     }
 
-    protected TextView createTitleText(final String name,
-                                       final ViewGroup.LayoutParams layoutParams) {
+    @NonNull
+    protected TextView createTitleText(@NonNull final String name,
+                                       @NonNull final ViewGroup.LayoutParams layoutParams) {
         final TextView title = new TextView(context);
         title.setText(name);
         title.setTextSize(COMPLEX_UNIT_DIP, FONT_SIZE_TITLE_ITEMS_IN_DIP);

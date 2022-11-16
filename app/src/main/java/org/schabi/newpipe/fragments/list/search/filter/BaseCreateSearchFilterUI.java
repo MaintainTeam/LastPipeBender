@@ -12,6 +12,8 @@ import org.schabi.newpipe.extractor.search.filter.FilterItem;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+
 /**
  * Common base for the {@link SearchFilterDialogGenerator} and
  * {@link SearchFilterOptionMenuAlikeDialogGenerator}'s
@@ -20,26 +22,30 @@ import java.util.List;
 public abstract class BaseCreateSearchFilterUI
         implements SearchFilterLogic.ICreateUiForFiltersWorker {
 
+    @NonNull
     protected final BaseSearchFilterUiDialogGenerator dialogGenBase;
+    @NonNull
     protected final Context context;
     protected final List<View> titleViewElements = new ArrayList<>();
     protected int titleResId;
 
-    protected BaseCreateSearchFilterUI(final BaseSearchFilterUiDialogGenerator dialogGenBase,
-                                       final Context context,
-                                       final int titleResId) {
+    protected BaseCreateSearchFilterUI(
+            @NonNull final BaseSearchFilterUiDialogGenerator dialogGenBase,
+            @NonNull final Context context,
+            final int titleResId) {
         this.dialogGenBase = dialogGenBase;
         this.context = context;
         this.titleResId = titleResId;
     }
 
     @Override
-    public void createFilterItem(final FilterItem filterItem, final FilterGroup filterGroup) {
+    public void createFilterItem(@NonNull final FilterItem filterItem,
+                                 @NonNull final FilterGroup filterGroup) {
         // no implementation here all creation stuff is done in createFilterGroupBeforeItems
     }
 
     @Override
-    public void createFilterGroupAfterItems(final FilterGroup filterGroup) {
+    public void createFilterGroupAfterItems(@NonNull final FilterGroup filterGroup) {
         // no implementation here all creation stuff is done in createFilterGroupBeforeItems
     }
 
@@ -66,15 +72,16 @@ public abstract class BaseCreateSearchFilterUI
 
     public static class CreateContentFilterUI extends CreateSortFilterUI {
 
-        public CreateContentFilterUI(final BaseSearchFilterUiDialogGenerator dialogGenBase,
-                                     final Context context) {
+        public CreateContentFilterUI(
+                @NonNull final BaseSearchFilterUiDialogGenerator dialogGenBase,
+                @NonNull final Context context) {
             super(dialogGenBase, context);
             this.titleResId = R.string.filter_search_content_filters;
         }
 
         @Override
         public void createFilterGroupBeforeItems(
-                final FilterGroup filterGroup) {
+                @NonNull final FilterGroup filterGroup) {
             dialogGenBase.createFilterGroup(filterGroup,
                     dialogGenBase::addContentFilterUiWrapperToItemMap,
                     dialogGenBase::selectContentFilter);
@@ -88,8 +95,9 @@ public abstract class BaseCreateSearchFilterUI
 
     public static class CreateSortFilterUI extends BaseCreateSearchFilterUI {
 
-        public CreateSortFilterUI(final BaseSearchFilterUiDialogGenerator dialogGenBase,
-                                  final Context context) {
+        public CreateSortFilterUI(
+                @NonNull final BaseSearchFilterUiDialogGenerator dialogGenBase,
+                @NonNull final Context context) {
             super(dialogGenBase, context, R.string.filter_search_sort_filters);
         }
 
@@ -99,7 +107,7 @@ public abstract class BaseCreateSearchFilterUI
         }
 
         @Override
-        public void createFilterGroupBeforeItems(final FilterGroup filterGroup) {
+        public void createFilterGroupBeforeItems(@NonNull final FilterGroup filterGroup) {
             dialogGenBase.createFilterGroup(filterGroup,
                     dialogGenBase::addSortFilterUiWrapperToItemMap,
                     dialogGenBase::selectSortFilter);

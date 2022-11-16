@@ -20,6 +20,7 @@ import org.schabi.newpipe.util.ServiceHelper;
 
 import java.util.Objects;
 
+import androidx.annotation.NonNull;
 import androidx.collection.SparseArrayCompat;
 
 public class SearchFilterDialogSpinnerAdapter extends BaseAdapter {
@@ -33,10 +34,10 @@ public class SearchFilterDialogSpinnerAdapter extends BaseAdapter {
             viewWrapperMap = new SparseArrayCompat<>();
 
     public SearchFilterDialogSpinnerAdapter(
-            final Context context,
-            final FilterGroup group,
-            final BaseSearchFilterUiGenerator.UiWrapperMapDelegate wrapperDelegate,
-            final Spinner filterDataSpinner) {
+            @NonNull final Context context,
+            @NonNull final FilterGroup group,
+            @NonNull final BaseSearchFilterUiGenerator.UiWrapperMapDelegate wrapperDelegate,
+            @NonNull final Spinner filterDataSpinner) {
         this.context = context;
         this.group = group;
         this.wrapperDelegate = wrapperDelegate;
@@ -123,6 +124,7 @@ public class SearchFilterDialogSpinnerAdapter extends BaseAdapter {
         }
     }
 
+    @NonNull
     private TextView createViewItem() {
         final TextView view = new TextView(context);
         view.setLayoutParams(new ViewGroup.LayoutParams(
@@ -145,12 +147,13 @@ public class SearchFilterDialogSpinnerAdapter extends BaseAdapter {
     public boolean isEnabled(final int position) {
         final UiItemWrapperSpinner wrappedView =
                 viewWrapperMap.get(position);
-        Objects.nonNull(wrappedView);
+        Objects.requireNonNull(wrappedView);
         return wrappedView.isEnabled();
     }
 
     private static class UiItemWrapperSpinner
             extends BaseItemWrapper {
+        @NonNull
         private final Spinner spinner;
 
         /**
@@ -165,10 +168,10 @@ public class SearchFilterDialogSpinnerAdapter extends BaseAdapter {
         private int visibility;
         private boolean enabled;
 
-        UiItemWrapperSpinner(final FilterItem item,
+        UiItemWrapperSpinner(@NonNull final FilterItem item,
                              final int initialVisibility,
                              final boolean isInitialEnabled,
-                             final Spinner spinner) {
+                             @NonNull final Spinner spinner) {
             super(item);
             this.spinner = spinner;
 

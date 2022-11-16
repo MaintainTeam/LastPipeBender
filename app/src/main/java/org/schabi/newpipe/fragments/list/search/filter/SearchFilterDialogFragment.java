@@ -11,6 +11,8 @@ import org.schabi.newpipe.extractor.StreamingService;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
 
@@ -41,13 +43,14 @@ public class SearchFilterDialogFragment extends BaseSearchFilterDialogFragment {
     }
 
     @Override
+    @Nullable
     protected Toolbar getToolbar() {
         return binding.toolbarLayout.toolbar;
     }
 
     @Override
-    protected View getRootView(final LayoutInflater inflater,
-                               final ViewGroup container) {
+    protected View getRootView(@NonNull final LayoutInflater inflater,
+                               @Nullable final ViewGroup container) {
         binding = SearchFilterDialogFragmentBinding
                 .inflate(inflater, container, false);
         return binding.getRoot();

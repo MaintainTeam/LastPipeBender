@@ -2,6 +2,8 @@
 
 package org.schabi.newpipe.fragments.list.search.filter;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import android.content.Context;
 import android.util.TypedValue;
@@ -21,9 +23,10 @@ public abstract class BaseSearchFilterUiGenerator extends SearchFilterLogic {
     protected final ICreateUiForFiltersWorker sortFilterWorker;
     protected final Context context;
 
-    protected BaseSearchFilterUiGenerator(final SearchQueryHandlerFactory linkHandlerFactory,
-                                          final Callback callback,
-                                          final Context context) {
+    protected BaseSearchFilterUiGenerator(
+            @NonNull final SearchQueryHandlerFactory linkHandlerFactory,
+            @Nullable final Callback callback,
+            @NonNull final Context context) {
         super(linkHandlerFactory, callback);
         this.context = context;
         this.contentFilterWorker = createContentFilterWorker();
