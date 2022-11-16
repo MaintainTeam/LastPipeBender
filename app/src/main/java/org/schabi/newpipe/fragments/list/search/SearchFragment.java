@@ -906,8 +906,8 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
     //////////////////////////////////////////////////////////////////////////*/
 
     @Override
-    public void selectedFilters(final List<FilterItem> theSelectedContentFilter,
-                                final List<FilterItem> theSelectedSortFilter) {
+    public void selectedFilters(@NonNull final List<FilterItem> theSelectedContentFilter,
+                                @NonNull final List<FilterItem> theSelectedSortFilter) {
 
         selectedContentFilter = theSelectedContentFilter;
         selectedSortFilter = theSelectedSortFilter;

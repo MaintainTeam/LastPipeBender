@@ -17,6 +17,7 @@ import org.schabi.newpipe.extractor.services.peertube.PeertubeInstance;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -324,10 +325,11 @@ public final class ServiceHelper {
         }
     }
 
-    public static String getTranslatedFilterString(final LibraryStringIds stringId,
-                                                   final Context context) {
+    public static String getTranslatedFilterString(@NonNull final LibraryStringIds stringId,
+                                                   @NonNull final Context context) {
         if (LIBRARY_STRING_ID_TO_RES_ID_MAP.containsKey(stringId)) {
-            return context.getString(LIBRARY_STRING_ID_TO_RES_ID_MAP.get(stringId));
+            return context.getString(
+                    Objects.requireNonNull(LIBRARY_STRING_ID_TO_RES_ID_MAP.get(stringId)));
         } else {
             return stringId.toString();
         }
