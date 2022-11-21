@@ -6,7 +6,6 @@ import org.schabi.newpipe.extractor.linkhandler.SearchQueryHandlerFactory;
 import org.schabi.newpipe.extractor.search.filter.FilterContainer;
 import org.schabi.newpipe.extractor.search.filter.FilterGroup;
 import org.schabi.newpipe.extractor.search.filter.FilterItem;
-import org.schabi.newpipe.fragments.list.search.SearchFragment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,8 +25,8 @@ import static org.schabi.newpipe.extractor.search.filter.FilterContainer.ITEM_ID
  * This class handles all the user interaction with the content and sort filters
  * of NewPipeExtractor.
  * <p>
- * The class works standalone to just get the default selected filters eg. during init phase
- * eg. in {@link SearchFragment#initializeFilterData()}
+ * It also facilitates the generation of the Ui's according to the implemented
+ * {@link ICreateUiForFiltersWorker}'s.
  */
 public class SearchFilterLogic {
 
@@ -50,7 +49,7 @@ public class SearchFilterLogic {
             new SparseArrayCompat<>();
     private final SparseArrayCompat<FilterContainer> contentFilterFidToSupersetSortFilterMap =
             new SparseArrayCompat<>();
-    private final Callback callback;
+    private Callback callback;
     /**
      * This list is used to store via Icepick and eventual store as preset
      * It contains all the content filter ids that the user has selected. It
@@ -74,12 +73,16 @@ public class SearchFilterLogic {
     private ICreateUiForFiltersWorker uiSortFilterWorker;
 
 
-    public SearchFilterLogic(@NonNull final SearchQueryHandlerFactory searchQHFactory,
-                             @Nullable final Callback callback) {
+    private SearchFilterLogic(@NonNull final SearchQueryHandlerFactory searchQHFactory,
+                              @Nullable final Callback callback) {
         this.searchQHFactory = searchQHFactory;
         this.callback = callback;
         initContentFilters();
         initSortFilters();
+    }
+
+    public void setCallback(@Nullable final Callback callback) {
+        this.callback = callback;
     }
 
     public void reset() {
@@ -533,7 +536,7 @@ public class SearchFilterLogic {
      * @param id            the id of a content filter
      * @param uiItemWrapper the wrapped UI {@link android.view.View} for that content filter
      */
-    protected void addContentFilterUiWrapperToItemMap(
+    public void addContentFilterUiWrapperToItemMap(
             final int id,
             @NonNull final IUiItemWrapper uiItemWrapper) {
         contentFilterIdToUiItemMap.put(id, uiItemWrapper);
@@ -549,7 +552,7 @@ public class SearchFilterLogic {
      * @param id            the id of a sort filter
      * @param uiItemWrapper the wrapped UI {@link android.view.View} for that sort filter
      */
-    protected void addSortFilterUiWrapperToItemMap(
+    public void addSortFilterUiWrapperToItemMap(
             final int id,
             @NonNull final IUiItemWrapper uiItemWrapper) {
         sortFilterIdToUiItemMap.put(id, uiItemWrapper);
@@ -775,6 +778,56 @@ public class SearchFilterLogic {
                 actualSelectedFilterIdInExclusiveGroupMap.removeAt(index);
             }
             return previousFilterId;
+        }
+    }
+
+    public static final class Factory {
+        private Factory() {
+        }
+
+        /**
+         * Create variant of {@link SearchFilterLogic}.
+         *
+         * @param logicVariant    the variant {@link Variant}.
+         * @param searchQHFactory of the service
+         * @param callback        if you want to get the data the user has requested by calling
+         *                        {@link SearchFilterLogic#prepareForSearch()}
+         * @return instance of {@link SearchFilterLogic}.
+         */
+        @NonNull
+        public static SearchFilterLogic create(
+                @NonNull final Variant logicVariant,
+                @NonNull final SearchQueryHandlerFactory searchQHFactory,
+                @Nullable final Callback callback) {
+            switch (logicVariant) {
+
+                case SEARCH_FILTER_LOGIC_LEGACY: // the case we are using SearchFragmentLegacy
+                    return new SearchFilterLogic(searchQHFactory, callback) {
+                        @Override
+                        protected void handleIdInNonExclusiveGroup(
+                                final int filterId,
+                                @Nullable final IUiItemWrapper uiItemWrapper,
+                                @NonNull final List<Integer> selectedFilter) {
+
+                            if (null != uiItemWrapper) {
+                                // for the action menu based UI we have to toggle first
+                                // to be compatible with the SearchFilterLogic
+                                uiItemWrapper.setChecked(!uiItemWrapper.isChecked());
+                            }
+                            super.handleIdInNonExclusiveGroup(
+                                    filterId, uiItemWrapper, selectedFilter);
+                        }
+                    };
+
+                default:
+                case SEARCH_FILTER_LOGIC_DEFAULT:
+                    return new SearchFilterLogic(searchQHFactory, callback);
+            }
+        }
+
+        public enum Variant {
+            SEARCH_FILTER_LOGIC_DEFAULT,
+            SEARCH_FILTER_LOGIC_LEGACY
         }
     }
 }

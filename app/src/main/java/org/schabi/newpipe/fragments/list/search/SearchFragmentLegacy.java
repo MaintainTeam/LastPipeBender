@@ -9,9 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import org.schabi.newpipe.R;
-import org.schabi.newpipe.extractor.NewPipe;
-import org.schabi.newpipe.extractor.StreamingService;
-import org.schabi.newpipe.extractor.exceptions.ExtractionException;
+import org.schabi.newpipe.fragments.list.search.filter.SearchFilterLogic;
 import org.schabi.newpipe.fragments.list.search.filter.SearchFilterUIOptionMenu;
 
 import androidx.annotation.NonNull;
@@ -34,31 +32,12 @@ public class SearchFragmentLegacy extends SearchFragment {
     private SearchFilterUIOptionMenu searchFilterUi;
 
     @Override
-    protected void initializeFilterData() {
-        try {
-            final StreamingService service = NewPipe.getService(serviceId);
+    protected void initViewModel() {
+        logicVariant = SearchFilterLogic.Factory.Variant.SEARCH_FILTER_LOGIC_LEGACY;
+        super.initViewModel();
 
-            searchFilterUi = new SearchFilterUIOptionMenu(service, this, requireContext());
-            searchFilterUi.restorePreviouslySelectedFilters(
-                    userSelectedContentFilterList,
-                    userSelectedSortFilterList);
-
-            userSelectedContentFilterList = searchFilterUi.getSelectedContentFilters();
-            userSelectedSortFilterList = searchFilterUi.getSelectedSortFilters();
-            selectedContentFilter = searchFilterUi.getSelectedContentFilterItems();
-            selectedSortFilter = searchFilterUi.getSelectedSortFiltersItems();
-        } catch (final ExtractionException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull final Bundle bundle) {
-        // get data to save its state via Icepick
-        userSelectedContentFilterList = searchFilterUi.getSelectedContentFilters();
-        userSelectedSortFilterList = searchFilterUi.getSelectedSortFilters();
-
-        super.onSaveInstanceState(bundle);
+        searchFilterUi = new SearchFilterUIOptionMenu(
+                searchViewModel.getSearchFilterLogic(), requireContext());
     }
 
     @Override

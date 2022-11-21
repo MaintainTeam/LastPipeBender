@@ -8,87 +8,28 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.schabi.newpipe.R;
-import org.schabi.newpipe.extractor.NewPipe;
-import org.schabi.newpipe.extractor.StreamingService;
-import org.schabi.newpipe.extractor.exceptions.ExtractionException;
-import org.schabi.newpipe.extractor.search.filter.FilterItem;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.schabi.newpipe.fragments.list.search.SearchViewModel;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
-import icepick.Icepick;
-import icepick.State;
+import androidx.lifecycle.ViewModelProvider;
 
 /**
  * Base dialog class for {@link DialogFragment} based search filter dialogs.
  */
 public abstract class BaseSearchFilterDialogFragment extends DialogFragment {
 
-    private static final String CONTENT_FILTERS = "CONTENT_FILTERS";
-    private static final String SORT_FILTERS = "SORT_FILTERS";
-    private static final String SERVICE_ID = "SERVICE_ID";
-    protected List<FilterItem> selectedContentFilters;
-    protected List<FilterItem> selectedSortFilters;
     protected BaseSearchFilterUiGenerator dialogGenerator;
-    @State
-    ArrayList<Integer> userSelectedContentFilterList;
-    @State
-    ArrayList<Integer> userSelectedSortFilterList = null;
+    protected SearchViewModel searchViewModel;
 
-    protected static DialogFragment initDialogArguments(
-            @NonNull final DialogFragment dialogFragment,
-            final int serviceId,
-            final List<Integer> userSelectedContentFilter,
-            final List<Integer> userSelectedSortFilter) {
-        final Bundle bundle = new Bundle(1);
-        bundle.putInt(SERVICE_ID, serviceId);
-        bundle.putIntegerArrayList(CONTENT_FILTERS, new ArrayList<>(userSelectedContentFilter));
-        bundle.putIntegerArrayList(SORT_FILTERS, new ArrayList<>(userSelectedSortFilter));
-        dialogFragment.setArguments(bundle);
-
-        return dialogFragment;
-    }
-
-    private void initializeFilterData() {
-
-        assert getArguments() != null;
-        final int serviceId = getArguments().getInt(SERVICE_ID);
-        final ArrayList<Integer> contentFilters =
-                getArguments().getIntegerArrayList(CONTENT_FILTERS);
-        final ArrayList<Integer> sortFilters =
-                getArguments().getIntegerArrayList(SORT_FILTERS);
-
-        final StreamingService service;
-        try {
-            service = NewPipe.getService(serviceId);
-        } catch (final ExtractionException e) {
-            throw new RuntimeException(e);
-        }
-
-        dialogGenerator = createSearchFilterDialogGenerator(service,
-                (userSelectedContentFilter, userSelectedSortFilter) -> {
-                    selectedContentFilters = userSelectedContentFilter;
-                    selectedSortFilters = userSelectedSortFilter;
-                    sendDataToParentFragment();
-                });
-
-        userSelectedContentFilterList = contentFilters;
-        userSelectedSortFilterList = sortFilters;
-
-        dialogGenerator.restorePreviouslySelectedFilters(
-                userSelectedContentFilterList,
-                userSelectedSortFilterList);
-
+    private void createSearchFilterUi() {
+        dialogGenerator = createSearchFilterDialogGenerator();
         dialogGenerator.createSearchUI();
     }
 
-    protected abstract BaseSearchFilterUiGenerator createSearchFilterDialogGenerator(
-            StreamingService service,
-            SearchFilterLogic.Callback callback);
+    protected abstract BaseSearchFilterUiGenerator createSearchFilterDialogGenerator();
 
     /**
      * As we have different bindings we need to get this sorted in a method.
@@ -102,18 +43,28 @@ public abstract class BaseSearchFilterDialogFragment extends DialogFragment {
                                         @Nullable ViewGroup container);
 
     @Override
+    public void onCreate(@Nullable final Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // Make sure that the first parameter is pointing to instance of SearchFragment otherwise
+        // another SearchViewModel object will be created instead of the existing one used.
+        // -> the SearchViewModel is first instantiated in SearchFragment. Here we just use it.
+        searchViewModel =
+                new ViewModelProvider(requireParentFragment()).get(SearchViewModel.class);
+    }
+
+    @Override
     public View onCreateView(@NonNull final LayoutInflater inflater,
                              @Nullable final ViewGroup container,
                              final Bundle savedInstanceState) {
         final View rootView = getRootView(inflater, container);
-        initializeFilterData();
+        createSearchFilterUi();
         return rootView;
     }
 
     @Override
     public void onViewCreated(@NonNull final View view, final Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Icepick.restoreInstanceState(this, savedInstanceState);
 
         final Toolbar toolbar = getToolbar();
         if (toolbar != null) {
@@ -143,44 +94,14 @@ public abstract class BaseSearchFilterDialogFragment extends DialogFragment {
 
         toolbar.setOnMenuItemClickListener(item -> {
             if (item.getItemId() == R.id.search) {
-                dialogGenerator.prepareForSearch();
+                searchViewModel.getSearchFilterLogic().prepareForSearch();
+                dismiss();
                 return true;
             } else if (item.getItemId() == R.id.reset) {
-                dialogGenerator.reset();
+                searchViewModel.getSearchFilterLogic().reset();
                 return true;
             }
             return false;
         });
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull final Bundle outState) {
-        super.onSaveInstanceState(outState);
-        // get data to save its state via Icepick
-        userSelectedContentFilterList = dialogGenerator.getSelectedContentFilters();
-        userSelectedSortFilterList = dialogGenerator.getSelectedSortFilters();
-
-        Icepick.saveInstanceState(this, outState);
-    }
-
-    private void sendDataToParentFragment() {
-        final Listener listener = (Listener) getTargetFragment();
-        if (listener != null) {
-            listener.onFinishSearchFilterDialog(
-                    userSelectedContentFilterList, userSelectedSortFilterList,
-                    selectedContentFilters, selectedSortFilters);
-        }
-        dismiss();
-    }
-
-    /**
-     * Listener to be implemented by the parent Fragment so it can receive data.
-     */
-    public interface Listener {
-
-        void onFinishSearchFilterDialog(List<Integer> userSelectedContentFilterList,
-                                        List<Integer> userSelectedSortFilterList,
-                                        List<FilterItem> selectedContentFilters,
-                                        List<FilterItem> selectedSortFilters);
     }
 }

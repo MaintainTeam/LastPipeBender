@@ -10,7 +10,6 @@ import android.view.MenuItem;
 import android.view.View;
 
 import org.schabi.newpipe.R;
-import org.schabi.newpipe.extractor.StreamingService;
 import org.schabi.newpipe.extractor.search.filter.FilterContainer;
 import org.schabi.newpipe.extractor.search.filter.FilterGroup;
 import org.schabi.newpipe.extractor.search.filter.FilterItem;
@@ -19,14 +18,14 @@ import org.schabi.newpipe.util.ServiceHelper;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.core.view.MenuCompat;
 
 import static android.content.ContentValues.TAG;
+import static org.schabi.newpipe.fragments.list.search.filter.SearchFilterLogic.ICreateUiForFiltersWorker;
+import static org.schabi.newpipe.fragments.list.search.filter.SearchFilterLogic.IUiItemWrapper;
 
 /**
  * The implementation of the action menu based 'dialog'.
@@ -43,24 +42,14 @@ public class SearchFilterUIOptionMenu extends BaseSearchFilterUiGenerator {
     private int newLastUsedGroupId = MENU_GROUP_SEARCH_RESET_BUTTONS + 1;
     private int firstSortFilterGroupId;
 
-    public SearchFilterUIOptionMenu(@NonNull final StreamingService service,
-                                    @Nullable final Callback callback,
-                                    @NonNull final Context context) {
-        super(service.getSearchQHFactory(), callback, context);
+    public SearchFilterUIOptionMenu(
+            @NonNull final SearchFilterLogic logic,
+            @NonNull final Context context) {
+        super(logic, context);
     }
 
     int getLastUsedGroupIdThanIncrement() {
         return newLastUsedGroupId++;
-    }
-
-    @Override
-    protected void handleIdInNonExclusiveGroup(final int filterId,
-                                               @Nullable final IUiItemWrapper uiItemWrapper,
-                                               @NonNull final List<Integer> selectedFilter) {
-        // here it should never be null as the UI is the action menu
-        Objects.requireNonNull(uiItemWrapper);
-        uiItemWrapper.setChecked(!uiItemWrapper.isChecked()); // toggle
-        super.handleIdInNonExclusiveGroup(filterId, uiItemWrapper, selectedFilter);
     }
 
     @SuppressLint("RestrictedApi")
@@ -84,7 +73,7 @@ public class SearchFilterUIOptionMenu extends BaseSearchFilterUiGenerator {
     public boolean onOptionsItemSelected(@NonNull final MenuItem item) {
         if (item.getGroupId() == MENU_GROUP_SEARCH_RESET_BUTTONS
                 && item.getItemId() == MENU_ID_SEARCH_BUTTON) {
-            prepareForSearch();
+            logic.prepareForSearch();
         } else { // all other menu groups -> reset, content filters and sort filters
 
             // main part for holding onto the menu -> not closing it
@@ -96,13 +85,13 @@ public class SearchFilterUIOptionMenu extends BaseSearchFilterUiGenerator {
                 public boolean onMenuItemActionExpand(final MenuItem item) {
                     if (item.getGroupId() == MENU_GROUP_SEARCH_RESET_BUTTONS
                             && item.getItemId() == MENU_ID_RESET_BUTTON) {
-                        reset();
+                        logic.reset();
                     } else if (item.getGroupId() < firstSortFilterGroupId) { // content filters
                         final int filterId = item.getItemId();
-                        selectContentFilter(filterId);
+                        logic.selectContentFilter(filterId);
                     } else { // the sort filters
                         Log.d(TAG, "onMenuItemActionExpand: sort filters are here");
-                        selectSortFilter(item.getItemId());
+                        logic.selectSortFilter(item.getItemId());
                     }
 
                     return false;
@@ -157,7 +146,7 @@ public class SearchFilterUIOptionMenu extends BaseSearchFilterUiGenerator {
         }
     }
 
-    private class CreateContentFilterUI implements SearchFilterLogic.ICreateUiForFiltersWorker {
+    private class CreateContentFilterUI implements ICreateUiForFiltersWorker {
 
         /**
          * MenuItem's that should not be checkable.
@@ -247,7 +236,7 @@ public class SearchFilterUIOptionMenu extends BaseSearchFilterUiGenerator {
                 nonCheckableMenuItems.add(item);
             }
 
-            addContentFilterUiWrapperToItemMap(filterItem.getIdentifier(),
+            logic.addContentFilterUiWrapperToItemMap(filterItem.getIdentifier(),
                     new UiItemWrapper(item));
         }
 
@@ -271,7 +260,7 @@ public class SearchFilterUIOptionMenu extends BaseSearchFilterUiGenerator {
 
         @Override
         public void filtersVisible(final boolean areFiltersVisible) {
-            // no implementation here all as there is no 'sort filter' title as MenuItem
+            // no implementation here as there is no 'sort filter' title as MenuItem
         }
     }
 
@@ -279,7 +268,7 @@ public class SearchFilterUIOptionMenu extends BaseSearchFilterUiGenerator {
 
         private void addSortFilterUiToItemMap(final int id,
                                               final MenuItem item) {
-            addSortFilterUiWrapperToItemMap(id, new UiItemWrapper(item));
+            logic.addSortFilterUiWrapperToItemMap(id, new UiItemWrapper(item));
         }
 
         @Override
@@ -306,7 +295,7 @@ public class SearchFilterUIOptionMenu extends BaseSearchFilterUiGenerator {
 
         @Override
         public void finish() {
-            // no implementation here all as we do not need to clean up anything or whatever
+            // no implementation here as we do not need to clean up anything or whatever
         }
     }
 }

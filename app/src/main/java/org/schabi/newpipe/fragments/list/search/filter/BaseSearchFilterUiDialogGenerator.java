@@ -7,24 +7,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import org.schabi.newpipe.extractor.linkhandler.SearchQueryHandlerFactory;
 import org.schabi.newpipe.extractor.search.filter.FilterGroup;
 
 import java.util.List;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import static android.util.TypedValue.COMPLEX_UNIT_DIP;
+import static org.schabi.newpipe.fragments.list.search.filter.SearchFilterLogic.ICreateUiForFiltersWorker;
 
 public abstract class BaseSearchFilterUiDialogGenerator extends BaseSearchFilterUiGenerator {
     private static final float FONT_SIZE_TITLE_ITEMS_IN_DIP = 20f;
 
     protected BaseSearchFilterUiDialogGenerator(
-            @NonNull final SearchQueryHandlerFactory linkHandlerFactory,
-            @Nullable final Callback callback,
+            @NonNull final SearchFilterLogic logic,
             @NonNull final Context context) {
-        super(linkHandlerFactory, callback, context);
+        super(logic, context);
     }
 
     protected abstract void createTitle(@NonNull String name,
@@ -36,12 +34,12 @@ public abstract class BaseSearchFilterUiDialogGenerator extends BaseSearchFilter
 
     @Override
     protected ICreateUiForFiltersWorker createContentFilterWorker() {
-        return new BaseCreateSearchFilterUI.CreateContentFilterUI(this, context);
+        return new BaseCreateSearchFilterUI.CreateContentFilterUI(this, context, logic);
     }
 
     @Override
     protected ICreateUiForFiltersWorker createSortFilterWorker() {
-        return new BaseCreateSearchFilterUI.CreateSortFilterUI(this, context);
+        return new BaseCreateSearchFilterUI.CreateSortFilterUI(this, context, logic);
     }
 
     @NonNull

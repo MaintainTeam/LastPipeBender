@@ -7,14 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.schabi.newpipe.databinding.SearchFilterDialogFragmentBinding;
-import org.schabi.newpipe.extractor.StreamingService;
-
-import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.DialogFragment;
 
 /**
  * A search filter dialog that also looks like a dialog aka. 'dialog style'.
@@ -23,23 +19,10 @@ public class SearchFilterDialogFragment extends BaseSearchFilterDialogFragment {
 
     private SearchFilterDialogFragmentBinding binding;
 
-    public static DialogFragment newInstance(
-            final int serviceId,
-            final List<Integer> userSelectedContentFilter,
-            final List<Integer> userSelectedSortFilter) {
-        return initDialogArguments(
-                new SearchFilterDialogFragment(),
-                serviceId,
-                userSelectedContentFilter,
-                userSelectedSortFilter);
-    }
-
     @Override
-    protected BaseSearchFilterUiGenerator createSearchFilterDialogGenerator(
-            final StreamingService service,
-            final SearchFilterLogic.Callback callback) {
-        return new SearchFilterDialogGenerator(service,
-                binding.verticalScroll, requireContext(), callback);
+    protected BaseSearchFilterUiGenerator createSearchFilterDialogGenerator() {
+        return new SearchFilterDialogGenerator(
+                searchViewModel.getSearchFilterLogic(), binding.verticalScroll, requireContext());
     }
 
     @Override

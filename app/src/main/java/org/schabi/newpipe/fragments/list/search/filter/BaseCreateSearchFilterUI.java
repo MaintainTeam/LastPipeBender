@@ -14,26 +14,31 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 
+import static org.schabi.newpipe.fragments.list.search.filter.SearchFilterLogic.ICreateUiForFiltersWorker;
+
 /**
  * Common base for the {@link SearchFilterDialogGenerator} and
  * {@link SearchFilterOptionMenuAlikeDialogGenerator}'s
- * {@link SearchFilterLogic.ICreateUiForFiltersWorker} implementation.
+ * {@link ICreateUiForFiltersWorker} implementation.
  */
 public abstract class BaseCreateSearchFilterUI
-        implements SearchFilterLogic.ICreateUiForFiltersWorker {
+        implements ICreateUiForFiltersWorker {
 
     @NonNull
     protected final BaseSearchFilterUiDialogGenerator dialogGenBase;
     @NonNull
     protected final Context context;
     protected final List<View> titleViewElements = new ArrayList<>();
+    protected final SearchFilterLogic logic;
     protected int titleResId;
 
     protected BaseCreateSearchFilterUI(
             @NonNull final BaseSearchFilterUiDialogGenerator dialogGenBase,
+            @NonNull final SearchFilterLogic logic,
             @NonNull final Context context,
             final int titleResId) {
         this.dialogGenBase = dialogGenBase;
+        this.logic = logic;
         this.context = context;
         this.titleResId = titleResId;
     }
@@ -74,8 +79,9 @@ public abstract class BaseCreateSearchFilterUI
 
         public CreateContentFilterUI(
                 @NonNull final BaseSearchFilterUiDialogGenerator dialogGenBase,
-                @NonNull final Context context) {
-            super(dialogGenBase, context);
+                @NonNull final Context context,
+                @NonNull final SearchFilterLogic logic) {
+            super(dialogGenBase, context, logic);
             this.titleResId = R.string.filter_search_content_filters;
         }
 
@@ -83,8 +89,8 @@ public abstract class BaseCreateSearchFilterUI
         public void createFilterGroupBeforeItems(
                 @NonNull final FilterGroup filterGroup) {
             dialogGenBase.createFilterGroup(filterGroup,
-                    dialogGenBase::addContentFilterUiWrapperToItemMap,
-                    dialogGenBase::selectContentFilter);
+                    logic::addContentFilterUiWrapperToItemMap,
+                    logic::selectContentFilter);
         }
 
         @Override
@@ -97,8 +103,9 @@ public abstract class BaseCreateSearchFilterUI
 
         public CreateSortFilterUI(
                 @NonNull final BaseSearchFilterUiDialogGenerator dialogGenBase,
-                @NonNull final Context context) {
-            super(dialogGenBase, context, R.string.filter_search_sort_filters);
+                @NonNull final Context context,
+                @NonNull final SearchFilterLogic logic) {
+            super(dialogGenBase, logic, context, R.string.filter_search_sort_filters);
         }
 
         @Override
@@ -109,8 +116,8 @@ public abstract class BaseCreateSearchFilterUI
         @Override
         public void createFilterGroupBeforeItems(@NonNull final FilterGroup filterGroup) {
             dialogGenBase.createFilterGroup(filterGroup,
-                    dialogGenBase::addSortFilterUiWrapperToItemMap,
-                    dialogGenBase::selectSortFilter);
+                    logic::addSortFilterUiWrapperToItemMap,
+                    logic::selectSortFilter);
         }
     }
 }

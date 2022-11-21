@@ -15,7 +15,6 @@ import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
 import org.schabi.newpipe.R;
-import org.schabi.newpipe.extractor.StreamingService;
 import org.schabi.newpipe.extractor.search.filter.FilterGroup;
 import org.schabi.newpipe.extractor.search.filter.FilterItem;
 import org.schabi.newpipe.util.DeviceUtils;
@@ -24,17 +23,16 @@ import org.schabi.newpipe.util.ServiceHelper;
 import java.util.List;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.view.ContextThemeWrapper;
 
 public class SearchFilterDialogGenerator extends BaseSearchFilterUiDialogGenerator {
     private final GridLayout globalLayout;
 
-    public SearchFilterDialogGenerator(@NonNull final StreamingService service,
-                                       @NonNull final ViewGroup root,
-                                       @NonNull final Context context,
-                                       @Nullable final SearchFilterLogic.Callback callback) {
-        super(service.getSearchQHFactory(), callback, context);
+    public SearchFilterDialogGenerator(
+            @NonNull final SearchFilterLogic logic,
+            @NonNull final ViewGroup root,
+            @NonNull final Context context) {
+        super(logic, context);
         this.globalLayout = createGridLayout();
         root.addView(globalLayout);
     }

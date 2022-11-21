@@ -12,7 +12,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import org.schabi.newpipe.extractor.StreamingService;
 import org.schabi.newpipe.extractor.search.filter.FilterGroup;
 import org.schabi.newpipe.extractor.search.filter.FilterItem;
 import org.schabi.newpipe.util.DeviceUtils;
@@ -31,11 +30,11 @@ public class SearchFilterOptionMenuAlikeDialogGenerator extends BaseSearchFilter
     private static final int VIEW_ITEMS_MIN_WIDTH_IN_DIP = 168;
     private final LinearLayout globalLayout;
 
-    public SearchFilterOptionMenuAlikeDialogGenerator(@NonNull final StreamingService service,
-                                                      @NonNull final ViewGroup root,
-                                                      @NonNull final Context context,
-                                                      @Nullable final Callback callback) {
-        super(service.getSearchQHFactory(), callback, context);
+    public SearchFilterOptionMenuAlikeDialogGenerator(
+            @NonNull final SearchFilterLogic logic,
+            @NonNull final ViewGroup root,
+            @NonNull final Context context) {
+        super(logic, context);
         this.globalLayout = createLinearLayout();
         root.addView(globalLayout);
     }
@@ -59,7 +58,7 @@ public class SearchFilterOptionMenuAlikeDialogGenerator extends BaseSearchFilter
      * expand their width over the complete dialog width to be easier to select
      */
     private void measureWidthOfChildrenAndResizeToWidest() {
-        showAllAvailableSortFilters();
+        logic.showAllAvailableSortFilters();
 
         // initialize width with a passable default width
         int widestViewInPx = DeviceUtils.dpToPx(VIEW_ITEMS_MIN_WIDTH_IN_DIP, context);

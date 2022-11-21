@@ -12,14 +12,10 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import org.schabi.newpipe.databinding.SearchFilterOptionMenuAlikeDialogFragmentBinding;
-import org.schabi.newpipe.extractor.StreamingService;
-
-import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.DialogFragment;
 
 /**
  * A search filter dialog that looks like a action menu aka. 'action menu style'.
@@ -28,24 +24,10 @@ public class SearchFilterOptionMenuAlikeDialogFragment extends BaseSearchFilterD
 
     private SearchFilterOptionMenuAlikeDialogFragmentBinding binding;
 
-    @NonNull
-    public static DialogFragment newInstance(
-            final int serviceId,
-            @Nullable final ArrayList<Integer> userSelectedContentFilter,
-            @Nullable final ArrayList<Integer> userSelectedSortFilter) {
-        return initDialogArguments(
-                new SearchFilterOptionMenuAlikeDialogFragment(),
-                serviceId,
-                userSelectedContentFilter,
-                userSelectedSortFilter);
-    }
-
     @Override
-    protected BaseSearchFilterUiGenerator createSearchFilterDialogGenerator(
-            final StreamingService service,
-            final SearchFilterLogic.Callback callback) {
-        return new SearchFilterOptionMenuAlikeDialogGenerator(service,
-                binding.verticalScroll, requireContext(), callback);
+    protected BaseSearchFilterUiGenerator createSearchFilterDialogGenerator() {
+        return new SearchFilterOptionMenuAlikeDialogGenerator(
+                searchViewModel.getSearchFilterLogic(), binding.verticalScroll, requireContext());
     }
 
     @Override

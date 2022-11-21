@@ -32,6 +32,8 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.schabi.newpipe.fragments.list.search.filter.SearchFilterLogic.Callback;
+import static org.schabi.newpipe.fragments.list.search.filter.SearchFilterLogic.ICreateUiForFiltersWorker;
 
 /**
  * Test the {@link SearchFilterLogic} and
@@ -47,6 +49,7 @@ public class SearchFilterLogicAndUiGeneratorTest {
     private SearchFilterGeneratorWorkersClass.FilterWorker sortWorker;
     private List<FilterItem> fromCallbackContentFilterItems;
     private List<FilterItem> fromCallbackSortFilterItems;
+    private SearchFilterLogic logic;
 
 
     private void setupEach(final boolean withUiWorker,
@@ -61,12 +64,17 @@ public class SearchFilterLogicAndUiGeneratorTest {
             throws ExtractionException {
         service = NewPipe.getService(serviceId);
 
+        logic = SearchFilterLogic.Factory.create(
+                SearchFilterLogic.Factory.Variant.SEARCH_FILTER_LOGIC_DEFAULT,
+                service.getSearchQHFactory(),
+                callback);
+
         if (withUiWorker) {
             generator = new SearchFilterGeneratorWorkersClass(service.getSearchQHFactory(),
-                    callback);
+                    callback, logic);
         } else {
             generator = new SearchFilterGeneratorNoWorkersClass(service.getSearchQHFactory(),
-                    callback);
+                    callback, logic);
         }
     }
 
@@ -74,11 +82,11 @@ public class SearchFilterLogicAndUiGeneratorTest {
     public void resetAndRestoreTest() throws ExtractionException {
         setupEach(false, null);
         // 1. no data input (eg no previously selected filters set)
-        final ArrayList<Integer> contentFilters = generator.getSelectedContentFilters();
-        final ArrayList<Integer> sortFilters = generator.getSelectedSortFilters();
-        generator.reset();
-        final ArrayList<Integer> contentFilters2 = generator.getSelectedContentFilters();
-        final ArrayList<Integer> sortFilters2 = generator.getSelectedSortFilters();
+        final ArrayList<Integer> contentFilters = logic.getSelectedContentFilters();
+        final ArrayList<Integer> sortFilters = logic.getSelectedSortFilters();
+        logic.reset();
+        final ArrayList<Integer> contentFilters2 = logic.getSelectedContentFilters();
+        final ArrayList<Integer> sortFilters2 = logic.getSelectedSortFilters();
         assertTrue(!contentFilters2.isEmpty() && !contentFilters.isEmpty());
         assertTrue(!sortFilters2.isEmpty() && !sortFilters.isEmpty());
 
@@ -88,32 +96,32 @@ public class SearchFilterLogicAndUiGeneratorTest {
         final ArrayList<Integer> sortFiltersWithNoneDefaultId = new ArrayList<>();
         sortFiltersWithNoneDefaultId.add(PeertubeFilters.ID_SF_SORT_BY_CREATION_DATE);
 
-        generator.restorePreviouslySelectedFilters(contentFiltersWithNoneDefaultId,
+        logic.restorePreviouslySelectedFilters(contentFiltersWithNoneDefaultId,
                 sortFiltersWithNoneDefaultId);
 
-        ArrayList<Integer> contentFilterResetResult = generator.getSelectedContentFilters();
-        ArrayList<Integer> sortFilterResetResult = generator.getSelectedSortFilters();
+        ArrayList<Integer> contentFilterResetResult = logic.getSelectedContentFilters();
+        ArrayList<Integer> sortFilterResetResult = logic.getSelectedSortFilters();
 
         assertTrue(contentFilterResetResult.contains(PeertubeFilters.ID_CF_MAIN_VIDEOS));
         assertTrue(sortFilterResetResult.contains(PeertubeFilters.ID_SF_SORT_BY_CREATION_DATE));
         assertFalse(contentFilterResetResult.contains(PeertubeFilters.ID_CF_MAIN_ALL));
         assertFalse(sortFilterResetResult.contains(PeertubeFilters.ID_SF_SORT_BY_RELEVANCE));
 
-        generator.reset(); // now go back to default values
+        logic.reset(); // now go back to default values
 
-        contentFilterResetResult = generator.getSelectedContentFilters();
-        sortFilterResetResult = generator.getSelectedSortFilters();
+        contentFilterResetResult = logic.getSelectedContentFilters();
+        sortFilterResetResult = logic.getSelectedSortFilters();
         assertTrue(contentFilterResetResult.contains(PeertubeFilters.ID_CF_MAIN_ALL));
         assertTrue(sortFilterResetResult.contains(PeertubeFilters.ID_SF_SORT_BY_RELEVANCE));
 
         // 3. test if empty input data results in defaults
         setupEach(false, null);
-        generator.restorePreviouslySelectedFilters(new ArrayList<>(),
+        logic.restorePreviouslySelectedFilters(new ArrayList<>(),
                 new ArrayList<>());
         final ArrayList<Integer> contentFilterResultNoInput =
-                generator.getSelectedContentFilters();
+                logic.getSelectedContentFilters();
         final ArrayList<Integer> sortFilterResultNoInput =
-                generator.getSelectedSortFilters();
+                logic.getSelectedSortFilters();
         assertTrue(contentFilterResultNoInput.contains(PeertubeFilters.ID_CF_MAIN_ALL));
         assertTrue(sortFilterResultNoInput.contains(PeertubeFilters.ID_SF_SORT_BY_RELEVANCE));
 
@@ -130,9 +138,9 @@ public class SearchFilterLogicAndUiGeneratorTest {
 
         // after setupEach() there should be default entries.
         final ArrayList<Integer> defaultContentFilters =
-                generator.getSelectedContentFilters();
+                logic.getSelectedContentFilters();
         final ArrayList<Integer> defaultSortFilters =
-                generator.getSelectedSortFilters();
+                logic.getSelectedSortFilters();
 
         assertTrue(defaultContentFilters.contains(PeertubeFilters.ID_CF_MAIN_ALL));
         assertTrue(defaultSortFilters.contains(PeertubeFilters.ID_SF_SORT_BY_RELEVANCE));
@@ -154,10 +162,10 @@ public class SearchFilterLogicAndUiGeneratorTest {
         fromCallbackSortFilterItems = null;
 
         // after setupEach() there should be default entries.
-        ArrayList<Integer> defaultContentFiltersIds = generator.getSelectedContentFilters();
-        ArrayList<Integer> defaultSortFiltersIds = generator.getSelectedSortFilters();
-        List<FilterItem> defaultContentFilterItems = generator.getSelectedContentFilterItems();
-        List<FilterItem> defaultSortFilterItems = generator.getSelectedSortFiltersItems();
+        ArrayList<Integer> defaultContentFiltersIds = logic.getSelectedContentFilters();
+        ArrayList<Integer> defaultSortFiltersIds = logic.getSelectedSortFilters();
+        List<FilterItem> defaultContentFilterItems = logic.getSelectedContentFilterItems();
+        List<FilterItem> defaultSortFilterItems = logic.getSelectedSortFiltersItems();
 
         assertNotEquals(defaultContentFiltersIds.size(), defaultContentFilterItems.size());
         assertNotEquals(defaultSortFiltersIds.size(), defaultSortFilterItems.size());
@@ -165,15 +173,15 @@ public class SearchFilterLogicAndUiGeneratorTest {
         assertNull(fromCallbackContentFilterItems);
         assertNull(fromCallbackSortFilterItems);
 
-        generator.prepareForSearch(); // callback variables are now being initialized
+        logic.prepareForSearch(); // callback variables are now being initialized
 
         assertNotNull(fromCallbackContentFilterItems);
         assertNotNull(fromCallbackSortFilterItems);
 
-        defaultContentFiltersIds = generator.getSelectedContentFilters();
-        defaultSortFiltersIds = generator.getSelectedSortFilters();
-        defaultContentFilterItems = generator.getSelectedContentFilterItems();
-        defaultSortFilterItems = generator.getSelectedSortFiltersItems();
+        defaultContentFiltersIds = logic.getSelectedContentFilters();
+        defaultSortFiltersIds = logic.getSelectedSortFilters();
+        defaultContentFilterItems = logic.getSelectedContentFilterItems();
+        defaultSortFilterItems = logic.getSelectedSortFiltersItems();
 
         assertTrue(defaultContentFilterItems.size() > 0);
         assertTrue(defaultSortFilterItems.size() > 0);
@@ -205,7 +213,7 @@ public class SearchFilterLogicAndUiGeneratorTest {
         contentFiltersWithIllegalIds.add(10000);
         final ArrayList<Integer> sortFiltersEmpty = new ArrayList<>();
 
-        generator.restorePreviouslySelectedFilters(contentFiltersWithIllegalIds,
+        logic.restorePreviouslySelectedFilters(contentFiltersWithIllegalIds,
                 sortFiltersEmpty);
     }
 
@@ -218,7 +226,7 @@ public class SearchFilterLogicAndUiGeneratorTest {
         final ArrayList<Integer> sortFiltersWithIllegalIds = new ArrayList<>();
         sortFiltersWithIllegalIds.add(20000);
 
-        generator.restorePreviouslySelectedFilters(contentFiltersWithValidId,
+        logic.restorePreviouslySelectedFilters(contentFiltersWithValidId,
                 sortFiltersWithIllegalIds);
     }
 
@@ -227,15 +235,15 @@ public class SearchFilterLogicAndUiGeneratorTest {
         setupEach(false, null);
 
         // set only one content filter, keep default sort filters
-        generator.selectContentFilter(PeertubeFilters.ID_CF_MAIN_PLAYLISTS);
-        ArrayList<Integer> contentFilterResetResult = generator.getSelectedContentFilters();
-        ArrayList<Integer> sortFilterResetResult = generator.getSelectedSortFilters();
+        logic.selectContentFilter(PeertubeFilters.ID_CF_MAIN_PLAYLISTS);
+        ArrayList<Integer> contentFilterResetResult = logic.getSelectedContentFilters();
+        ArrayList<Integer> sortFilterResetResult = logic.getSelectedSortFilters();
         assertTrue(contentFilterResetResult.contains(PeertubeFilters.ID_CF_MAIN_PLAYLISTS));
         assertTrue(sortFilterResetResult.contains(PeertubeFilters.ID_SF_SORT_BY_RELEVANCE));
 
-        generator.selectContentFilter(PeertubeFilters.ID_CF_MAIN_CHANNELS);
-        contentFilterResetResult = generator.getSelectedContentFilters();
-        sortFilterResetResult = generator.getSelectedSortFilters();
+        logic.selectContentFilter(PeertubeFilters.ID_CF_MAIN_CHANNELS);
+        contentFilterResetResult = logic.getSelectedContentFilters();
+        sortFilterResetResult = logic.getSelectedSortFilters();
         assertFalse(contentFilterResetResult.contains(PeertubeFilters.ID_CF_MAIN_PLAYLISTS));
         assertTrue(contentFilterResetResult.contains(PeertubeFilters.ID_CF_MAIN_CHANNELS));
         assertTrue(sortFilterResetResult.contains(PeertubeFilters.ID_SF_SORT_BY_RELEVANCE));
@@ -245,18 +253,18 @@ public class SearchFilterLogicAndUiGeneratorTest {
     public void selectOneContentFilterAndOneSortFilterTest() throws ExtractionException {
         setupEach(false, null);
 
-        generator.selectContentFilter(PeertubeFilters.ID_CF_MAIN_PLAYLISTS);
-        generator.selectSortFilter(PeertubeFilters.ID_SF_SORT_BY_CREATION_DATE);
-        ArrayList<Integer> contentFilterResetResult = generator.getSelectedContentFilters();
-        ArrayList<Integer> sortFilterResetResult = generator.getSelectedSortFilters();
+        logic.selectContentFilter(PeertubeFilters.ID_CF_MAIN_PLAYLISTS);
+        logic.selectSortFilter(PeertubeFilters.ID_SF_SORT_BY_CREATION_DATE);
+        ArrayList<Integer> contentFilterResetResult = logic.getSelectedContentFilters();
+        ArrayList<Integer> sortFilterResetResult = logic.getSelectedSortFilters();
         assertTrue(contentFilterResetResult.contains(PeertubeFilters.ID_CF_MAIN_PLAYLISTS));
         assertFalse(sortFilterResetResult.contains(PeertubeFilters.ID_SF_SORT_BY_RELEVANCE));
         assertTrue(sortFilterResetResult.contains(PeertubeFilters.ID_SF_SORT_BY_CREATION_DATE));
 
-        generator.selectContentFilter(PeertubeFilters.ID_CF_MAIN_CHANNELS);
-        generator.selectSortFilter(PeertubeFilters.ID_SF_SORT_BY_DURATION);
-        contentFilterResetResult = generator.getSelectedContentFilters();
-        sortFilterResetResult = generator.getSelectedSortFilters();
+        logic.selectContentFilter(PeertubeFilters.ID_CF_MAIN_CHANNELS);
+        logic.selectSortFilter(PeertubeFilters.ID_SF_SORT_BY_DURATION);
+        contentFilterResetResult = logic.getSelectedContentFilters();
+        sortFilterResetResult = logic.getSelectedSortFilters();
         assertFalse(contentFilterResetResult.contains(PeertubeFilters.ID_CF_MAIN_PLAYLISTS));
         assertTrue(contentFilterResetResult.contains(PeertubeFilters.ID_CF_MAIN_CHANNELS));
         assertTrue(sortFilterResetResult.contains(PeertubeFilters.ID_SF_SORT_BY_DURATION));
@@ -267,15 +275,15 @@ public class SearchFilterLogicAndUiGeneratorTest {
     public void selectTwoContentFiltersTest() throws ExtractionException {
         setupEach(false, null);
 
-        generator.selectContentFilter(PeertubeFilters.ID_CF_MAIN_PLAYLISTS);
-        ArrayList<Integer> contentFilterResetResult = generator.getSelectedContentFilters();
+        logic.selectContentFilter(PeertubeFilters.ID_CF_MAIN_PLAYLISTS);
+        ArrayList<Integer> contentFilterResetResult = logic.getSelectedContentFilters();
         assertTrue(contentFilterResetResult.contains(PeertubeFilters.ID_CF_MAIN_PLAYLISTS));
         assertFalse(contentFilterResetResult.contains(PeertubeFilters.ID_CF_SEPIA_SEPIASEARCH));
 
         // 2nd content filters added from another group of course as PeertubeFilter.ID_CF_MAIN_GRP
         // is exclusive group -> only one item per group allowed
-        generator.selectContentFilter(PeertubeFilters.ID_CF_SEPIA_SEPIASEARCH);
-        contentFilterResetResult = generator.getSelectedContentFilters();
+        logic.selectContentFilter(PeertubeFilters.ID_CF_SEPIA_SEPIASEARCH);
+        contentFilterResetResult = logic.getSelectedContentFilters();
         assertTrue(contentFilterResetResult.contains(PeertubeFilters.ID_CF_MAIN_PLAYLISTS));
         assertTrue(contentFilterResetResult.contains(PeertubeFilters.ID_CF_SEPIA_SEPIASEARCH));
     }
@@ -299,16 +307,16 @@ public class SearchFilterLogicAndUiGeneratorTest {
             generator.createSearchUI();
             simulateUiClicking(YoutubeFilters.ID_CF_MAIN_VIDEOS);
         }
-        generator.selectContentFilter(YoutubeFilters.ID_CF_MAIN_VIDEOS);
-        final ArrayList<Integer> contentFilterResetResult = generator.getSelectedContentFilters();
+        logic.selectContentFilter(YoutubeFilters.ID_CF_MAIN_VIDEOS);
+        final ArrayList<Integer> contentFilterResetResult = logic.getSelectedContentFilters();
         assertTrue(contentFilterResetResult.contains(YoutubeFilters.ID_CF_MAIN_VIDEOS));
 
         // select 1st element from a non-exclusive group
         if (withUiWorker) {
             simulateUiClicking(YoutubeFilters.ID_SF_FEATURES_3D);
         }
-        generator.selectSortFilter(YoutubeFilters.ID_SF_FEATURES_3D);
-        ArrayList<Integer> sortFilterResetResult = generator.getSelectedSortFilters();
+        logic.selectSortFilter(YoutubeFilters.ID_SF_FEATURES_3D);
+        ArrayList<Integer> sortFilterResetResult = logic.getSelectedSortFilters();
         assertTrue(sortFilterResetResult.contains(YoutubeFilters.ID_SF_FEATURES_3D));
         assertFalse(sortFilterResetResult.contains(YoutubeFilters.ID_SF_FEATURES_4K));
 
@@ -316,8 +324,8 @@ public class SearchFilterLogicAndUiGeneratorTest {
         if (withUiWorker) {
             simulateUiClicking(YoutubeFilters.ID_SF_FEATURES_4K);
         }
-        generator.selectSortFilter(YoutubeFilters.ID_SF_FEATURES_4K);
-        sortFilterResetResult = generator.getSelectedSortFilters();
+        logic.selectSortFilter(YoutubeFilters.ID_SF_FEATURES_4K);
+        sortFilterResetResult = logic.getSelectedSortFilters();
         assertTrue(sortFilterResetResult.contains(YoutubeFilters.ID_SF_FEATURES_3D));
         assertTrue(sortFilterResetResult.contains(YoutubeFilters.ID_SF_FEATURES_4K));
 
@@ -325,8 +333,8 @@ public class SearchFilterLogicAndUiGeneratorTest {
         if (withUiWorker) {
             simulateUiClicking(YoutubeFilters.ID_SF_FEATURES_4K);
         }
-        generator.selectSortFilter(YoutubeFilters.ID_SF_FEATURES_4K);
-        sortFilterResetResult = generator.getSelectedSortFilters();
+        logic.selectSortFilter(YoutubeFilters.ID_SF_FEATURES_4K);
+        sortFilterResetResult = logic.getSelectedSortFilters();
         assertTrue(sortFilterResetResult.contains(YoutubeFilters.ID_SF_FEATURES_3D));
         assertFalse(sortFilterResetResult.contains(YoutubeFilters.ID_SF_FEATURES_4K));
     }
@@ -371,7 +379,7 @@ public class SearchFilterLogicAndUiGeneratorTest {
         // get all sort filters from  and compare with universalWrapper map
         // set content filter with no sort filters available
         final int contentFilterWithNoSortFilters = PeertubeFilters.ID_CF_MAIN_PLAYLISTS;
-        generator.selectContentFilter(contentFilterWithNoSortFilters);
+        logic.selectContentFilter(contentFilterWithNoSortFilters);
         final FilterContainer noSortFiltersAkaNull = service.getSearchQHFactory()
                 .getContentFilterSortFilterVariant(contentFilterWithNoSortFilters);
         assertNull(noSortFiltersAkaNull);
@@ -409,7 +417,7 @@ public class SearchFilterLogicAndUiGeneratorTest {
         // 3rd test:
         // select content filter that should have all sort filters visible again
         final int contentFilterWithAllSortFiltersVisible = PeertubeFilters.ID_CF_MAIN_VIDEOS;
-        generator.selectContentFilter(contentFilterWithAllSortFiltersVisible);
+        logic.selectContentFilter(contentFilterWithAllSortFiltersVisible);
         expectSortFiltersToBeVisible(contentFilterWithAllSortFiltersVisible);
     }
 
@@ -417,8 +425,9 @@ public class SearchFilterLogicAndUiGeneratorTest {
     private static class SearchFilterGeneratorNoWorkersClass extends BaseSearchFilterUiGenerator {
 
         SearchFilterGeneratorNoWorkersClass(final SearchQueryHandlerFactory linkHandlerFactory,
-                                            final Callback callback) {
-            super(linkHandlerFactory, callback, null); // null as this is no androidTest
+                                            final Callback callback,
+                                            final SearchFilterLogic logic) {
+            super(logic, null); // context is null as this is no androidTest
         }
 
         @Override
@@ -470,8 +479,9 @@ public class SearchFilterLogicAndUiGeneratorTest {
     private class SearchFilterGeneratorWorkersClass extends SearchFilterGeneratorNoWorkersClass {
 
         SearchFilterGeneratorWorkersClass(final SearchQueryHandlerFactory linkHandlerFactory,
-                                          final Callback callback) {
-            super(linkHandlerFactory, callback);
+                                          final Callback callback,
+                                          final SearchFilterLogic logic) {
+            super(linkHandlerFactory, callback, logic);
         }
 
         @Override
@@ -485,7 +495,7 @@ public class SearchFilterLogicAndUiGeneratorTest {
             return new FilterWorker(false);
         }
 
-        class FilterWorker implements SearchFilterLogic.ICreateUiForFiltersWorker {
+        class FilterWorker implements ICreateUiForFiltersWorker {
 
             private final boolean isSortWorker;
             public Optional<Boolean> areAnySortFiltersVisible = null;
@@ -505,9 +515,9 @@ public class SearchFilterLogicAndUiGeneratorTest {
                             new ElementsWrapper(item, filterGroup.getIdentifier());
                     universalWrapper.put(item.getIdentifier(), element);
                     if (isSortWorker) {
-                        addSortFilterUiWrapperToItemMap(item.getIdentifier(), element);
+                        logic.addSortFilterUiWrapperToItemMap(item.getIdentifier(), element);
                     } else {
-                        addContentFilterUiWrapperToItemMap(item.getIdentifier(), element);
+                        logic.addContentFilterUiWrapperToItemMap(item.getIdentifier(), element);
                     }
                 }
             }
