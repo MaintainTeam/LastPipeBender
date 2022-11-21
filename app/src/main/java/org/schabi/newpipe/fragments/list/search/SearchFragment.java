@@ -35,6 +35,7 @@ import androidx.appcompat.widget.TooltipCompat;
 import androidx.core.text.HtmlCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
@@ -43,7 +44,6 @@ import org.schabi.newpipe.App;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.databinding.FragmentSearchBinding;
 import org.schabi.newpipe.error.ErrorInfo;
-import org.schabi.newpipe.error.ErrorUtil;
 import org.schabi.newpipe.error.ReCaptchaActivity;
 import org.schabi.newpipe.error.UserAction;
 import org.schabi.newpipe.extractor.InfoItem;
@@ -52,13 +52,11 @@ import org.schabi.newpipe.extractor.MetaInfo;
 import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.Page;
 import org.schabi.newpipe.extractor.StreamingService;
-import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.extractor.search.SearchExtractor;
 import org.schabi.newpipe.extractor.search.SearchInfo;
 import org.schabi.newpipe.extractor.search.filter.FilterItem;
 import org.schabi.newpipe.fragments.BackPressable;
 import org.schabi.newpipe.fragments.list.BaseListFragment;
-import org.schabi.newpipe.fragments.list.search.filter.BaseSearchFilterDialogFragment;
 import org.schabi.newpipe.fragments.list.search.filter.SearchFilterDialogFragment;
 import org.schabi.newpipe.fragments.list.search.filter.SearchFilterLogic;
 import org.schabi.newpipe.fragments.list.search.filter.SearchFilterOptionMenuAlikeDialogFragment;
@@ -90,8 +88,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 
 public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.InfoItemsPage<?>>
-        implements BackPressable, SearchFilterLogic.Callback,
-        BaseSearchFilterDialogFragment.Listener {
+        implements BackPressable {
     /*//////////////////////////////////////////////////////////////////////////
     // Search
     //////////////////////////////////////////////////////////////////////////*/
@@ -169,6 +166,11 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
     @State
     ArrayList<Integer> userSelectedSortFilterList = null;
 
+    protected SearchViewModel searchViewModel;
+    protected SearchFilterLogic.Factory.Variant logicVariant =
+            SearchFilterLogic.Factory.Variant.SEARCH_FILTER_LOGIC_DEFAULT;
+
+
     public static SearchFragment getInstance(final int serviceId, final String searchString) {
         final SearchFragment searchFragment;
         final App app = App.getApp();
@@ -227,30 +229,40 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
         if (userSelectedSortFilterList == null) {
             userSelectedSortFilterList = new ArrayList<>();
         }
-        initializeFilterData();
+
+        initViewModel();
+
+        // observe the content/sort filter items lists
+        searchViewModel.getSelectedContentFilterItemListLiveData().observe(
+                getViewLifecycleOwner(), filterItems -> selectedContentFilter = filterItems);
+        searchViewModel.getSelectedSortFilterItemListLiveData().observe(
+                getViewLifecycleOwner(), filterItems -> selectedSortFilter = filterItems);
+
+        // the content/sort filters ids lists are only
+        // observed here to store them via Icepick
+        searchViewModel.getUserSelectedContentFilterListLiveData().observe(
+                getViewLifecycleOwner(), filterIds -> userSelectedContentFilterList = filterIds);
+        searchViewModel.getUserSelectedSortFilterListLiveData().observe(
+                getViewLifecycleOwner(), filterIds -> userSelectedSortFilterList = filterIds);
+
+        searchViewModel.getDoSearchLiveData().observe(
+                getViewLifecycleOwner(), doSearch -> {
+                    if (doSearch) {
+                        selectedFilters(selectedContentFilter, selectedSortFilter);
+                        searchViewModel.weConsumedDoSearchLiveData();
+                    }
+                });
+
         return inflater.inflate(R.layout.fragment_search, container, false);
     }
 
-    /**
-     * initialize the initial content and sort filter Lists with defaults
-     * or previously with Icepick stored data.
-     */
-    protected void initializeFilterData() {
-        try {
-            final SearchFilterLogic logic =
-                    new SearchFilterLogic(NewPipe.getService(serviceId).getSearchQHFactory(), null);
-            logic.restorePreviouslySelectedFilters(
-                    userSelectedContentFilterList,
-                    userSelectedSortFilterList);
-
-            userSelectedContentFilterList = logic.getSelectedContentFilters();
-            userSelectedSortFilterList = logic.getSelectedSortFilters();
-            selectedContentFilter = logic.getSelectedContentFilterItems();
-            selectedSortFilter = logic.getSelectedSortFiltersItems();
-        } catch (final ExtractionException e) {
-            ErrorUtil.showUiErrorSnackbar(this,
-                    "No filtering possible. Getting service for id " + serviceId, e);
-        }
+    protected void initViewModel() {
+        searchViewModel = new ViewModelProvider(this, SearchViewModel.Companion
+                .getFactory(serviceId,
+                        logicVariant,
+                        userSelectedContentFilterList,
+                        userSelectedSortFilterList))
+                .get(SearchViewModel.class);
     }
 
     @Override
@@ -905,7 +917,6 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
     // Utils
     //////////////////////////////////////////////////////////////////////////*/
 
-    @Override
     public void selectedFilters(@NonNull final List<FilterItem> theSelectedContentFilter,
                                 @NonNull final List<FilterItem> theSelectedSortFilter) {
 
@@ -1072,32 +1083,18 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
     }
 
     private void showSelectFiltersDialog() {
-        final FragmentManager fragmentManager = getParentFragmentManager();
+        final FragmentManager fragmentManager = getChildFragmentManager();
         final DialogFragment searchFilterUiDialog;
 
         final String searchUi = PreferenceManager.getDefaultSharedPreferences(App.getApp())
                 .getString(getString(R.string.search_filter_ui_key),
                         getString(R.string.search_filter_ui_value));
-        if (getString(R.string.search_filter_ui_dialog_key).equals(searchUi)) {
-            searchFilterUiDialog =
-                    SearchFilterDialogFragment.newInstance(
-                            serviceId, userSelectedContentFilterList, userSelectedSortFilterList);
-        } else {
-            searchFilterUiDialog =
-                    SearchFilterOptionMenuAlikeDialogFragment.newInstance(
-                            serviceId, userSelectedContentFilterList, userSelectedSortFilterList);
+        if (getString(R.string.search_filter_ui_option_menu_style_key).equals(searchUi)) {
+            searchFilterUiDialog = new SearchFilterOptionMenuAlikeDialogFragment();
+        } else { // default dialog
+            searchFilterUiDialog = new SearchFilterDialogFragment();
         }
 
-        searchFilterUiDialog.setTargetFragment(SearchFragment.this, 300);
         searchFilterUiDialog.show(fragmentManager, "fragment_search");
-    }
-
-    @SuppressWarnings("checkstyle:HiddenField")
-    @Override
-    public void onFinishSearchFilterDialog(final List<Integer> userSelectedContentFilterList,
-                                           final List<Integer> userSelectedSortFilterList,
-                                           final List<FilterItem> selectedContentFilters,
-                                           final List<FilterItem> selectedSortFilters) {
-        selectedFilters(selectedContentFilters, selectedSortFilters);
     }
 }
