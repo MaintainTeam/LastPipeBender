@@ -8,7 +8,6 @@ import org.schabi.newpipe.extractor.search.filter.FilterGroup;
 import org.schabi.newpipe.extractor.search.filter.FilterItem;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -185,7 +184,7 @@ public class SearchFilterLogic {
         final List<FilterGroup> sortGroups = getAllSortFilterGroups(filters);
         uiSortFilterWorker = createUiForFiltersWorker;
 
-        initFiltersUi(sortGroups.toArray(new FilterGroup[0]),
+        initFiltersUi(sortGroups,
                 sortFilterIdToUiItemMap,
                 createUiForFiltersWorker);
 
@@ -202,7 +201,7 @@ public class SearchFilterLogic {
      * @param createUiForFiltersWorker the implementation how to create the UI.
      */
     private void initFiltersUi(
-            @NonNull final FilterGroup[] filterGroups,
+            @NonNull final List<FilterGroup> filterGroups,
             @NonNull final SparseArrayCompat<IUiItemWrapper> filterIdToUiItemMap,
             @NonNull final ICreateUiForFiltersWorker createUiForFiltersWorker) {
 
@@ -235,7 +234,7 @@ public class SearchFilterLogic {
      * @param fidToSupersetSortFilterMap null possible, only for content filters relevant
      */
     private void initFilters(
-            @NonNull final FilterGroup[] filterGroups,
+            @NonNull final List<FilterGroup> filterGroups,
             @NonNull final ExclusiveGroups exclusive,
             @NonNull final List<Integer> selectedFilters,
             @Nullable final SparseArrayCompat<FilterContainer> fidToSupersetSortFilterMap) {
@@ -290,9 +289,7 @@ public class SearchFilterLogic {
     private void initSortFilters() {
         final FilterContainer filters = searchQHFactory.getAvailableContentFilter();
         final List<FilterGroup> sortGroups = getAllSortFilterGroups(filters);
-
-        initFilters(sortGroups.toArray(new FilterGroup[0]), sortFilterExclusive,
-                selectedSortFilters, null);
+        initFilters(sortGroups, sortFilterExclusive, selectedSortFilters, null);
     }
 
     /**
@@ -450,7 +447,7 @@ public class SearchFilterLogic {
             for (final FilterGroup filterGroup : filters.getFilterGroups()) {
                 final FilterContainer sf = filterGroup.getAllSortFilters();
                 if (sf != null && sf.getFilterGroups() != null) {
-                    sortGroups.addAll(Arrays.asList(sf.getFilterGroups()));
+                    sortGroups.addAll(sf.getFilterGroups());
                 }
             }
             return sortGroups;

@@ -24,6 +24,7 @@ import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.core.view.MenuCompat;
 
 import static android.content.ContentValues.TAG;
+import static org.schabi.newpipe.fragments.list.search.filter.InjectFilterItem.DividerItem;
 import static org.schabi.newpipe.fragments.list.search.filter.SearchFilterLogic.ICreateUiForFiltersWorker;
 import static org.schabi.newpipe.fragments.list.search.filter.SearchFilterLogic.IUiItemWrapper;
 
@@ -227,9 +228,10 @@ public class SearchFilterUIOptionMenu extends BaseSearchFilterUiGenerator {
                                      @NonNull final FilterGroup filterGroup) {
             final MenuItem item = createMenuItem(filterItem);
 
-            if (filterItem instanceof FilterItem.DividerItem) {
+            if (filterItem instanceof DividerItem) {
+                final DividerItem dividerItem = (DividerItem) filterItem;
                 final String menuDividerTitle = ">>>"
-                        + ServiceHelper.getTranslatedFilterString(filterItem.getNameId(), context)
+                        + context.getString(dividerItem.getStringResId())
                         + "<<<";
                 item.setTitle(menuDividerTitle);
                 item.setEnabled(false);

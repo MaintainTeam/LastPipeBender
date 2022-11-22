@@ -23,6 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import static android.util.TypedValue.COMPLEX_UNIT_DIP;
+import static org.schabi.newpipe.fragments.list.search.filter.InjectFilterItem.DividerItem;
 
 public class SearchFilterOptionMenuAlikeDialogGenerator extends BaseSearchFilterUiDialogGenerator {
     private static final Integer NO_RESIZE_VIEW_TAG = 1;
@@ -149,7 +150,7 @@ public class SearchFilterOptionMenuAlikeDialogGenerator extends BaseSearchFilter
         for (final FilterItem item : filterGroup.getFilterItems()) {
 
             final View view;
-            if (item instanceof FilterItem.DividerItem) {
+            if (item instanceof DividerItem) {
                 view = createDividerTextView(item, getLayoutParamsViews());
             } else {
                 view = createViewItemRadio(item, getLayoutParamsViews());
@@ -175,7 +176,7 @@ public class SearchFilterOptionMenuAlikeDialogGenerator extends BaseSearchFilter
             @NonNull final UiSelectorDelegate selectorDelegate) {
         for (final FilterItem item : filterGroup.getFilterItems()) {
             final View view;
-            if (item instanceof FilterItem.DividerItem) {
+            if (item instanceof DividerItem) {
                 view = createDividerTextView(item, getLayoutParamsViews());
             } else {
                 final CheckBox checkBox = createCheckBox(item, getLayoutParamsViews());
@@ -278,10 +279,11 @@ public class SearchFilterOptionMenuAlikeDialogGenerator extends BaseSearchFilter
     @NonNull
     private TextView createDividerTextView(@NonNull final FilterItem item,
                                            @NonNull final ViewGroup.LayoutParams layoutParams) {
+        final DividerItem dividerItem = (DividerItem) item;
         final TextView view = new TextView(context);
         view.setEnabled(true);
         final String menuDividerTitle =
-                ServiceHelper.getTranslatedFilterString(item.getNameId(), context);
+                context.getString(dividerItem.getStringResId());
         view.setText(menuDividerTitle);
         view.setGravity(Gravity.TOP);
         view.setLayoutParams(layoutParams);

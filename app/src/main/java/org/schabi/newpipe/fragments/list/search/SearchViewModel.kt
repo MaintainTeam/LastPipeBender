@@ -7,6 +7,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import org.schabi.newpipe.extractor.NewPipe
 import org.schabi.newpipe.extractor.search.filter.FilterItem
+import org.schabi.newpipe.fragments.list.search.filter.InjectFilterItem
 import org.schabi.newpipe.fragments.list.search.filter.SearchFilterLogic
 import org.schabi.newpipe.fragments.list.search.filter.SearchFilterLogic.Factory.Variant
 
@@ -38,11 +39,16 @@ class SearchViewModel(
     val doSearchLiveData: LiveData<Boolean>
         get() = doSearchMutableLiveData
 
-    val searchFilterLogic = SearchFilterLogic.Factory.create(
-        logicVariant, NewPipe.getService(serviceId).searchQHFactory, null
-    )
+    var searchFilterLogic: SearchFilterLogic
 
     init {
+        // inject before creating SearchFilterLogic
+        InjectFilterItem.DividerBetweenYoutubeAndYoutubeMusic.run()
+
+        searchFilterLogic = SearchFilterLogic.Factory.create(
+            logicVariant,
+            NewPipe.getService(serviceId).searchQHFactory, null
+        )
         searchFilterLogic.restorePreviouslySelectedFilters(
             userSelectedContentFilterList,
             userSelectedSortFilterList

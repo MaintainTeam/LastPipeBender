@@ -17,7 +17,6 @@ import org.schabi.newpipe.fragments.list.search.filter.BaseSearchFilterUiGenerat
 import org.schabi.newpipe.fragments.list.search.filter.SearchFilterLogic;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -347,7 +346,7 @@ public class SearchFilterLogicAndUiGeneratorTest {
     private void expectSortFiltersToBeVisible(final int id) {
         final FilterContainer sortFilterVariant = service.getSearchQHFactory()
                 .getContentFilterSortFilterVariant(id);
-        assertTrue(sortFilterVariant.getFilterGroups().length > 0);
+        assertTrue(!sortFilterVariant.getFilterGroups().isEmpty());
         for (final FilterGroup group : sortFilterVariant.getFilterGroups()) {
             for (final FilterItem item : group.getFilterItems()) {
                 final int itemId = item.getIdentifier();
@@ -389,9 +388,9 @@ public class SearchFilterLogicAndUiGeneratorTest {
         final FilterContainer allSortFilters = service.getSearchQHFactory()
                 .getContentFilterSortFilterVariant(PeertubeFilters.ID_CF_MAIN_ALL);
         // second way
-        final Optional<FilterGroup> allSortFilters2 = Arrays.stream(service.getSearchQHFactory()
-                        .getAvailableContentFilter()
-                        .getFilterGroups())
+        final Optional<FilterGroup> allSortFilters2 = service.getSearchQHFactory()
+                .getAvailableContentFilter()
+                .getFilterGroups().stream()
                 .filter(filterGroup
                         -> (filterGroup.getIdentifier() == PeertubeFilters.ID_CF_MAIN_GRP))
                 .findFirst();
@@ -399,7 +398,7 @@ public class SearchFilterLogicAndUiGeneratorTest {
         assertNotNull(allSortFilters);
         assertTrue(allSortFilters2.isPresent());
         assertEquals(allSortFilters, allSortFilters2.get().getAllSortFilters());
-        assertTrue(allSortFilters.getFilterGroups().length > 0);
+        assertTrue(!allSortFilters.getFilterGroups().isEmpty());
         assertNotNull(sortWorker.areAnySortFiltersVisible);
         assertTrue(sortWorker.areAnySortFiltersVisible.isPresent());
         assertFalse(sortWorker.areAnySortFiltersVisible.get());

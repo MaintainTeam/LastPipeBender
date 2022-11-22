@@ -23,6 +23,8 @@ import java.util.Objects;
 import androidx.annotation.NonNull;
 import androidx.collection.SparseArrayCompat;
 
+import static org.schabi.newpipe.fragments.list.search.filter.InjectFilterItem.DividerItem;
+
 public class SearchFilterDialogSpinnerAdapter extends BaseAdapter {
 
     private final Context context;
@@ -48,12 +50,12 @@ public class SearchFilterDialogSpinnerAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return group.getFilterItems().length;
+        return group.getFilterItems().size();
     }
 
     @Override
     public Object getItem(final int position) {
-        return group.getFilterItems()[position];
+        return group.getFilterItems().get(position);
     }
 
     @Override
@@ -63,7 +65,7 @@ public class SearchFilterDialogSpinnerAdapter extends BaseAdapter {
 
     @Override
     public View getView(final int position, final View convertView, final ViewGroup parent) {
-        final FilterItem item = group.getFilterItems()[position];
+        final FilterItem item = group.getFilterItems().get(position);
         final TextView view;
 
         if (convertView != null) {
@@ -89,11 +91,12 @@ public class SearchFilterDialogSpinnerAdapter extends BaseAdapter {
         view.setVisibility(wrappedView.getVisibility());
         view.setEnabled(wrappedView.isEnabled());
 
-        if (item instanceof FilterItem.DividerItem) {
+        if (item instanceof DividerItem) {
+            final DividerItem dividerItem = (DividerItem) item;
             wrappedView.setEnabled(false);
             view.setEnabled(wrappedView.isEnabled());
             final String menuDividerTitle = ">>>"
-                    + ServiceHelper.getTranslatedFilterString(item.getNameId(), context) + "<<<";
+                    + context.getString(dividerItem.getStringResId()) + "<<<";
             view.setText(menuDividerTitle);
         }
     }
@@ -111,7 +114,7 @@ public class SearchFilterDialogSpinnerAdapter extends BaseAdapter {
                             isInitialEnabled,
                             spinner);
 
-            if (item instanceof FilterItem.DividerItem) {
+            if (item instanceof DividerItem) {
                 wrappedView.setEnabled(false);
             }
 
