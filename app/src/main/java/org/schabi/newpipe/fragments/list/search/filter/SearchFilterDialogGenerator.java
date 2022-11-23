@@ -4,6 +4,7 @@ package org.schabi.newpipe.fragments.list.search.filter;
 
 import android.content.Context;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -23,9 +24,11 @@ import org.schabi.newpipe.util.ServiceHelper;
 import java.util.List;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.view.ContextThemeWrapper;
+import androidx.annotation.Nullable;
 
 public class SearchFilterDialogGenerator extends BaseSearchFilterUiDialogGenerator {
+    private static final int CHIP_GROUP_ELEMENTS_THRESHOLD = 2;
+    private static final int CHIP_MIN_TOUCH_TARGET_SIZE_DP = 40;
     private final GridLayout globalLayout;
 
     public SearchFilterDialogGenerator(
@@ -62,8 +65,9 @@ public class SearchFilterDialogGenerator extends BaseSearchFilterUiDialogGenerat
         final UiItemWrapperViews viewsWrapper = new UiItemWrapperViews(
                 filterGroup.getIdentifier());
 
+        final TextView filterLabel;
         if (filterGroup.getNameId() != null) {
-            final TextView filterLabel = new TextView(context);
+            filterLabel = new TextView(context);
 
             filterLabel.setId(filterGroup.getIdentifier());
             filterLabel.setText(
@@ -73,13 +77,16 @@ public class SearchFilterDialogGenerator extends BaseSearchFilterUiDialogGenerat
             setZeroPadding(filterLabel);
 
             filterLabel.setLayoutParams(layoutParams);
-            globalLayout.addView(filterLabel);
             viewsWrapper.add(filterLabel);
         } else {
+            filterLabel = null;
             doSpanDataOverMultipleCells = true;
         }
 
         if (filterGroup.isOnlyOneCheckable()) {
+            if (filterLabel != null) {
+                globalLayout.addView(filterLabel);
+            }
 
             final Spinner filterDataSpinner = new Spinner(context, Spinner.MODE_DROPDOWN);
 
@@ -97,6 +104,9 @@ public class SearchFilterDialogGenerator extends BaseSearchFilterUiDialogGenerat
 
         } else { // multiple items in FilterGroup selectable
             final ChipGroup chipGroup = new ChipGroup(context);
+            doSpanDataOverMultipleCells = chooseParentViewForFilterLabelAndAdd(
+                    filterGroup, doSpanDataOverMultipleCells, filterLabel, chipGroup);
+
             viewsWrapper.add(chipGroup);
             globalLayout.addView(chipGroup);
             chipGroup.setLayoutParams(
@@ -108,6 +118,28 @@ public class SearchFilterDialogGenerator extends BaseSearchFilterUiDialogGenerat
         }
 
         wrapperDelegate.put(filterGroup.getIdentifier(), viewsWrapper);
+    }
+
+    private boolean chooseParentViewForFilterLabelAndAdd(
+            @NonNull final FilterGroup filterGroup,
+            final boolean doSpanDataOverMultipleCells,
+            @Nullable final TextView filterLabel,
+            @NonNull final ChipGroup possibleParentView) {
+
+        boolean spanOverMultipleCells = doSpanDataOverMultipleCells;
+        if (filterLabel != null) {
+            // If we have more than CHIP_GROUP_ELEMENTS_THRESHOLD elements to be
+            // displayed as Chips add its filterLabel as first element to ChipGroup.
+            // Now the ChipGroup can be spanned over all the cells to use
+            // the space better.
+            if (filterGroup.getFilterItems().size() > CHIP_GROUP_ELEMENTS_THRESHOLD) {
+                possibleParentView.addView(filterLabel);
+                spanOverMultipleCells = true;
+            } else {
+                globalLayout.addView(filterLabel);
+            }
+        }
+        return spanOverMultipleCells;
     }
 
     private void createUiElementsForSingleSelectableItemsFilterGroup(
@@ -143,8 +175,10 @@ public class SearchFilterDialogGenerator extends BaseSearchFilterUiDialogGenerat
             @NonNull final UiSelectorDelegate selectorDelegate,
             @NonNull final ChipGroup chipGroup) {
         for (final FilterItem item : filterGroup.getFilterItems()) {
-            final Chip chip = new Chip(new ContextThemeWrapper(
-                    context, R.style.Theme_MaterialComponents_Light));
+            final Chip chip = (Chip) LayoutInflater.from(context).inflate(
+                    R.layout.chip_search_filter, chipGroup, false);
+            chip.ensureAccessibleTouchTarget(
+                    DeviceUtils.dpToPx(CHIP_MIN_TOUCH_TARGET_SIZE_DP, context));
             chip.setText(ServiceHelper.getTranslatedFilterString(item.getNameId(), context));
             chip.setId(item.getIdentifier());
             chip.setCheckable(true);
@@ -205,7 +239,7 @@ public class SearchFilterDialogGenerator extends BaseSearchFilterUiDialogGenerat
     @NonNull
     private GridLayout.LayoutParams getLayoutParamsViews() {
         final GridLayout.LayoutParams layoutParams = new GridLayout.LayoutParams();
-        layoutParams.setGravity(Gravity.TOP);
+        layoutParams.setGravity(Gravity.CENTER_VERTICAL);
         setDefaultMargin(layoutParams);
         return layoutParams;
     }
@@ -247,7 +281,6 @@ public class SearchFilterDialogGenerator extends BaseSearchFilterUiDialogGenerat
 
         @Override
         public void setChecked(final boolean checked) {
-            view.setSelected(checked);
             ((Chip) view).setChecked(checked);
 
             if (checked) {
