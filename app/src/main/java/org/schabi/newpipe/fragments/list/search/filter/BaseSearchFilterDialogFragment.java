@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 
 /**
@@ -27,6 +28,14 @@ public abstract class BaseSearchFilterDialogFragment extends DialogFragment {
     private void createSearchFilterUi() {
         dialogGenerator = createSearchFilterDialogGenerator();
         dialogGenerator.createSearchUI();
+    }
+
+    @Override
+    public void show(@NonNull final FragmentManager manager, @Nullable final String tag) {
+        // Avoid multiple instances of the dialog that could be triggered by multiple taps
+        if (manager.findFragmentByTag(tag) == null) {
+            super.show(manager, tag);
+        }
     }
 
     protected abstract BaseSearchFilterUiGenerator createSearchFilterDialogGenerator();
