@@ -553,6 +553,7 @@
     <string name="search_filter_ui_dialog">Simple Dialog (default)</string>
     <string name="search_filter_ui_style">Action Menu styled Dialog</string>
     <string name="search_filter_ui_legacy">Action Menu (legacy)</string>
+    <string name="search_filter_ui_chip_dialog">Chip Dialog</string>
     <!-- Seekbar Preview Thumbnail-->
     <string name="seekbar_preview_thumbnail_title">Seekbar thumbnail preview</string>
     <string name="high_quality_larger">High quality (larger)</string>

@@ -57,6 +57,7 @@ import org.schabi.newpipe.extractor.search.SearchInfo;
 import org.schabi.newpipe.extractor.search.filter.FilterItem;
 import org.schabi.newpipe.fragments.BackPressable;
 import org.schabi.newpipe.fragments.list.BaseListFragment;
+import org.schabi.newpipe.fragments.list.search.filter.SearchFilterChipDialogFragment;
 import org.schabi.newpipe.fragments.list.search.filter.SearchFilterDialogFragment;
 import org.schabi.newpipe.fragments.list.search.filter.SearchFilterLogic;
 import org.schabi.newpipe.fragments.list.search.filter.SearchFilterOptionMenuAlikeDialogFragment;
@@ -1091,6 +1092,8 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
                         getString(R.string.search_filter_ui_value));
         if (getString(R.string.search_filter_ui_option_menu_style_key).equals(searchUi)) {
             searchFilterUiDialog = new SearchFilterOptionMenuAlikeDialogFragment();
+        } else if (getString(R.string.search_filter_ui_chip_dialog_key).equals(searchUi)) {
+            searchFilterUiDialog = new SearchFilterChipDialogFragment();
         } else { // default dialog
             searchFilterUiDialog = new SearchFilterDialogFragment();
         }
