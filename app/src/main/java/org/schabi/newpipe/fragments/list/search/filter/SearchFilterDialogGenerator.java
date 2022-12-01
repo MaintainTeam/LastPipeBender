@@ -29,7 +29,7 @@ import androidx.annotation.Nullable;
 public class SearchFilterDialogGenerator extends BaseSearchFilterUiDialogGenerator {
     private static final int CHIP_GROUP_ELEMENTS_THRESHOLD = 2;
     private static final int CHIP_MIN_TOUCH_TARGET_SIZE_DP = 40;
-    private final GridLayout globalLayout;
+    protected final GridLayout globalLayout;
 
     public SearchFilterDialogGenerator(
             @NonNull final SearchFilterLogic logic,
@@ -67,16 +67,7 @@ public class SearchFilterDialogGenerator extends BaseSearchFilterUiDialogGenerat
 
         final TextView filterLabel;
         if (filterGroup.getNameId() != null) {
-            filterLabel = new TextView(context);
-
-            filterLabel.setId(filterGroup.getIdentifier());
-            filterLabel.setText(
-                    ServiceHelper.getTranslatedFilterString(filterGroup.getNameId(), context));
-            filterLabel.setGravity(Gravity.CENTER_VERTICAL);
-            setDefaultMargin(layoutParams);
-            setZeroPadding(filterLabel);
-
-            filterLabel.setLayoutParams(layoutParams);
+            filterLabel = createFilterLabel(filterGroup, layoutParams);
             viewsWrapper.add(filterLabel);
         } else {
             filterLabel = null;
@@ -113,11 +104,28 @@ public class SearchFilterDialogGenerator extends BaseSearchFilterUiDialogGenerat
                     clipFreeRightColumnLayoutParams(doSpanDataOverMultipleCells));
             chipGroup.setSingleLine(false);
 
-            createUiElementsForMultipleSelectableItemsFilterGroup(
+            createUiChipElementsForFilterGroupItems(
                     filterGroup, wrapperDelegate, selectorDelegate, chipGroup);
         }
 
         wrapperDelegate.put(filterGroup.getIdentifier(), viewsWrapper);
+    }
+
+    @NonNull
+    protected TextView createFilterLabel(@NonNull final FilterGroup filterGroup,
+                                         @NonNull final GridLayout.LayoutParams layoutParams) {
+        final TextView filterLabel;
+        filterLabel = new TextView(context);
+
+        filterLabel.setId(filterGroup.getIdentifier());
+        filterLabel.setText(
+                ServiceHelper.getTranslatedFilterString(filterGroup.getNameId(), context));
+        filterLabel.setGravity(Gravity.CENTER_VERTICAL);
+        setDefaultMargin(layoutParams);
+        setZeroPadding(filterLabel);
+
+        filterLabel.setLayoutParams(layoutParams);
+        return filterLabel;
     }
 
     private boolean chooseParentViewForFilterLabelAndAdd(
@@ -169,27 +177,63 @@ public class SearchFilterDialogGenerator extends BaseSearchFilterUiDialogGenerat
         filterDataSpinner.setOnItemSelectedListener(listener);
     }
 
-    private void createUiElementsForMultipleSelectableItemsFilterGroup(
+    protected void createUiChipElementsForFilterGroupItems(
             @NonNull final FilterGroup filterGroup,
             @NonNull final UiWrapperMapDelegate wrapperDelegate,
             @NonNull final UiSelectorDelegate selectorDelegate,
             @NonNull final ChipGroup chipGroup) {
         for (final FilterItem item : filterGroup.getFilterItems()) {
-            final Chip chip = (Chip) LayoutInflater.from(context).inflate(
-                    R.layout.chip_search_filter, chipGroup, false);
-            chip.ensureAccessibleTouchTarget(
-                    DeviceUtils.dpToPx(CHIP_MIN_TOUCH_TARGET_SIZE_DP, context));
-            chip.setText(ServiceHelper.getTranslatedFilterString(item.getNameId(), context));
-            chip.setId(item.getIdentifier());
-            chip.setCheckable(true);
-            final View.OnClickListener listener;
-            listener = view -> selectorDelegate.selectFilter(view.getId());
 
-            chip.setOnClickListener(listener);
-            chipGroup.addView(chip);
-            wrapperDelegate.put(item.getIdentifier(), new UiItemWrapperChip(
-                    item, chip, chipGroup));
+            if (item instanceof InjectFilterItem.DividerItem) {
+                final InjectFilterItem.DividerItem dividerItem =
+                        (InjectFilterItem.DividerItem) item;
+
+                final GridLayout.LayoutParams layoutParams = getLayoutParamsViews();
+                final TextView dividerLabel = createDividerLabel(dividerItem, layoutParams);
+                chipGroup.addView(dividerLabel);
+            } else {
+                final Chip chip = createChipView(chipGroup, item);
+
+                final View.OnClickListener listener;
+                listener = view -> selectorDelegate.selectFilter(view.getId());
+                chip.setOnClickListener(listener);
+
+                chipGroup.addView(chip);
+                wrapperDelegate.put(item.getIdentifier(),
+                        new UiItemWrapperChip(item, chip, chipGroup));
+            }
         }
+    }
+
+    @NonNull
+    private Chip createChipView(@NonNull final ChipGroup chipGroup,
+                                @NonNull final FilterItem item) {
+        final Chip chip = (Chip) LayoutInflater.from(context).inflate(
+                R.layout.chip_search_filter, chipGroup, false);
+        chip.ensureAccessibleTouchTarget(
+                DeviceUtils.dpToPx(CHIP_MIN_TOUCH_TARGET_SIZE_DP, context));
+        chip.setText(ServiceHelper.getTranslatedFilterString(item.getNameId(), context));
+        chip.setId(item.getIdentifier());
+        chip.setCheckable(true);
+        return chip;
+    }
+
+    @NonNull
+    private TextView createDividerLabel(
+            @NonNull final InjectFilterItem.DividerItem dividerItem,
+            @NonNull final GridLayout.LayoutParams layoutParams) {
+        final TextView dividerLabel;
+        dividerLabel = new TextView(context);
+        dividerLabel.setEnabled(true);
+
+        dividerLabel.setGravity(Gravity.CENTER_VERTICAL);
+        setDefaultMargin(layoutParams);
+        layoutParams.height = DeviceUtils.dpToPx(CHIP_MIN_TOUCH_TARGET_SIZE_DP, context);
+        dividerLabel.setLayoutParams(layoutParams);
+        final String menuDividerTitle =
+                context.getString(dividerItem.getStringResId()) + ":";
+        dividerLabel.setText(menuDividerTitle);
+        return dividerLabel;
     }
 
     @NonNull
@@ -221,7 +265,7 @@ public class SearchFilterDialogGenerator extends BaseSearchFilterUiDialogGenerat
     }
 
     @NonNull
-    private GridLayout.LayoutParams clipFreeRightColumnLayoutParams(final boolean doColumnSpan) {
+    protected GridLayout.LayoutParams clipFreeRightColumnLayoutParams(final boolean doColumnSpan) {
         final GridLayout.LayoutParams layoutParams = new GridLayout.LayoutParams();
         // https://stackoverflow.com/questions/37744672/gridlayout-children-are-being-clipped
         layoutParams.width = 0;
@@ -245,8 +289,8 @@ public class SearchFilterDialogGenerator extends BaseSearchFilterUiDialogGenerat
     }
 
     @NonNull
-    private GridLayout.LayoutParams setDefaultMargin(
-            @NonNull final GridLayout.LayoutParams layoutParams) {
+    protected ViewGroup.MarginLayoutParams setDefaultMargin(
+            @NonNull final ViewGroup.MarginLayoutParams layoutParams) {
         layoutParams.setMargins(
                 DeviceUtils.dpToPx(4, context),
                 DeviceUtils.dpToPx(2, context),
@@ -257,7 +301,7 @@ public class SearchFilterDialogGenerator extends BaseSearchFilterUiDialogGenerat
     }
 
     @NonNull
-    private View setZeroPadding(@NonNull final View view) {
+    protected View setZeroPadding(@NonNull final View view) {
         view.setPadding(0, 0, 0, 0);
         return view;
     }

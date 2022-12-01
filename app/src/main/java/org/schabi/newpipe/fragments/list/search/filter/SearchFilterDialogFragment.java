@@ -17,7 +17,7 @@ import androidx.appcompat.widget.Toolbar;
  */
 public class SearchFilterDialogFragment extends BaseSearchFilterDialogFragment {
 
-    private SearchFilterDialogFragmentBinding binding;
+    protected SearchFilterDialogFragmentBinding binding;
 
     @Override
     protected BaseSearchFilterUiGenerator createSearchFilterDialogGenerator() {
