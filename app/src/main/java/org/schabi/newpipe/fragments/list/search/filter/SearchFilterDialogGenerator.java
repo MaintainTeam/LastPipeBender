@@ -188,7 +188,10 @@ public class SearchFilterDialogGenerator extends BaseSearchFilterUiDialogGenerat
                 final InjectFilterItem.DividerItem dividerItem =
                         (InjectFilterItem.DividerItem) item;
 
-                final GridLayout.LayoutParams layoutParams = getLayoutParamsViews();
+                // For the width MATCH_PARENT is necessary as this allows the
+                // dividerLabel to fill one row of ChipGroup exclusively
+                final ChipGroup.LayoutParams layoutParams = new ChipGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                 final TextView dividerLabel = createDividerLabel(dividerItem, layoutParams);
                 chipGroup.addView(dividerLabel);
             } else {
@@ -221,17 +224,16 @@ public class SearchFilterDialogGenerator extends BaseSearchFilterUiDialogGenerat
     @NonNull
     private TextView createDividerLabel(
             @NonNull final InjectFilterItem.DividerItem dividerItem,
-            @NonNull final GridLayout.LayoutParams layoutParams) {
+            @NonNull final ViewGroup.MarginLayoutParams layoutParams) {
         final TextView dividerLabel;
         dividerLabel = new TextView(context);
         dividerLabel.setEnabled(true);
 
         dividerLabel.setGravity(Gravity.CENTER_VERTICAL);
         setDefaultMargin(layoutParams);
-        layoutParams.height = DeviceUtils.dpToPx(CHIP_MIN_TOUCH_TARGET_SIZE_DP, context);
         dividerLabel.setLayoutParams(layoutParams);
         final String menuDividerTitle =
-                context.getString(dividerItem.getStringResId()) + ":";
+                context.getString(dividerItem.getStringResId());
         dividerLabel.setText(menuDividerTitle);
         return dividerLabel;
     }
