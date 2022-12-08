@@ -4,14 +4,4 @@
     <string name="brave_about_title">About this fork</string>
     <string name="brave_github_url" translatable="false">https://github.com/bravenewpipe</string>
     <string name="brave_supported_platforms" translatable="false">\n\u2022 BitChute\n\u2022 Rumble</string>
-    <string name="search_filters_short">Short</string>
-    <string name="search_filters_long">Long</string>
-    <string name="search_filters_rumbles">Rumbles</string>
-    <string name="search_filters_most_recent">Most recent</string>
-    <string name="search_filters_short_0_5_min">Short (0-5m)</string>
-    <string name="search_filters_medium_5_20_min">Medium (5-20m)</string>
-    <string name="search_filters_long_20_min_plus"> Long (20m+)</string>
-    <string name="search_filters_feature_45_min_plus">Feature (45m+)</string>
-    <string name="search_filters_newest_first">Newest First</string>
-    <string name="search_filters_oldest_first">Oldest First</string>
 </resources>
