@@ -82,12 +82,12 @@ public class SearchFilterDialogGenerator extends BaseSearchFilterUiDialogGenerat
         final UiItemWrapperViews viewsWrapper = new UiItemWrapperViews(
                 filterGroup.getIdentifier(), filterGroup.getIdentifier());
 
-        if (filterGroup.getNameId() != null) {
+        if (filterGroup.getName() != null) {
             final TextView filterLabel = new TextView(context);
 
             filterLabel.setId(filterGroup.getIdentifier());
             filterLabel.setText(
-                    ServiceHelper.getTranslatedFilterString(filterGroup.getNameId(), context));
+                    ServiceHelper.getTranslatedFilterString(filterGroup.getName(), context));
             filterLabel.setGravity(Gravity.CENTER_VERTICAL);
             setDefaultMargin(layoutParams);
             setZeroPadding(filterLabel);
@@ -166,7 +166,7 @@ public class SearchFilterDialogGenerator extends BaseSearchFilterUiDialogGenerat
         for (final FilterItem item : filterGroup.getFilterItems()) {
             final Chip chip = new Chip(new ContextThemeWrapper(
                     context, R.style.Theme_MaterialComponents_Light));
-            chip.setText(ServiceHelper.getTranslatedFilterString(item.getNameId(), context));
+            chip.setText(ServiceHelper.getTranslatedFilterString(item.getName(), context));
             chip.setId(item.getIdentifier());
             chip.setCheckable(true);
             final View.OnClickListener listener;
