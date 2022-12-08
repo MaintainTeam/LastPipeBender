@@ -1,6 +1,5 @@
 package org.schabi.newpipe
 
-import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.util.Log
@@ -19,6 +18,7 @@ import com.grack.nanojson.JsonParserException
 import org.schabi.newpipe.brave.NewVersionHelper
 import org.schabi.newpipe.extractor.downloader.Response
 import org.schabi.newpipe.extractor.exceptions.ReCaptchaException
+import org.schabi.newpipe.util.PendingIntentCompat
 import org.schabi.newpipe.util.ReleaseVersionUtil.coerceUpdateCheckExpiry
 import org.schabi.newpipe.util.ReleaseVersionUtil.isLastUpdateCheckExpired
 import org.schabi.newpipe.util.ReleaseVersionUtil.isReleaseApk
@@ -50,7 +50,7 @@ class NewVersionWorker(
         // A pending intent to open the apk location url in the browser.
         val intent = Intent(Intent.ACTION_VIEW, apkLocationUrl?.toUri())
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        val pendingIntent = PendingIntent.getActivity(app, 0, intent, 0)
+        val pendingIntent = PendingIntentCompat.getActivity(app, 0, intent, 0)
         val channelId = app.getString(R.string.app_update_notification_channel_id)
         val notificationBuilder = NotificationCompat.Builder(app, channelId)
             .setSmallIcon(R.drawable.ic_newpipe_update)
