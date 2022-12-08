@@ -61,7 +61,6 @@ import org.schabi.newpipe.fragments.list.BaseListFragment;
 import org.schabi.newpipe.fragments.list.search.filter.BaseSearchFilterDialogFragment;
 import org.schabi.newpipe.fragments.list.search.filter.SearchFilterDialogFragment;
 import org.schabi.newpipe.fragments.list.search.filter.SearchFilterLogic;
-import org.schabi.newpipe.fragments.list.search.filter.SearchFilterOptionMenuAlikeDialogFragment;
 import org.schabi.newpipe.ktx.AnimationType;
 import org.schabi.newpipe.ktx.ExceptionUtils;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
@@ -1082,20 +1081,9 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
 
     private void showSelectFiltersDialog() {
         final FragmentManager fragmentManager = getParentFragmentManager();
-        final DialogFragment searchFilterUiDialog;
-
-        final String searchUi = PreferenceManager.getDefaultSharedPreferences(App.getApp())
-                .getString(getString(R.string.search_filter_ui_key),
-                        getString(R.string.search_filter_ui_value));
-        if (getString(R.string.search_filter_ui_dialog_key).equals(searchUi)) {
-            searchFilterUiDialog =
-                    SearchFilterDialogFragment.newInstance(
-                            serviceId, userSelectedContentFilterList, userSelectedSortFilterList);
-        } else {
-            searchFilterUiDialog =
-                    SearchFilterOptionMenuAlikeDialogFragment.newInstance(
-                            serviceId, userSelectedContentFilterList, userSelectedSortFilterList);
-        }
+        final DialogFragment searchFilterUiDialog =
+                SearchFilterDialogFragment.newInstance(
+                        serviceId, userSelectedContentFilterList, userSelectedSortFilterList);
 
         searchFilterUiDialog.setTargetFragment(SearchFragment.this, 300);
         searchFilterUiDialog.show(fragmentManager, "fragment_search");
