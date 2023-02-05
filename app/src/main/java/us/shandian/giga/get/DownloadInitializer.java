@@ -12,10 +12,12 @@ import java.io.InterruptedIOException;
 import java.net.HttpURLConnection;
 import java.nio.channels.ClosedByInterruptException;
 
+import androidx.annotation.Nullable;
 import us.shandian.giga.util.Utility;
 
 import static org.schabi.newpipe.BuildConfig.DEBUG;
 import static us.shandian.giga.get.DownloadMission.ERROR_HTTP_FORBIDDEN;
+import static us.shandian.giga.get.DownloadMission.ERROR_HTTP_METHOD_NOT_ALLOWED;
 
 public class DownloadInitializer extends Thread {
     private final static String TAG = "DownloadInitializer";
@@ -33,7 +35,9 @@ public class DownloadInitializer extends Thread {
 
     private void dispose() {
         try {
-            mConn.getInputStream().close();
+            if (mConn != null) {
+                mConn.getInputStream().close();
+            }
         } catch (Exception e) {
             // nothing to do
         }
@@ -45,6 +49,7 @@ public class DownloadInitializer extends Thread {
 
         int retryCount = 0;
         int httpCode = 204;
+        boolean headRequest = true;
 
         while (true) {
             try {
@@ -54,9 +59,7 @@ public class DownloadInitializer extends Thread {
                     long lowestSize = Long.MAX_VALUE;
 
                     for (int i = 0; i < mMission.urls.length && mMission.running; i++) {
-                        mConn = mMission.openConnection(mMission.urls[i], true, -1, -1);
-                        mMission.establishConnection(mId, mConn);
-                        dispose();
+                        headRequest = httpSession(mMission.urls[i], headRequest, -1, -1);
 
                         if (Thread.interrupted()) return;
                         long length = Utility.getContentLength(mConn);
@@ -84,9 +87,7 @@ public class DownloadInitializer extends Thread {
                     }
                 } else {
                     // ask for the current resource length
-                    mConn = mMission.openConnection(true, -1, -1);
-                    mMission.establishConnection(mId, mConn);
-                    dispose();
+                    headRequest = httpSession(null, headRequest, -1, -1);
 
                     if (!mMission.running || Thread.interrupted()) return;
 
@@ -110,9 +111,7 @@ public class DownloadInitializer extends Thread {
                     }
                 } else {
                     // Open again
-                    mConn = mMission.openConnection(true, mMission.length - 10, mMission.length);
-                    mMission.establishConnection(mId, mConn);
-                    dispose();
+                    headRequest = httpSession(null, headRequest, mMission.length - 10, mMission.length);
 
                     if (!mMission.running || Thread.interrupted()) return;
 
@@ -203,6 +202,41 @@ public class DownloadInitializer extends Thread {
     @Override
     public void interrupt() {
         super.interrupt();
-        if (mConn != null) dispose();
+        dispose();
+    }
+
+    // the url parameter can be null if method was called the first time with an url
+    private void openEstablishAndCloseConnectionAfterwards(
+            @Nullable final String url, final boolean headRequest,
+            final long rangeStart, final long rangeEnd)
+            throws IOException, DownloadMission.HttpError {
+        if (url != null) {
+            mConn = mMission.openConnection(url, headRequest, rangeStart, rangeEnd);
+        } else {
+            mConn = mMission.openConnection(headRequest, rangeStart, rangeEnd);
+        }
+        mMission.establishConnection(mId, mConn);
+        dispose();
+    }
+
+    // connect ot http server and disconnect afterwards
+    private boolean httpSession(
+            @Nullable final String url, final boolean headRequest,
+            final long rangeStart, final long rangeEnd)
+            throws IOException, DownloadMission.HttpError {
+        boolean hasHeadMethod = headRequest;
+        try {
+            openEstablishAndCloseConnectionAfterwards(url, hasHeadMethod, rangeStart, rangeEnd);
+        } catch (final Exception e) {
+            if (e instanceof DownloadMission.HttpError
+                    && ((DownloadMission.HttpError) e).statusCode == ERROR_HTTP_METHOD_NOT_ALLOWED) {
+                // fallback to GET as HEAD request method is probably not allowed
+                // available for this service.
+                // -> Rumble is known for not supporting HEAD anymore (discovered 20230203)
+                hasHeadMethod = false;
+                openEstablishAndCloseConnectionAfterwards(url, hasHeadMethod, rangeStart, rangeEnd);
+            }
+        }
+        return hasHeadMethod;
     }
 }
