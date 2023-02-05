@@ -69,10 +69,10 @@ android {
         // the amount of trailing zeros depends on the amount of digits the
         // defaultConfig.versionCode has -> we just prepend our increasing
         // versionCode before those zeros.
-        def braveVersionCode = 14000
+        def braveVersionCode = 15000
         // -> our versionName will be added as suffix to defaultConfig.versionName
         // We use major.minor.patch
-        def braveVersionName = "2.0.1"
+        def braveVersionName = "2.0.2"
 
         brave {
             dimension 'default'
@@ -217,7 +217,7 @@ dependencies {
     // name and the commit hash with the commit hash of the (pushed) commit you want to test
     // This works thanks to JitPack: https://jitpack.io/
     implementation 'com.github.TeamNewPipe:nanojson:1d9e1aea9049fc9f85e68b43ba39fe7be1c1f751'
-    implementation 'com.github.bravenewpipe:NewPipeExtractor:d6ad581d10'
+    implementation 'com.github.TeamNewPipe:NewPipeExtractor:2211a24b6934a8a8cdf5547ea1b52daa4cb5de6c'
     implementation 'com.github.TeamNewPipe:NoNonsense-FilePicker:5.0.0'
 
 /** Checkstyle **/
@@ -348,7 +348,7 @@ static String getGitWorkingBranch() {
 configurations.all {
     exclude group: 'com.github.TeamNewPipe', module: 'NewPipeExtractor'
 
-    project.getDependencies().implementation("com.github.bravenewpipe:NewPipeExtractor:d214df7ef")
+    project.getDependencies().implementation("com.github.bravenewpipe:NewPipeExtractor:b6b2b759e")
 }
 
 // replace NewPipe with BraveNewPipe in all strings.xml
