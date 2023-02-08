@@ -19,6 +19,7 @@ APK_FILE=$2
 BNP_R_MGR_REPO="bnp-r-mgr"
 GITHUB_LOGIN="bravenewpipe"
 RELEASE_BODY="Apk available at bravenewpipe/NewPipe@${TAG}](https://github.com/bravenewpipe/NewPipe/releases/tag/${TAG})."
+GIT_BRANCH="master"
 
 PRERELEASE="false"
 if [[ "$TAG" == "latest" ]]; then
@@ -59,7 +60,7 @@ create_tagged_release() {
   # Add all the changed files and push the changes upstream
   git add -f .
   git commit -m "${COMMIT_MSG}" || true
-  git push -f origin master:master
+  git push -f origin ${GIT_BRANCH}:${GIT_BRANCH}
   git tag $TAG
   git push origin $TAG
 
@@ -94,7 +95,7 @@ JSON_FILE=/tmp/${BNP_R_MGR_REPO}/api/data.json
 
 # checkout json release file repo
 rm -rf "/tmp/${BNP_R_MGR_REPO}"
-git clone "https://bravenewpipe:${GITHUB_SUPER_TOKEN}@github.com/bravenewpipe/${BNP_R_MGR_REPO}.git" /tmp/${BNP_R_MGR_REPO}
+git clone --branch "${GIT_BRANCH}" "https://bravenewpipe:${GITHUB_SUPER_TOKEN}@github.com/bravenewpipe/${BNP_R_MGR_REPO}.git" /tmp/${BNP_R_MGR_REPO}
 # update version{code,name} and download url
 cat $JSON_FILE \
     | jq '.flavors.github.stable.version_code = '${VERSION_CODE}'' \
