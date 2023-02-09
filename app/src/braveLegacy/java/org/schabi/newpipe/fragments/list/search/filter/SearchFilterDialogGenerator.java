@@ -3,6 +3,7 @@
 package org.schabi.newpipe.fragments.list.search.filter;
 
 import android.content.Context;
+import android.os.Build;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -276,7 +277,11 @@ public class SearchFilterDialogGenerator extends BaseSearchFilterUiDialogGenerat
         setDefaultMargin(layoutParams);
 
         if (doColumnSpan) {
-            layoutParams.columnSpec = GridLayout.spec(0, 2, 1.0f);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                layoutParams.columnSpec = GridLayout.spec(0, 2, 1.0f);
+            } else {
+                layoutParams.columnSpec = GridLayout.spec(0, 2, GridLayout.FILL);
+            }
         }
 
         return layoutParams;
