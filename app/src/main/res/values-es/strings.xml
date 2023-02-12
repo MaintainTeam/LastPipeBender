@@ -692,7 +692,7 @@
     <string name="show_error_snackbar">Mostrar una barra de error</string>
     <string name="no_appropriate_file_manager_message">No se ha encontrado un gestor de archivos apropiado para esta acción.
 \nPor favor, instale un gestor de archivos o intente desactivar \'%s\' en los ajustes de la descarga</string>
-    <string name="no_appropriate_file_manager_message_android_10">No se encontró ningún administrador de archivos apropiado para esta acción. 
+    <string name="no_appropriate_file_manager_message_android_10">No se encontró ningún administrador de archivos apropiado para esta acción.
 \n Instale un administrador de archivos compatible con Storage Access Framework</string>
     <string name="detail_pinned_comment_view_description">Comentario fijado</string>
     <string name="leak_canary_not_available">LeakCanary no está disponible</string>
@@ -702,6 +702,24 @@
     <string name="streams_notification_channel_name">Nuevos streams</string>
     <string name="settings_category_player_notification_title">Notificación del reproductor</string>
     <string name="settings_category_player_notification_summary">Configurar notificación de la reproducción en curso</string>
+    <string name="settings_category_sponsor_block_title">SponsorBlock (Beta, Servicio de Terceros)</string>
+    <string name="settings_category_sponsor_block_categories_title">Categorías de SponsorBlock</string>
+    <string name="settings_category_sponsor_block_categories_summary">Personaliza qué segmentos de video saltar, junto con sus marcas de color en la barra de búsqueda.</string>
+    <string name="settings_category_sponsor_block_categories_reset_colors_title">Restablecer Colores</string>
+    <string name="settings_category_sponsor_block_category_enable_title">Activar</string>
+    <string name="settings_category_sponsor_block_category_color">Color en la Barra de Búsqueda</string>
+    <string name="settings_category_sponsor_block_category_sponsor_title">Sponsor</string>
+    <string name="settings_category_sponsor_block_category_sponsor_summary">Promoción pagada, recomendaciones pagadas y anuncios directos. No para promoción propia o anuncios gratuitos a causas/creadores/sitios web/productos que les gusten.</string>
+    <string name="settings_category_sponsor_block_category_intro_title">Intermisión/Animación de Introducción</string>
+    <string name="settings_category_sponsor_block_category_intro_summary">Un intervalo sin contenido real. Podría ser una pausa, un cuadro estático, una animación repetida. Esto no debe ser usado para transiciones que contengan información ni utilizarse en videos musicales.</string>
+    <string name="settings_category_sponsor_block_category_outro_title">Tarjetas/Créditos</string>
+    <string name="settings_category_sponsor_block_category_outro_summary">Créditos o cuando aparecen las tarjetas finales de YouTube. No para conclusiones habladas. Esto no debe contener contenido útil. Esto no debe ser usado en videos musicales.</string>
+    <string name="settings_category_sponsor_block_category_interaction_title">Recordatorios de Interacción (Suscribir)</string>
+    <string name="settings_category_sponsor_block_category_interaction_summary">Cuando hay un breve recordatorio para dar like, suscribirse o seguirlos en medio del contenido. Si es largo o sobre algo específico, debería estar bajo autopromoción en su lugar.</string>
+    <string name="settings_category_sponsor_block_category_self_promo_title">Promoción Propia/No Remunerada</string>
+    <string name="settings_category_sponsor_block_category_self_promo_summary">Similar a "sponsor", excepto que para la promoción propia o no remunerada. Esto incluye secciones sobre mercancía, donaciones o información sobre con quiénes colaboraron.</string>
+    <string name="settings_category_sponsor_block_category_non_music_title">Música: Sección sin musica</string>
+    <string name="settings_category_sponsor_block_category_non_music_summary">Sólo para el uso en vídeos musicales. Esto incluye introducciones u outros en videos musicales.</string>
     <string name="you_successfully_subscribed">Ahora te has suscrito a este canal</string>
     <string name="any_network">Cualquier red</string>
     <string name="enumeration_comma">,</string>
@@ -748,4 +766,50 @@
     <string name="card">Tarjeta</string>
     <string name="playlist_add_stream_success_duplicate">Duplicado añadido %d vez/veces</string>
     <string name="duplicate_in_playlist">Las listas de reproducción que están en gris ya contienen este elemento.</string>
+    <!-- SponsorBlock -->
+    <string name="sponsor_block">SponsorBlock</string>
+    <string name="sponsor_block_home_page_title">Ver Sitio Web</string>
+    <string name="sponsor_block_home_page_summary">Ver sitio web oficial de SponsorBlock.</string>
+    <string name="sponsor_block_enable_title">Saltar Sponsors</string>
+    <string name="sponsor_block_enable_summary">Usar la API de SponsorBlock para automáticamente saltar los sponsors en los videos. Actualmente esto solo funciona para los videos de YouTube.</string>
+    <string name="sponsor_block_api_url_title">URL de la API</string>
+    <string name="sponsor_block_api_url_summary">La URL a usar al consultar la API de SponsorBlock. Esta debe estar establecida para que SponsorBlock funcione.</string>
+    <string name="sponsor_block_notifications_title">Notificar cuando se saltan los sponsors</string>
+    <string name="sponsor_block_notifications_summary">Mostrar un aviso cuando se salta un sponsor automáticamente.</string>
+    <string name="sponsor_block_privacy_title">Ver Política de Privacidad</string>
+    <string name="sponsor_block_privacy_summary">Ver la política de privacidad de SponsorBlock</string>
+    <string name="sponsor_block_api_url_help_text">Esta es la URL que se consultará cuando la aplicación necesite saber qué partes de un vídeo debe omitir.\n\nPuedes establecer la URL oficial haciendo clic en la opción "Usar oficial" que aparece a continuación, aunque es muy recomendable que veas la política de privacidad de SponsorBlock antes de hacerlo.</string>
+    <string name="sponsor_block_privacy_policy_text">Política de Privacidad de SponsorBlock</string>
+    <string name="sponsor_block_homepage_url">https://sponsor.ajay.app/</string>
+    <string name="sponsor_block_default_api_url">https://sponsor.ajay.app/api/</string>
+    <string name="sponsor_block_privacy_policy_url">https://gist.github.com/ajayyy/aa9f8ded2b573d4f73a3ffa0ef74f796</string>
+    <string name="sponsor_block_skip_sponsor_toast">Sponsor Omitido</string>
+    <string name="sponsor_block_skip_intro_toast">Intermisión/Introducción Omitida</string>
+    <string name="sponsor_block_skip_outro_toast">Tarjetas/Créditos Omitidos</string>
+    <string name="sponsor_block_skip_interaction_toast">Recordatorio de Interacción Omitido</string>
+    <string name="sponsor_block_skip_self_promo_toast">Promoción Propia/No Remunerada Omitida</string>
+    <string name="sponsor_block_skip_non_music_toast">Sin Música Omitido</string>
+    <string name="sponsor_block_toggle_skipping">Alternar omisión de sponsors</string>
+    <string name="sponsor_block_clear_whitelist_title">Borrar la Lista Blanca</string>
+    <string name="sponsor_block_clear_whitelist_summary">Borrar la lista de canales que SponsorBlock ignorará.</string>
+    <string name="sponsor_block_enabled_toast">SponsorBlock activado</string>
+    <string name="sponsor_block_disabled_toast">SponsorBlock desactivado</string>
+    <string name="sponsor_block_whitelist_cleared_toast">Lista blanca borrada</string>
+    <string name="sponsor_block_uploader_added_to_whitelist_toast">Canal añadido a la lista blanca</string>
+    <string name="sponsor_block_uploader_removed_from_whitelist_toast">Canal retirado de la lista blanca</string>
+    <string name="sponsor_block_confirm_clear_whitelist">¿Estás seguro/a de que quieres borrar la lista blanca?</string>
+    <string name="sponsor_block_confirm_reset_colors">¿Estás seguro/a de que quieres restablecer los colores de las categorías?</string>
+    <string name="sponsor_block_reset_colors_toast">Colores restablecidos.</string>
+    <!-- Extras -->
+    <string name="extras">Extras</string>
+    <string name="extras_todo_summary">Los retoques, arreglos y otros ajustes misceláneos pertenecen aquí.</string>
+    <string name="experimental_settings">Ajustes Experimentales</string>
+    <string name="enable_local_player_title">Activar Reproductor Local (alfa)</string>
+    <string name="enable_local_player_summary">Utilizar un reproductor integrado para la reproducción local. Esto todavía está en desarrollo temprano, así que probablemente habrá muchos problemas, incluyendo conflictos con el reproductor existente.</string>
+    <string name="force_auto_fullscreen_title">Forzar Pantalla Completa Automática</string>
+    <string name="force_auto_fullscreen_summary">Si se activa, cuando el dispositivo está en modo horizontal, fuerza el modo de pantalla completa, incluso si el dispositivo es una tableta o un televisor.</string>
+    <string name="disable_error_reports_title">Desactivar el Informe de Errores</string>
+    <string name="disable_error_reports_summary">Evitar que aparezcan todas las pantallas de informe de errores. Esto puede hacer que la aplicación se comporte de forma inesperada. <b>¡UTILÍCELO BAJO SU PROPIO RIESGO!</b></string>
+    <string name="enable_return_youtube_dislike_title">Mostrar Conteo de No Me Gusta</string>
+    <string name="enable_return_youtube_dislike_summary">Utilizar el API de ReturnYouTubeDislike API para mostrar la cantidad de no me gusta de un video. Esto solo funciona con videos de YouTube.\n<b>ADVERTENCIA: Su dirección IP será visible para la API. Utilícelo bajo su propio riesgo.</b></string>
 </resources>

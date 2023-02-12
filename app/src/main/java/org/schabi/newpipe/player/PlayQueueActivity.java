@@ -5,8 +5,10 @@ import static org.schabi.newpipe.player.helper.PlayerHelper.formatSpeed;
 import static org.schabi.newpipe.util.Localization.assureCorrectAppLanguage;
 
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.Settings;
@@ -19,6 +21,7 @@ import android.widget.SeekBar;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -43,6 +46,8 @@ import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.PermissionHelper;
 import org.schabi.newpipe.util.ServiceHelper;
 import org.schabi.newpipe.util.ThemeHelper;
+
+import static org.schabi.newpipe.util.SponsorBlockUtils.markSegments;
 
 public final class PlayQueueActivity extends AppCompatActivity
         implements PlayerEventListener, SeekBar.OnSeekBarChangeListener,
@@ -214,6 +219,12 @@ public final class PlayQueueActivity extends AppCompatActivity
                     onQueueUpdate(player.getPlayQueue());
                     buildComponents();
                     if (player != null) {
+                        final PlayQueueItem item = player.getPlayQueue().getItem();
+                        final Context context = getApplicationContext();
+                        final SharedPreferences prefs =
+                                PreferenceManager.getDefaultSharedPreferences(context);
+                        markSegments(item, queueControlBinding.seekBar, context, prefs);
+
                         player.setActivityListener(PlayQueueActivity.this);
                     }
                 }

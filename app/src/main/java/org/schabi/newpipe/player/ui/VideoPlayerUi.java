@@ -15,6 +15,7 @@ import static org.schabi.newpipe.player.helper.PlayerHelper.formatSpeed;
 import static org.schabi.newpipe.player.helper.PlayerHelper.getTimeString;
 import static org.schabi.newpipe.player.helper.PlayerHelper.nextResizeModeAndSaveToPrefs;
 import static org.schabi.newpipe.player.helper.PlayerHelper.retrieveSeekDurationFromPreferences;
+import static org.schabi.newpipe.util.SponsorBlockUtils.markSegments;
 
 import android.content.Intent;
 import android.content.res.Resources;
@@ -33,9 +34,11 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -79,13 +82,16 @@ import org.schabi.newpipe.player.seekbarpreview.SeekbarPreviewThumbnailHelper;
 import org.schabi.newpipe.player.seekbarpreview.SeekbarPreviewThumbnailHolder;
 import org.schabi.newpipe.util.DeviceUtils;
 import org.schabi.newpipe.util.NavigationHelper;
+import org.schabi.newpipe.util.SponsorBlockMode;
 import org.schabi.newpipe.util.external_communication.KoreUtils;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
 import org.schabi.newpipe.views.player.PlayerFastSeekOverlay;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBarChangeListener,
@@ -138,7 +144,6 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
     @NonNull
     private final SeekbarPreviewThumbnailHolder seekbarPreviewThumbnailHolder =
             new SeekbarPreviewThumbnailHolder();
-
 
     /*//////////////////////////////////////////////////////////////////////////
     // Constructor, setup, destroy
@@ -234,6 +239,11 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
                         .setPackage(App.PACKAGE_NAME))
         ));
         binding.switchMute.setOnClickListener(makeOnClickListener(player::toggleMute));
+
+        binding.switchSponsorBlocking.setOnClickListener(
+                makeOnClickListener(this::onBlockingSponsorsButtonClicked));
+        binding.switchSponsorBlocking.setOnLongClickListener(
+                makeOnLongClickListener(this::onBlockingSponsorsButtonLongClicked));
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.itemsListPanel, (view, windowInsets) -> {
             final Insets cutout = windowInsets.getInsets(WindowInsetsCompat.Type.displayCutout());
@@ -408,6 +418,13 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
     protected void setupElementsVisibility() {
         setMuteButton(player.isMuted());
         animateRotation(binding.moreOptionsButton, DEFAULT_CONTROLS_DURATION, 0);
+
+        final boolean isSponsorBlockEnabled = player.getPrefs().getBoolean(
+                context.getString(R.string.sponsor_block_enable_key), false);
+        binding.switchSponsorBlocking.setVisibility(
+                isSponsorBlockEnabled ? View.VISIBLE : View.GONE);
+
+        setBlockSponsorsButton(binding.switchSponsorBlocking);
     }
 
     protected abstract void setupElementsSize(Resources resources);
@@ -756,6 +773,7 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
         super.onPrepared();
         setVideoDurationToControls((int) player.getExoPlayer().getDuration());
         binding.playbackSpeed.setText(formatSpeed(player.getPlaybackSpeed()));
+        markSegments(player.getCurrentItem(), binding.playbackSeekBar, context, player.getPrefs());
     }
 
     @Override
@@ -979,6 +997,21 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
         binding.channelTextView.setText(info.getUploaderName());
 
         this.seekbarPreviewThumbnailHolder.resetFrom(player.getContext(), info.getPreviewFrames());
+
+        final boolean isSponsorBlockEnabled = player.getPrefs().getBoolean(
+                context.getString(R.string.sponsor_block_enable_key), false);
+        final Set<String> uploaderWhitelist = player.getPrefs().getStringSet(
+                context.getString(R.string.sponsor_block_whitelist_key), null);
+
+        if (uploaderWhitelist != null && uploaderWhitelist.contains(info.getUploaderName())) {
+            player.setSponsorBlockMode(SponsorBlockMode.IGNORE);
+        } else {
+            player.setSponsorBlockMode(isSponsorBlockEnabled
+                    ? SponsorBlockMode.ENABLED
+                    : SponsorBlockMode.DISABLED);
+        }
+
+        setBlockSponsorsButton(binding.switchSponsorBlocking);
     }
 
     private void updateStreamRelatedViews() {
@@ -1356,6 +1389,37 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
         };
     }
 
+    protected View.OnLongClickListener makeOnLongClickListener(@NonNull final Runnable runnable) {
+        return v -> {
+            if (DEBUG) {
+                Log.d(TAG, "onLongClick() called with: v = [" + v + "]");
+            }
+
+            runnable.run();
+
+            // Manages the player controls after handling the view click.
+            if (player.getCurrentState() == STATE_COMPLETED) {
+                return true;
+            }
+            controlsVisibilityHandler.removeCallbacksAndMessages(null);
+            showHideShadow(true, DEFAULT_CONTROLS_DURATION);
+            animate(binding.playbackControlRoot, true, DEFAULT_CONTROLS_DURATION,
+                    AnimationType.ALPHA, 0, () -> {
+                        if (player.getCurrentState() == STATE_PLAYING && !isSomePopupMenuVisible) {
+                            if (v == binding.playPauseButton
+                                    // Hide controls in fullscreen immediately
+                                    || (v == binding.screenRotationButton && isFullscreen())) {
+                                hideControls(0, 0);
+                            } else {
+                                hideControls(DEFAULT_CONTROLS_DURATION, DEFAULT_CONTROLS_HIDE_TIME);
+                            }
+                        }
+                    });
+
+            return true;
+        };
+    }
+
     public boolean onKeyDown(final int keyCode) {
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
@@ -1459,6 +1523,96 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
     }
     //endregion
 
+    /*//////////////////////////////////////////////////////////////////////////
+    // SponsorBlock
+    //////////////////////////////////////////////////////////////////////////*/
+    //region
+
+    public void onBlockingSponsorsButtonClicked() {
+        if (DEBUG) {
+            Log.d(TAG, "onBlockingSponsorsButtonClicked() called");
+        }
+
+        switch (player.getSponsorBlockMode()) {
+            case DISABLED:
+                player.setSponsorBlockMode(SponsorBlockMode.ENABLED);
+                break;
+            case ENABLED:
+                player.setSponsorBlockMode(SponsorBlockMode.DISABLED);
+                break;
+            case IGNORE:
+                // ignored
+        }
+
+        setBlockSponsorsButton(binding.switchSponsorBlocking);
+    }
+
+    public void onBlockingSponsorsButtonLongClicked() {
+        if (DEBUG) {
+            Log.d(TAG, "onBlockingSponsorsButtonLongClicked() called");
+        }
+
+        final MediaItemTag metaData = player.getCurrentMetadata();
+
+        if (metaData == null) {
+            return;
+        }
+
+        final Set<String> uploaderWhitelist = new HashSet<>(player.getPrefs().getStringSet(
+                context.getString(R.string.sponsor_block_whitelist_key),
+                new HashSet<>()));
+
+        final String toastText;
+
+        final String uploaderName = metaData.getUploaderName();
+
+        if (player.getSponsorBlockMode() == SponsorBlockMode.IGNORE) {
+            uploaderWhitelist.remove(uploaderName);
+            player.setSponsorBlockMode(SponsorBlockMode.ENABLED);
+            toastText = context
+                    .getString(R.string.sponsor_block_uploader_removed_from_whitelist_toast);
+        } else {
+            uploaderWhitelist.add(uploaderName);
+            player.setSponsorBlockMode(SponsorBlockMode.IGNORE);
+            toastText = context
+                    .getString(R.string.sponsor_block_uploader_added_to_whitelist_toast);
+        }
+
+        player.getPrefs()
+                .edit()
+                .putStringSet(
+                        context.getString(R.string.sponsor_block_whitelist_key),
+                        new HashSet<>(uploaderWhitelist))
+                .apply();
+
+        setBlockSponsorsButton(binding.switchSponsorBlocking);
+        Toast.makeText(context, toastText, Toast.LENGTH_LONG).show();
+    }
+
+    protected void setBlockSponsorsButton(final ImageButton button) {
+        if (button == null) {
+            return;
+        }
+
+        final int resId;
+
+        switch (player.getSponsorBlockMode()) {
+            case DISABLED:
+                resId = R.drawable.ic_sponsor_block_disable;
+                break;
+            case ENABLED:
+                resId = R.drawable.ic_sponsor_block_enable;
+                break;
+            case IGNORE:
+                resId = R.drawable.ic_sponsor_block_exclude;
+                break;
+            default:
+                return;
+        }
+
+        button.setImageDrawable(AppCompatResources.getDrawable(player.getService(), resId));
+    }
+    //endregion
 
     /*//////////////////////////////////////////////////////////////////////////
     // SurfaceHolderCallback helpers

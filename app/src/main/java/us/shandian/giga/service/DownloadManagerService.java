@@ -37,6 +37,9 @@ import androidx.core.app.ServiceCompat;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
+import com.grack.nanojson.JsonStringWriter;
+import com.grack.nanojson.JsonWriter;
+
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.download.DownloadActivity;
 import org.schabi.newpipe.player.helper.LockManager;
@@ -44,6 +47,7 @@ import org.schabi.newpipe.streams.io.StoredDirectoryHelper;
 import org.schabi.newpipe.streams.io.StoredFileHelper;
 import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.PendingIntentCompat;
+import org.schabi.newpipe.util.VideoSegment;
 
 import java.io.File;
 import java.io.IOException;
@@ -79,6 +83,7 @@ public class DownloadManagerService extends Service {
     private static final String EXTRA_PARENT_PATH = "DownloadManagerService.extra.storageParentPath";
     private static final String EXTRA_STORAGE_TAG = "DownloadManagerService.extra.storageTag";
     private static final String EXTRA_RECOVERY_INFO = "DownloadManagerService.extra.recoveryInfo";
+    private static final String EXTRA_SEGMENTS = "DownloadManagerService.extra.segments";
 
     private static final String ACTION_RESET_DOWNLOAD_FINISHED = APPLICATION_ID + ".reset_download_finished";
     private static final String ACTION_OPEN_DOWNLOADS_FINISHED = APPLICATION_ID + ".open_downloads_finished";
@@ -359,7 +364,8 @@ public class DownloadManagerService extends Service {
      */
     public static void startMission(Context context, String[] urls, StoredFileHelper storage,
                                     char kind, int threads, String source, String psName,
-                                    String[] psArgs, long nearLength, MissionRecoveryInfo[] recoveryInfo) {
+                                    String[] psArgs, long nearLength, MissionRecoveryInfo[] recoveryInfo,
+                                    VideoSegment[] segments) {
         Intent intent = new Intent(context, DownloadManagerService.class);
         intent.setAction(Intent.ACTION_RUN);
         intent.putExtra(EXTRA_URLS, urls);
@@ -374,6 +380,7 @@ public class DownloadManagerService extends Service {
         intent.putExtra(EXTRA_PARENT_PATH, storage.getParentUri());
         intent.putExtra(EXTRA_PATH, storage.getUri());
         intent.putExtra(EXTRA_STORAGE_TAG, storage.getTag());
+        intent.putExtra(EXTRA_SEGMENTS, segments);
 
         context.startService(intent);
     }
@@ -390,6 +397,7 @@ public class DownloadManagerService extends Service {
         long nearLength = intent.getLongExtra(EXTRA_NEAR_LENGTH, 0);
         String tag = intent.getStringExtra(EXTRA_STORAGE_TAG);
         Parcelable[] parcelRecovery = intent.getParcelableArrayExtra(EXTRA_RECOVERY_INFO);
+        VideoSegment[] segments = (VideoSegment[]) intent.getSerializableExtra(EXTRA_SEGMENTS);
 
         StoredFileHelper storage;
         try {
@@ -413,6 +421,25 @@ public class DownloadManagerService extends Service {
         mission.source = source;
         mission.nearLength = nearLength;
         mission.recoveryInfo = recovery;
+
+        if (segments != null && segments.length > 0) {
+            try {
+                final JsonStringWriter writer = JsonWriter.string()
+                        .object()
+                        .array("segments");
+                for (final VideoSegment segment : segments) {
+                    writer.object()
+                            .value("start", segment.startTime)
+                            .value("end", segment.endTime)
+                            .value("category", segment.category)
+                            .end();
+                }
+                writer.end().end();
+                mission.segmentsJson = writer.done();
+            } catch (final Exception e) {
+                e.printStackTrace();
+            }
+        }
 
         if (ps != null)
             ps.setTemporalDir(DownloadManager.pickAvailableTemporalDir(this));

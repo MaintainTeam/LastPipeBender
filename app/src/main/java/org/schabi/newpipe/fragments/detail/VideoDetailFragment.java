@@ -107,15 +107,18 @@ import org.schabi.newpipe.player.ui.VideoPlayerUi;
 import org.schabi.newpipe.util.Constants;
 import org.schabi.newpipe.util.DeviceUtils;
 import org.schabi.newpipe.util.ExtractorHelper;
+import org.schabi.newpipe.util.ReturnYouTubeDislikeUtils;
+import org.schabi.newpipe.util.VideoSegment;
+import org.schabi.newpipe.util.external_communication.KoreUtils;
 import org.schabi.newpipe.util.ListHelper;
 import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.PermissionHelper;
 import org.schabi.newpipe.util.PicassoHelper;
 import org.schabi.newpipe.util.StreamTypeUtil;
-import org.schabi.newpipe.util.ThemeHelper;
-import org.schabi.newpipe.util.external_communication.KoreUtils;
+import org.schabi.newpipe.util.SponsorBlockUtils;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
+import org.schabi.newpipe.util.ThemeHelper;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -128,6 +131,7 @@ import java.util.function.Consumer;
 
 import icepick.State;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -208,6 +212,8 @@ public final class VideoDetailFragment
     private final CompositeDisposable disposables = new CompositeDisposable();
     @Nullable
     private Disposable positionSubscriber = null;
+    @Nullable
+    private Disposable videoSegmentsSubscriber = null;
 
     private BottomSheetBehavior<FrameLayout> bottomSheetBehavior;
     private BottomSheetBehavior.BottomSheetCallback bottomSheetCallback;
@@ -400,6 +406,9 @@ public final class VideoDetailFragment
 
         if (positionSubscriber != null) {
             positionSubscriber.dispose();
+        }
+        if (videoSegmentsSubscriber != null) {
+            videoSegmentsSubscriber.dispose();
         }
         if (currentWorker != null) {
             currentWorker.dispose();
@@ -1534,6 +1543,19 @@ public final class VideoDetailFragment
 
             binding.detailThumbsDisabledView.setVisibility(View.VISIBLE);
         } else {
+            if (info.getDislikeCount() == -1) {
+                new Thread(() -> {
+                    info.setDislikeCount(ReturnYouTubeDislikeUtils.getDislikes(getContext(), info));
+                    if (info.getDislikeCount() >= 0) {
+                        activity.runOnUiThread(() -> {
+                            binding.detailThumbsDownCountView.setText(Localization
+                                    .shortCount(activity, info.getDislikeCount()));
+                            binding.detailThumbsDownCountView.setVisibility(View.VISIBLE);
+                            binding.detailThumbsDownImgView.setVisibility(View.VISIBLE);
+                        });
+                    }
+                }).start();
+            }
             if (info.getDislikeCount() >= 0) {
                 binding.detailThumbsDownCountView.setText(Localization
                         .shortCount(activity, info.getDislikeCount()));
@@ -1661,13 +1683,32 @@ public final class VideoDetailFragment
             return;
         }
 
-        try {
-            final DownloadDialog downloadDialog = new DownloadDialog(activity, currentInfo);
-            downloadDialog.show(activity.getSupportFragmentManager(), "downloadDialog");
-        } catch (final Exception e) {
-            ErrorUtil.showSnackbar(activity, new ErrorInfo(e, UserAction.DOWNLOAD_OPEN_DIALOG,
-                    "Showing download dialog", currentInfo));
-        }
+        videoSegmentsSubscriber = Single.fromCallable(() -> {
+            VideoSegment[] videoSegments = null;
+
+            try {
+                videoSegments =
+                        SponsorBlockUtils.getYouTubeVideoSegments(getContext(), currentInfo);
+            } catch (final Exception e) {
+                // TODO: handle?
+            }
+
+            return videoSegments == null
+                    ? new VideoSegment[0]
+                    : videoSegments;
+        })
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(videoSegments -> {
+            try {
+                final DownloadDialog downloadDialog = new DownloadDialog(activity, currentInfo);
+                downloadDialog.setVideoSegments(videoSegments);
+                downloadDialog.show(activity.getSupportFragmentManager(), "downloadDialog");
+            } catch (final Exception e) {
+                ErrorUtil.showSnackbar(activity, new ErrorInfo(e, UserAction.DOWNLOAD_OPEN_DIALOG,
+                        "Showing download dialog", currentInfo));
+            }
+        });
     }
 
     /*//////////////////////////////////////////////////////////////////////////

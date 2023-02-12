@@ -71,12 +71,10 @@
             android:exported="false"
             android:label="@string/title_activity_play_queue"
             android:launchMode="singleTask" />
-
         <activity
             android:name=".settings.SettingsActivity"
             android:exported="false"
             android:label="@string/settings" />
-
         <activity
             android:name=".about.AboutActivity"
             android:exported="false"
@@ -98,7 +96,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".ExitActivity"
             android:exported="false"
@@ -445,6 +442,14 @@
             </intent-filter>
 
         </activity>
+
+        <activity
+            android:name=".LocalPlayerActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:foregroundServiceType="mediaPlayback"
+            android:configChanges="orientation|screenSize|layoutDirection" />
+
         <service
             android:name=".RouterActivity$FetcherService"
             android:exported="false" />
