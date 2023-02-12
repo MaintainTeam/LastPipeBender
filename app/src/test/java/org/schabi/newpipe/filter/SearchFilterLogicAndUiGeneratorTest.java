@@ -103,14 +103,14 @@ public class SearchFilterLogicAndUiGeneratorTest {
 
         assertTrue(contentFilterResetResult.contains(PeertubeFilters.ID_CF_MAIN_VIDEOS));
         assertTrue(sortFilterResetResult.contains(PeertubeFilters.ID_SF_SORT_BY_CREATION_DATE));
-        assertFalse(contentFilterResetResult.contains(PeertubeFilters.ID_CF_MAIN_ALL));
+        assertFalse(contentFilterResetResult.contains(PeertubeFilters.ID_CF_MAIN_CHANNELS));
         assertFalse(sortFilterResetResult.contains(PeertubeFilters.ID_SF_SORT_BY_RELEVANCE));
 
         logic.reset(); // now go back to default values
 
         contentFilterResetResult = logic.getSelectedContentFilters();
         sortFilterResetResult = logic.getSelectedSortFilters();
-        assertTrue(contentFilterResetResult.contains(PeertubeFilters.ID_CF_MAIN_ALL));
+        assertTrue(contentFilterResetResult.contains(PeertubeFilters.ID_CF_MAIN_VIDEOS));
         assertTrue(sortFilterResetResult.contains(PeertubeFilters.ID_SF_SORT_BY_RELEVANCE));
 
         // 3. test if empty input data results in defaults
@@ -121,7 +121,7 @@ public class SearchFilterLogicAndUiGeneratorTest {
                 logic.getSelectedContentFilters();
         final ArrayList<Integer> sortFilterResultNoInput =
                 logic.getSelectedSortFilters();
-        assertTrue(contentFilterResultNoInput.contains(PeertubeFilters.ID_CF_MAIN_ALL));
+        assertTrue(contentFilterResultNoInput.contains(PeertubeFilters.ID_CF_MAIN_VIDEOS));
         assertTrue(sortFilterResultNoInput.contains(PeertubeFilters.ID_SF_SORT_BY_RELEVANCE));
 
         // 4. compare 2 and 3 results
@@ -141,7 +141,7 @@ public class SearchFilterLogicAndUiGeneratorTest {
         final ArrayList<Integer> defaultSortFilters =
                 logic.getSelectedSortFilters();
 
-        assertTrue(defaultContentFilters.contains(PeertubeFilters.ID_CF_MAIN_ALL));
+        assertTrue(defaultContentFilters.contains(PeertubeFilters.ID_CF_MAIN_VIDEOS));
         assertTrue(defaultSortFilters.contains(PeertubeFilters.ID_SF_SORT_BY_RELEVANCE));
     }
 
@@ -371,7 +371,7 @@ public class SearchFilterLogicAndUiGeneratorTest {
         // 1st test:
         // default content filter is PeertubeFilters.ID_CF_MAIN_ALL so we expect all sort filters
         // visible. Get the filters from service and compare with universalWrapper map
-        expectSortFiltersToBeVisible(PeertubeFilters.ID_CF_MAIN_ALL);
+        expectSortFiltersToBeVisible(PeertubeFilters.ID_CF_MAIN_VIDEOS);
 
         // 2nd test:
         // content filter with no sort filters aka Ui element should be not visible.
@@ -386,7 +386,7 @@ public class SearchFilterLogicAndUiGeneratorTest {
         // get content filter with all sort filters visible in two ways
         // first way
         final FilterContainer allSortFilters = service.getSearchQHFactory()
-                .getContentFilterSortFilterVariant(PeertubeFilters.ID_CF_MAIN_ALL);
+                .getContentFilterSortFilterVariant(PeertubeFilters.ID_CF_MAIN_VIDEOS);
         // second way
         final Optional<FilterGroup> allSortFilters2 = service.getSearchQHFactory()
                 .getAvailableContentFilter()
