@@ -22,12 +22,10 @@
     <color name="dark_peertube_accent_color">#FFFFFF</color>
 
     <!-- BitChute -->
-    <color name="light_bitchute_primary_color">#ef4038</color>
-    <color name="light_bitchute_dark_color">#b50010</color>
+    <color name="light_bitchute_primary_color">#EC4036</color>
     <color name="light_bitchute_accent_color">#000000</color>
 
-    <color name="dark_bitchute_primary_color">#ef4038</color>
-    <color name="dark_bitchute_dark_color">#b50010</color>
+    <color name="dark_bitchute_primary_color">#972721</color>
     <color name="dark_bitchute_accent_color">#FFFFFF</color>
 
     <!-- Rumble -->
