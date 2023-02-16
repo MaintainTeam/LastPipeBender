@@ -31,12 +31,10 @@
     <color name="dark_bitchute_accent_color">#FFFFFF</color>
 
     <!-- Rumble -->
-    <color name="light_rumble_primary_color">#ef4038</color>
-    <color name="light_rumble_dark_color">#b50010</color>
+    <color name="light_rumble_primary_color">#73CA1D</color>
     <color name="light_rumble_accent_color">#000000</color>
 
-    <color name="dark_rumble_primary_color">#ef4038</color>
-    <color name="dark_rumble_dark_color">#b50010</color>
+    <color name="dark_rumble_primary_color">#36620B</color>
     <color name="dark_rumble_accent_color">#FFFFFF</color>
 
     <!-- media.ccc.de -->
