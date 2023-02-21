@@ -235,6 +235,8 @@ public class DownloadInitializer extends Thread {
                 // -> Rumble is known for not supporting HEAD anymore (discovered 20230203)
                 hasHeadMethod = false;
                 openEstablishAndCloseConnectionAfterwards(url, hasHeadMethod, rangeStart, rangeEnd);
+            } else {
+                throw e;
             }
         }
         return hasHeadMethod;
