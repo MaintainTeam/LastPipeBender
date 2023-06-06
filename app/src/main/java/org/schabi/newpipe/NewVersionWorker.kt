@@ -17,7 +17,6 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import com.grack.nanojson.JsonParser
 import com.grack.nanojson.JsonParserException
-import org.schabi.newpipe.brave.NewVersionHelper
 import org.schabi.newpipe.extractor.downloader.Response
 import org.schabi.newpipe.extractor.exceptions.ReCaptchaException
 import org.schabi.newpipe.util.PendingIntentCompat
@@ -127,10 +126,7 @@ class NewVersionWorker(
 
             val versionName = githubStableObject.getString("version")
             val versionCode = githubStableObject.getInt("version_code")
-            var apkLocationUrl = githubStableObject.getString("apk")
-            apkLocationUrl = NewVersionHelper.getAlternativeUrlOnKitkat(
-                githubStableObject, apkLocationUrl
-            )
+            val apkLocationUrl = githubStableObject.getString("apk")
             compareAppVersionAndShowNotification(versionName, apkLocationUrl, versionCode)
         } catch (e: JsonParserException) {
             // Most likely something is wrong in data received from NEWPIPE_API_URL.
