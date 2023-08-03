@@ -33,6 +33,7 @@ import androidx.annotation.StringRes;
 import androidx.collection.SparseArrayCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationCompat.Builder;
+import androidx.core.app.PendingIntentCompat;
 import androidx.core.app.ServiceCompat;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
@@ -46,7 +47,6 @@ import org.schabi.newpipe.player.helper.LockManager;
 import org.schabi.newpipe.streams.io.StoredDirectoryHelper;
 import org.schabi.newpipe.streams.io.StoredFileHelper;
 import org.schabi.newpipe.util.Localization;
-import org.schabi.newpipe.util.PendingIntentCompat;
 import org.schabi.newpipe.util.VideoSegment;
 
 import java.io.File;
@@ -151,7 +151,7 @@ public class DownloadManagerService extends Service {
 
         mOpenDownloadList = PendingIntentCompat.getActivity(this, 0,
                 openDownloadListIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent.FLAG_UPDATE_CURRENT, false);
 
         icLauncher = BitmapFactory.decodeResource(this.getResources(), R.mipmap.ic_launcher);
 
@@ -514,7 +514,7 @@ public class DownloadManagerService extends Service {
     private PendingIntent makePendingIntent(String action) {
         Intent intent = new Intent(this, DownloadManagerService.class).setAction(action);
         return PendingIntentCompat.getService(this, intent.hashCode(), intent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent.FLAG_UPDATE_CURRENT, false);
     }
 
     private void manageLock(boolean acquire) {

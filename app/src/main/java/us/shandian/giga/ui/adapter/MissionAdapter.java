@@ -565,7 +565,6 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
 
         builder.setNegativeButton(R.string.ok, (dialog, which) -> dialog.cancel())
                 .setTitle(mission.storage.getName())
-                .create()
                 .show();
     }
 

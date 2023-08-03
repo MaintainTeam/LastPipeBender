@@ -15,6 +15,7 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SeekBar;
@@ -30,11 +31,13 @@ import com.google.android.exoplayer2.PlaybackParameters;
 
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.databinding.ActivityPlayerQueueControlBinding;
+import org.schabi.newpipe.extractor.stream.AudioStream;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.fragments.OnScrollBelowItemsListener;
 import org.schabi.newpipe.local.dialog.PlaylistDialog;
 import org.schabi.newpipe.player.event.PlayerEventListener;
 import org.schabi.newpipe.player.helper.PlaybackParameterDialog;
+import org.schabi.newpipe.player.mediaitem.MediaItemTag;
 import org.schabi.newpipe.player.playqueue.PlayQueue;
 import org.schabi.newpipe.player.playqueue.PlayQueueAdapter;
 import org.schabi.newpipe.player.playqueue.PlayQueueItem;
@@ -47,6 +50,9 @@ import org.schabi.newpipe.util.PermissionHelper;
 import org.schabi.newpipe.util.ServiceHelper;
 import org.schabi.newpipe.util.ThemeHelper;
 
+import java.util.List;
+import java.util.Optional;
+
 import static org.schabi.newpipe.util.SponsorBlockUtils.markSegments;
 
 public final class PlayQueueActivity extends AppCompatActivity
@@ -56,6 +62,8 @@ public final class PlayQueueActivity extends AppCompatActivity
     private static final String TAG = PlayQueueActivity.class.getSimpleName();
 
     private static final int SMOOTH_SCROLL_MAXIMUM_DISTANCE = 80;
+
+    private static final int MENU_ID_AUDIO_TRACK = 71;
 
     private Player player;
 
@@ -102,6 +110,7 @@ public final class PlayQueueActivity extends AppCompatActivity
         this.menu = m;
         getMenuInflater().inflate(R.menu.menu_play_queue, m);
         getMenuInflater().inflate(R.menu.menu_play_queue_bg, m);
+        buildAudioTrackMenu();
         onMaybeMuteChanged();
         // to avoid null reference
         if (player != null) {
@@ -158,6 +167,12 @@ public final class PlayQueueActivity extends AppCompatActivity
                 NavigationHelper.playOnBackgroundPlayer(this, player.getPlayQueue(), true);
                 return true;
         }
+
+        if (item.getGroupId() == MENU_ID_AUDIO_TRACK) {
+            onAudioTrackClick(item.getItemId());
+            return true;
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -601,5 +616,70 @@ public final class PlayQueueActivity extends AppCompatActivity
             // using rootView.getContext() because getApplicationContext() didn't work
             item.setIcon(player.isMuted() ? R.drawable.ic_volume_off : R.drawable.ic_volume_up);
         }
+    }
+
+    @Override
+    public void onAudioTrackUpdate() {
+        buildAudioTrackMenu();
+    }
+
+    private void buildAudioTrackMenu() {
+        if (menu == null) {
+            return;
+        }
+
+        final MenuItem audioTrackSelector = menu.findItem(R.id.action_audio_track);
+        final List<AudioStream> availableStreams =
+                Optional.ofNullable(player.getCurrentMetadata())
+                        .flatMap(MediaItemTag::getMaybeAudioTrack)
+                        .map(MediaItemTag.AudioTrack::getAudioStreams)
+                        .orElse(null);
+        final Optional<AudioStream> selectedAudioStream = player.getSelectedAudioStream();
+
+        if (availableStreams == null || availableStreams.size() < 2
+                || selectedAudioStream.isEmpty()) {
+            audioTrackSelector.setVisible(false);
+        } else {
+            final SubMenu audioTrackMenu = audioTrackSelector.getSubMenu();
+            audioTrackMenu.clear();
+
+            for (int i = 0; i < availableStreams.size(); i++) {
+                final AudioStream audioStream = availableStreams.get(i);
+                audioTrackMenu.add(MENU_ID_AUDIO_TRACK, i, Menu.NONE,
+                        Localization.audioTrackName(this, audioStream));
+            }
+
+            final AudioStream s = selectedAudioStream.get();
+            final String trackName = Localization.audioTrackName(this, s);
+            audioTrackSelector.setTitle(
+                    getString(R.string.play_queue_audio_track, trackName));
+
+            final String shortName = s.getAudioLocale() != null
+                    ? s.getAudioLocale().getLanguage() : trackName;
+            audioTrackSelector.setTitleCondensed(
+                    shortName.substring(0, Math.min(shortName.length(), 2)));
+            audioTrackSelector.setVisible(true);
+        }
+    }
+
+    /**
+     * Called when an item from the audio track selector is selected.
+     *
+     * @param itemId index of the selected item
+     */
+    private void onAudioTrackClick(final int itemId) {
+        if (player.getCurrentMetadata() == null) {
+            return;
+        }
+        player.getCurrentMetadata().getMaybeAudioTrack().ifPresent(audioTrack -> {
+            final List<AudioStream> availableStreams = audioTrack.getAudioStreams();
+            final int selectedStreamIndex = audioTrack.getSelectedAudioStreamIndex();
+            if (selectedStreamIndex == itemId || availableStreams.size() <= itemId) {
+                return;
+            }
+
+            final String newAudioTrack = availableStreams.get(itemId).getAudioTrackId();
+            player.setAudioTrack(newAudioTrack);
+        });
     }
 }

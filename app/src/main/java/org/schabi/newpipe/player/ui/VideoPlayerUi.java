@@ -66,6 +66,7 @@ import org.schabi.newpipe.App;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.databinding.PlayerBinding;
 import org.schabi.newpipe.extractor.MediaFormat;
+import org.schabi.newpipe.extractor.stream.AudioStream;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.extractor.stream.VideoStream;
 import org.schabi.newpipe.fragments.detail.VideoDetailFragment;
@@ -81,6 +82,7 @@ import org.schabi.newpipe.player.playqueue.PlayQueueItem;
 import org.schabi.newpipe.player.seekbarpreview.SeekbarPreviewThumbnailHelper;
 import org.schabi.newpipe.player.seekbarpreview.SeekbarPreviewThumbnailHolder;
 import org.schabi.newpipe.util.DeviceUtils;
+import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.SponsorBlockMode;
 import org.schabi.newpipe.util.external_communication.KoreUtils;
@@ -114,7 +116,8 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
 
     protected PlayerBinding binding;
     private final Handler controlsVisibilityHandler = new Handler(Looper.getMainLooper());
-    @Nullable private SurfaceHolderCallback surfaceHolderCallback;
+    @Nullable
+    private SurfaceHolderCallback surfaceHolderCallback;
     boolean surfaceIsSetup = false;
 
 
@@ -123,11 +126,13 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
     //////////////////////////////////////////////////////////////////////////*/
 
     private static final int POPUP_MENU_ID_QUALITY = 69;
+    private static final int POPUP_MENU_ID_AUDIO_TRACK = 70;
     private static final int POPUP_MENU_ID_PLAYBACK_SPEED = 79;
     private static final int POPUP_MENU_ID_CAPTION = 89;
 
     protected boolean isSomePopupMenuVisible = false;
     private PopupMenu qualityPopupMenu;
+    private PopupMenu audioTrackPopupMenu;
     protected PopupMenu playbackSpeedPopupMenu;
     private PopupMenu captionPopupMenu;
 
@@ -151,7 +156,7 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
     //region Constructor, setup, destroy
 
     protected VideoPlayerUi(@NonNull final Player player,
-                         @NonNull final PlayerBinding playerBinding) {
+                            @NonNull final PlayerBinding playerBinding) {
         super(player);
         binding = playerBinding;
         setupFromView();
@@ -178,6 +183,7 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
                 R.style.DarkPopupMenu);
 
         qualityPopupMenu = new PopupMenu(themeWrapper, binding.qualityTextView);
+        audioTrackPopupMenu = new PopupMenu(themeWrapper, binding.audioTrackTextView);
         playbackSpeedPopupMenu = new PopupMenu(context, binding.playbackSpeed);
         captionPopupMenu = new PopupMenu(themeWrapper, binding.captionTextView);
 
@@ -195,6 +201,8 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
 
     protected void initListeners() {
         binding.qualityTextView.setOnClickListener(makeOnClickListener(this::onQualityClicked));
+        binding.audioTrackTextView.setOnClickListener(
+                makeOnClickListener(this::onAudioTracksClicked));
         binding.playbackSpeed.setOnClickListener(makeOnClickListener(this::onPlaybackSpeedClicked));
 
         binding.playbackSeekBar.setOnSeekBarChangeListener(this);
@@ -276,6 +284,7 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
 
     protected void deinitListeners() {
         binding.qualityTextView.setOnClickListener(null);
+        binding.audioTrackTextView.setOnClickListener(null);
         binding.playbackSpeed.setOnClickListener(null);
         binding.playbackSeekBar.setOnSeekBarChangeListener(null);
         binding.captionTextView.setOnClickListener(null);
@@ -436,6 +445,7 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
         binding.topControls.setPaddingRelative(controlsPad, playerTopPad, controlsPad, 0);
         binding.bottomControls.setPaddingRelative(controlsPad, 0, controlsPad, 0);
         binding.qualityTextView.setPadding(buttonsPad, buttonsPad, buttonsPad, buttonsPad);
+        binding.audioTrackTextView.setPadding(buttonsPad, buttonsPad, buttonsPad, buttonsPad);
         binding.playbackSpeed.setPadding(buttonsPad, buttonsPad, buttonsPad, buttonsPad);
         binding.playbackSpeed.setMinimumWidth(buttonsMinWidth);
         binding.captionTextView.setPadding(buttonsPad, buttonsPad, buttonsPad, buttonsPad);
@@ -541,6 +551,7 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
 
     /**
      * Sets the current duration into the corresponding elements.
+     *
      * @param currentProgress the current progress, in milliseconds
      */
     private void updatePlayBackElementsCurrentDuration(final int currentProgress) {
@@ -553,6 +564,7 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
 
     /**
      * Sets the video duration time into all control components (e.g. seekbar).
+     *
      * @param duration the video duration, in milliseconds
      */
     private void setVideoDurationToControls(final int duration) {
@@ -1017,6 +1029,7 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
     private void updateStreamRelatedViews() {
         player.getCurrentStreamInfo().ifPresent(info -> {
             binding.qualityTextView.setVisibility(View.GONE);
+            binding.audioTrackTextView.setVisibility(View.GONE);
             binding.playbackSpeed.setVisibility(View.GONE);
 
             binding.playbackEndTime.setVisibility(View.GONE);
@@ -1052,6 +1065,7 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
                     }
 
                     buildQualityMenu();
+                    buildAudioTrackMenu();
 
                     binding.qualityTextView.setVisibility(View.VISIBLE);
                     binding.surfaceView.setVisibility(View.VISIBLE);
@@ -1098,6 +1112,34 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
 
         player.getSelectedVideoStream()
                 .ifPresent(s -> binding.qualityTextView.setText(s.getResolution()));
+    }
+
+    private void buildAudioTrackMenu() {
+        if (audioTrackPopupMenu == null) {
+            return;
+        }
+        audioTrackPopupMenu.getMenu().removeGroup(POPUP_MENU_ID_AUDIO_TRACK);
+
+        final List<AudioStream> availableStreams = Optional.ofNullable(player.getCurrentMetadata())
+                .flatMap(MediaItemTag::getMaybeAudioTrack)
+                .map(MediaItemTag.AudioTrack::getAudioStreams)
+                .orElse(null);
+        if (availableStreams == null || availableStreams.size() < 2) {
+            return;
+        }
+
+        for (int i = 0; i < availableStreams.size(); i++) {
+            final AudioStream audioStream = availableStreams.get(i);
+            audioTrackPopupMenu.getMenu().add(POPUP_MENU_ID_AUDIO_TRACK, i, Menu.NONE,
+                    Localization.audioTrackName(context, audioStream));
+        }
+
+        player.getSelectedAudioStream()
+                .ifPresent(s -> binding.audioTrackTextView.setText(
+                        Localization.audioTrackName(context, s)));
+        binding.audioTrackTextView.setVisibility(View.VISIBLE);
+        audioTrackPopupMenu.setOnMenuItemClickListener(this);
+        audioTrackPopupMenu.setOnDismissListener(this);
     }
 
     private void buildPlaybackSpeedMenu() {
@@ -1208,6 +1250,11 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
                 .ifPresent(binding.qualityTextView::setText);
     }
 
+    private void onAudioTracksClicked() {
+        audioTrackPopupMenu.show();
+        isSomePopupMenuVisible = true;
+    }
+
     /**
      * Called when an item of the quality selector or the playback speed selector is selected.
      */
@@ -1220,26 +1267,10 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
         }
 
         if (menuItem.getGroupId() == POPUP_MENU_ID_QUALITY) {
-            final int menuItemIndex = menuItem.getItemId();
-            @Nullable final MediaItemTag currentMetadata = player.getCurrentMetadata();
-            if (currentMetadata == null || currentMetadata.getMaybeQuality().isEmpty()) {
-                return true;
-            }
-
-            final MediaItemTag.Quality quality = currentMetadata.getMaybeQuality().get();
-            final List<VideoStream> availableStreams = quality.getSortedVideoStreams();
-            final int selectedStreamIndex = quality.getSelectedVideoStreamIndex();
-            if (selectedStreamIndex == menuItemIndex || availableStreams.size() <= menuItemIndex) {
-                return true;
-            }
-
-            player.saveStreamProgressState(); //TODO added, check if good
-            final String newResolution = availableStreams.get(menuItemIndex).getResolution();
-            player.setRecovery();
-            player.setPlaybackQuality(newResolution);
-            player.reloadPlayQueueManager();
-
-            binding.qualityTextView.setText(menuItem.getTitle());
+            onQualityItemClick(menuItem);
+            return true;
+        } else if (menuItem.getGroupId() == POPUP_MENU_ID_AUDIO_TRACK) {
+            onAudioTrackItemClick(menuItem);
             return true;
         } else if (menuItem.getGroupId() == POPUP_MENU_ID_PLAYBACK_SPEED) {
             final int speedIndex = menuItem.getItemId();
@@ -1250,6 +1281,47 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
         }
 
         return false;
+    }
+
+    private void onQualityItemClick(@NonNull final MenuItem menuItem) {
+        final int menuItemIndex = menuItem.getItemId();
+        @Nullable final MediaItemTag currentMetadata = player.getCurrentMetadata();
+        if (currentMetadata == null || currentMetadata.getMaybeQuality().isEmpty()) {
+            return;
+        }
+
+        final MediaItemTag.Quality quality = currentMetadata.getMaybeQuality().get();
+        final List<VideoStream> availableStreams = quality.getSortedVideoStreams();
+        final int selectedStreamIndex = quality.getSelectedVideoStreamIndex();
+        if (selectedStreamIndex == menuItemIndex || availableStreams.size() <= menuItemIndex) {
+            return;
+        }
+
+        final String newResolution = availableStreams.get(menuItemIndex).getResolution();
+        player.setPlaybackQuality(newResolution);
+
+        binding.qualityTextView.setText(menuItem.getTitle());
+    }
+
+    private void onAudioTrackItemClick(@NonNull final MenuItem menuItem) {
+        final int menuItemIndex = menuItem.getItemId();
+        @Nullable final MediaItemTag currentMetadata = player.getCurrentMetadata();
+        if (currentMetadata == null || currentMetadata.getMaybeAudioTrack().isEmpty()) {
+            return;
+        }
+
+        final MediaItemTag.AudioTrack audioTrack =
+                currentMetadata.getMaybeAudioTrack().get();
+        final List<AudioStream> availableStreams = audioTrack.getAudioStreams();
+        final int selectedStreamIndex = audioTrack.getSelectedAudioStreamIndex();
+        if (selectedStreamIndex == menuItemIndex || availableStreams.size() <= menuItemIndex) {
+            return;
+        }
+
+        final String newAudioTrack = availableStreams.get(menuItemIndex).getAudioTrackId();
+        player.setAudioTrack(newAudioTrack);
+
+        binding.audioTrackTextView.setText(menuItem.getTitle());
     }
 
     /**
