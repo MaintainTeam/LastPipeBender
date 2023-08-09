@@ -59,10 +59,10 @@ public class DownloadInitializer extends Thread {
                     long lowestSize = Long.MAX_VALUE;
 
                     for (int i = 0; i < mMission.urls.length && mMission.running; i++) {
-                        headRequest = httpSession(mMission.urls[i], headRequest, -1, -1);
+                        headRequest = httpSession(mMission.urls[i], headRequest, 0, 0);
 
                         if (Thread.interrupted()) return;
-                        long length = Utility.getContentLength(mConn);
+                        long length = Utility.getTotalContentLength(mConn);
 
                         if (i == 0) {
                             httpCode = mConn.getResponseCode();
@@ -87,12 +87,12 @@ public class DownloadInitializer extends Thread {
                     }
                 } else {
                     // ask for the current resource length
-                    headRequest = httpSession(null, headRequest, -1, -1);
+                    headRequest = httpSession(null, headRequest, 0, 0);
 
                     if (!mMission.running || Thread.interrupted()) return;
 
                     httpCode = mConn.getResponseCode();
-                    mMission.length = Utility.getContentLength(mConn);
+                    mMission.length = Utility.getTotalContentLength(mConn);
                 }
 
                 if (mMission.length == 0 || httpCode == 204) {

@@ -10,11 +10,11 @@ import android.view.View
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.app.PendingIntentCompat
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import com.google.android.material.snackbar.Snackbar
 import org.schabi.newpipe.R
-import org.schabi.newpipe.util.PendingIntentCompat
 
 /**
  * This class contains all of the methods that should be used to let the user know that an error has
@@ -133,7 +133,8 @@ class ErrorUtil {
                             context,
                             0,
                             getErrorActivityIntent(context, errorInfo),
-                            PendingIntent.FLAG_UPDATE_CURRENT
+                            PendingIntent.FLAG_UPDATE_CURRENT,
+                            false
                         )
                     )
 
