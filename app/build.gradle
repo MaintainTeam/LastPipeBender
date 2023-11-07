@@ -73,10 +73,10 @@ android {
         // the amount of trailing zeros depends on the amount of digits the
         // defaultConfig.versionCode has -> we just prepend our increasing
         // versionCode before those zeros.
-        def braveVersionCode = 22000
+        def braveVersionCode = 23000
         // -> our versionName will be added as suffix to defaultConfig.versionName
         // We use major.minor.patch
-        def braveVersionName = "2.1.4"
+        def braveVersionName = "2.1.5"
 
         brave {
             dimension 'default'
@@ -385,7 +385,7 @@ project.afterEvaluate {
 configurations.all {
     exclude group: 'com.github.TeamNewPipe', module: 'NewPipeExtractor'
 
-    project.getDependencies().implementation("com.github.bravenewpipe:NewPipeExtractor:v0.22.7-2.1.4")
+    project.getDependencies().implementation("com.github.bravenewpipe:NewPipeExtractor:v0.22.7-2.1.5")
 }
 
 // replace NewPipe with BraveNewPipe in all strings.xml
