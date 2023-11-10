@@ -29,10 +29,7 @@ def cleanupDirBefore = { dir ->
     delete "${dir}"
 }
 
-// the return value points to the new srcDir containing the modified files
-ext.copyFilesAndReplaceStrings = { dir, tmpTargetDir ->
-    println "[BraveNewPipe string replacing] source dir: " + dir
-    println "[BraveNewPipe string replacing] target dir: " + tmpTargetDir
+ext.copyStringsXmlFiles = { dir, tmpTargetDir ->
     copy {
         from(dir)
         include '**/strings.xml'
@@ -41,22 +38,40 @@ ext.copyFilesAndReplaceStrings = { dir, tmpTargetDir ->
             line ->
                 if (shouldWeReplaceStuffInThisLine(line)) {
                     line
-                        .replace('NewPipe', 'BraveNewPipe')
-                        .replace('Newpipe', 'BraveNewPipe')
-                        .replace('নিউপাইপ', 'সাহসী নিউপাইপ') // bn (bengali)
-                        .replace('نیوپایپ', 'لوله جدید شجاع') // fa, czk (farsi)
+                            .replace('NewPipe', 'BraveNewPipe')
+                            .replace('Newpipe', 'BraveNewPipe')
+                            .replace('নিউপাইপ', 'সাহসী নিউপাইপ') // bn (bengali)
+                            .replace('نیوپایپ', 'لوله جدید شجاع') // fa, czk (farsi)
                 } else {
                     line
                 }
         }
         into("${tmpTargetDir}")
     }
+}
+
+ext.copyNonStringsXmlFiles = { dir, tmpTargetDir ->
     copy {
         from(dir)
         exclude '**/strings.xml'
         into("${tmpTargetDir}")
     }
+}
+
+// the return value points to the new srcDir containing the modified files
+ext.copyFilesAndReplaceStrings = { dir, tmpTargetDir ->
+    println "[BraveNewPipe string replacing] source dir: " + dir
+    println "[BraveNewPipe string replacing] target dir: " + tmpTargetDir
+    copyStringsXmlFiles(dir, tmpTargetDir)
+    copyNonStringsXmlFiles(dir, tmpTargetDir)
     return "${tmpTargetDir}"
+}
+
+ext.copyFiles = { dir, tmpTargetDir ->
+    copy {
+        from(dir)
+        into("${tmpTargetDir}")
+    }
 }
 
 // replace variables content for specific files
@@ -152,6 +167,27 @@ task testReplacingStrings() {
     def targetDir = "${buildDir}/tmp/${relativeDirFile}/test_output"
     cleanupDirBefore(targetDir)
     copyFilesAndReplaceStrings(sourceDir, targetDir)
+}
+
+ext.replaceNewPipeWithBraveNewPipeStrings = {
+
+    println "[BraveNewPipe string replacing]"
+
+    // modify .{xml} files
+    def relativeDirFile = 'src/main/res'
+    def sourceDir = "${rootDir}/app/${relativeDirFile}/"
+    def targetDir = "${buildDir}/tmp/${relativeDirFile}/test_output"
+    copyStringsXmlFiles(sourceDir, targetDir)
+    copyFiles(targetDir, sourceDir)
+}
+
+task bravify() {
+    group = 'brave'
+    description = 'replaces string NewPipe with BraveNewPipe'
+
+    doLast {
+        replaceNewPipeWithBraveNewPipeStrings()
+    }
 }
 
 // Patch NewPipe to use BraveNewPipe's:
