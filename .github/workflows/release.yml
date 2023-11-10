@@ -41,6 +41,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: ${{ runner.os }}-gradle
 
+      - name: Rename strings from NewPipe to BraveNewPipe
+        run: ./gradlew bravify
+
       - name: Build Project
         run: ./gradlew assemble
 
