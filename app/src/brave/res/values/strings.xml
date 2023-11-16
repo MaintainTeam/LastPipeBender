@@ -19,8 +19,6 @@
     <!-- end - strings for search filter feature (BraveNewPipe Services only) -->
 
     <!-- begin - strings for search filter feature (NewPipe Services only) -->
-    <string name="filter_search_sort_filters">Sort filters</string>
-    <string name="filter_search_content_filters">Content filters</string>
     <string name="search_filters_10_30_min">10–30 min</string>
     <string name="search_filters_2_10_min">2–10 min</string>
     <string name="search_filters_360">360°</string>
@@ -81,4 +79,15 @@
     <string name="search_filters_yes">Yes</string>
     <string name="search_filters_youtube_music">YouTube Music</string>
     <!-- end - strings for search filter feature (NewPipe Services only) -->
+
+    <!-- begin - more strings for search filter feature -->
+    <string name="filter">Filter</string>
+    <string name="filter_search_sort_filters">Sort filters</string>
+    <string name="filter_search_content_filters">Content filters</string>
+    <string name="search_filter_ui">Select Search Filter UI</string>
+    <string name="search_filter_ui_dialog">Simple Dialog (default)</string>
+    <string name="search_filter_ui_style">Action Menu styled Dialog</string>
+    <string name="search_filter_ui_legacy">Action Menu (legacy)</string>
+    <string name="search_filter_ui_chip_dialog">Chip Dialog</string>
+    <!-- end - more strings for search filter feature -->
 </resources>
