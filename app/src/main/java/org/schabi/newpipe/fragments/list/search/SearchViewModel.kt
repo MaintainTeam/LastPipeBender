@@ -11,6 +11,11 @@ import org.schabi.newpipe.fragments.list.search.filter.InjectFilterItem
 import org.schabi.newpipe.fragments.list.search.filter.SearchFilterLogic
 import org.schabi.newpipe.fragments.list.search.filter.SearchFilterLogic.Factory.Variant
 
+/**
+ * This class hosts the search filters logic. It facilitates
+ * the communication with the SearchFragment* and the *DialogFragment
+ * based search filter UI's
+ */
 class SearchViewModel(
     val serviceId: Int,
     logicVariant: Variant,
