@@ -69,7 +69,7 @@ import org.schabi.newpipe.util.SecondaryStreamHelper;
 import org.schabi.newpipe.util.SimpleOnSeekBarChangeListener;
 import org.schabi.newpipe.util.SponsorBlockUtils;
 import org.schabi.newpipe.util.StreamItemAdapter;
-import org.schabi.newpipe.util.StreamItemAdapter.StreamSizeWrapper;
+import org.schabi.newpipe.util.StreamItemAdapter.StreamInfoWrapper;
 import org.schabi.newpipe.util.AudioTrackAdapter;
 import org.schabi.newpipe.util.AudioTrackAdapter.AudioTracksWrapper;
 import org.schabi.newpipe.util.ThemeHelper;
@@ -104,9 +104,9 @@ public class DownloadDialog extends DialogFragment
     @State
     StreamInfo currentInfo;
     @State
-    StreamSizeWrapper<VideoStream> wrappedVideoStreams;
+    StreamInfoWrapper<VideoStream> wrappedVideoStreams;
     @State
-    StreamSizeWrapper<SubtitlesStream> wrappedSubtitleStreams;
+    StreamInfoWrapper<SubtitlesStream> wrappedSubtitleStreams;
     @State
     AudioTracksWrapper wrappedAudioTracks;
     @State
@@ -198,8 +198,8 @@ public class DownloadDialog extends DialogFragment
                 wrappedAudioTracks.size() > 1
         );
 
-        this.wrappedVideoStreams = new StreamSizeWrapper<>(videoStreams, context);
-        this.wrappedSubtitleStreams = new StreamSizeWrapper<>(
+        this.wrappedVideoStreams = new StreamInfoWrapper<>(videoStreams, context);
+        this.wrappedSubtitleStreams = new StreamInfoWrapper<>(
                 getStreamsOfSpecifiedDelivery(info.getSubtitles(), PROGRESSIVE_HTTP), context);
 
         this.selectedVideoIndex = ListHelper.getDefaultResolutionIndex(context, videoStreams);
@@ -271,17 +271,17 @@ public class DownloadDialog extends DialogFragment
      * Update the displayed video streams based on the selected audio track.
      */
     private void updateSecondaryStreams() {
-        final StreamSizeWrapper<AudioStream> audioStreams = getWrappedAudioStreams();
+        final StreamInfoWrapper<AudioStream> audioStreams = getWrappedAudioStreams();
         final var secondaryStreams = new SparseArrayCompat<SecondaryStreamHelper<AudioStream>>(4);
         final List<VideoStream> videoStreams = wrappedVideoStreams.getStreamsList();
-        wrappedVideoStreams.resetSizes();
+        wrappedVideoStreams.resetInfo();
 
         for (int i = 0; i < videoStreams.size(); i++) {
             if (!videoStreams.get(i).isVideoOnly()) {
                 continue;
             }
-            final AudioStream audioStream = SecondaryStreamHelper
-                    .getAudioStreamFor(audioStreams.getStreamsList(), videoStreams.get(i));
+            final AudioStream audioStream = SecondaryStreamHelper.getAudioStreamFor(
+                    context, audioStreams.getStreamsList(), videoStreams.get(i));
 
             if (audioStream != null) {
                 secondaryStreams.append(i, new SecondaryStreamHelper<>(audioStreams, audioStream));
@@ -413,7 +413,7 @@ public class DownloadDialog extends DialogFragment
 
     private void fetchStreamsSize() {
         disposables.clear();
-        disposables.add(StreamSizeWrapper.fetchSizeForWrapper(wrappedVideoStreams)
+        disposables.add(StreamInfoWrapper.fetchMoreInfoForWrapper(wrappedVideoStreams)
                 .subscribe(result -> {
                     if (dialogBinding.videoAudioGroup.getCheckedRadioButtonId()
                             == R.id.video_button) {
@@ -423,7 +423,7 @@ public class DownloadDialog extends DialogFragment
                         new ErrorInfo(throwable, UserAction.DOWNLOAD_OPEN_DIALOG,
                                 "Downloading video stream size",
                                 currentInfo.getServiceId()))));
-        disposables.add(StreamSizeWrapper.fetchSizeForWrapper(getWrappedAudioStreams())
+        disposables.add(StreamInfoWrapper.fetchMoreInfoForWrapper(getWrappedAudioStreams())
                 .subscribe(result -> {
                     if (dialogBinding.videoAudioGroup.getCheckedRadioButtonId()
                             == R.id.audio_button) {
@@ -433,7 +433,7 @@ public class DownloadDialog extends DialogFragment
                         new ErrorInfo(throwable, UserAction.DOWNLOAD_OPEN_DIALOG,
                                 "Downloading audio stream size",
                                 currentInfo.getServiceId()))));
-        disposables.add(StreamSizeWrapper.fetchSizeForWrapper(wrappedSubtitleStreams)
+        disposables.add(StreamInfoWrapper.fetchMoreInfoForWrapper(wrappedSubtitleStreams)
                 .subscribe(result -> {
                     if (dialogBinding.videoAudioGroup.getCheckedRadioButtonId()
                             == R.id.subtitle_button) {
@@ -741,9 +741,9 @@ public class DownloadDialog extends DialogFragment
         dialogBinding.subtitleButton.setEnabled(enabled);
     }
 
-    private StreamSizeWrapper<AudioStream> getWrappedAudioStreams() {
+    private StreamInfoWrapper<AudioStream> getWrappedAudioStreams() {
         if (selectedAudioTrackIndex < 0 || selectedAudioTrackIndex > wrappedAudioTracks.size()) {
-            return StreamSizeWrapper.empty();
+            return StreamInfoWrapper.empty();
         }
         return wrappedAudioTracks.getTracksList().get(selectedAudioTrackIndex);
     }
@@ -783,7 +783,7 @@ public class DownloadDialog extends DialogFragment
     }
 
     private void showFailedDialog(@StringRes final int msg) {
-        assureCorrectAppLanguage(getContext());
+        assureCorrectAppLanguage(requireContext());
         new AlertDialog.Builder(context)
                 .setTitle(R.string.general_error)
                 .setMessage(msg)
@@ -816,7 +816,7 @@ public class DownloadDialog extends DialogFragment
                     filenameTmp += "opus";
                 } else if (format != null) {
                     mimeTmp = format.mimeType;
-                    filenameTmp += format.suffix;
+                    filenameTmp += format.getSuffix();
                 }
                 break;
             case R.id.video_button:
@@ -825,7 +825,7 @@ public class DownloadDialog extends DialogFragment
                 format = videoStreamsAdapter.getItem(selectedVideoIndex).getFormat();
                 if (format != null) {
                     mimeTmp = format.mimeType;
-                    filenameTmp += format.suffix;
+                    filenameTmp += format.getSuffix();
                 }
                 break;
             case R.id.subtitle_button:
@@ -837,9 +837,9 @@ public class DownloadDialog extends DialogFragment
                 }
 
                 if (format == MediaFormat.TTML) {
-                    filenameTmp += MediaFormat.SRT.suffix;
+                    filenameTmp += MediaFormat.SRT.getSuffix();
                 } else if (format != null) {
-                    filenameTmp += format.suffix;
+                    filenameTmp += format.getSuffix();
                 }
                 break;
             default:

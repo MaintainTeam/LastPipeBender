@@ -258,12 +258,10 @@ public final class ServiceHelper {
      */
     @StringRes
     public static int getImportInstructionsHint(final int serviceId) {
-        switch (serviceId) {
-            case 1:
-                return R.string.import_soundcloud_instructions_hint;
-            default:
-                return -1;
+        if (serviceId == 1) {
+            return R.string.import_soundcloud_instructions_hint;
         }
+        return -1;
     }
 
     public static int getSelectedServiceId(final Context context) {
@@ -293,6 +291,19 @@ public final class ServiceHelper {
                 .map(StreamingService::getServiceInfo)
                 .map(StreamingService.ServiceInfo::getName)
                 .orElse("<unknown>");
+    }
+
+    /**
+     * @param serviceId the id of the service
+     * @return the service corresponding to the provided id
+     * @throws java.util.NoSuchElementException if there is no service with the provided id
+     */
+    @NonNull
+    public static StreamingService getServiceById(final int serviceId) {
+        return ServiceList.all().stream()
+                .filter(s -> s.getServiceId() == serviceId)
+                .findFirst()
+                .orElseThrow();
     }
 
     public static void setSelectedServiceId(final Context context, final int serviceId) {
