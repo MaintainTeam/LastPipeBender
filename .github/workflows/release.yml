@@ -50,6 +50,13 @@ jobs:
       - name: build release
         run: ./gradlew assembleRelease
 
+      - name: Setup build tool version variable
+        shell: bash
+        run: |
+          BUILD_TOOL_VERSION=$(ls /usr/local/lib/android/sdk/build-tools/ | tail -n 1)
+          echo "BUILD_TOOL_VERSION=$BUILD_TOOL_VERSION" >> $GITHUB_ENV
+          echo Last build tool version is: $BUILD_TOOL_VERSION
+
       - name: Sign app APK brave
         uses: r0adkll/sign-android-release@v1
         # ID used to access action output
@@ -61,6 +68,8 @@ jobs:
           alias: alias_name
           keyStorePassword: ${{ secrets.RELEASE_KEYSTORE_PASS }}
           #keyPassword: ${{ secrets.RELEASE_KEYSTORE_PASS }}
+        env:
+          BUILD_TOOLS_VERSION: ${{ env.BUILD_TOOL_VERSION }}
 
       - name: Sign app APK braveConscrypt
         uses: r0adkll/sign-android-release@v1
@@ -73,6 +82,8 @@ jobs:
           alias: alias_name
           keyStorePassword: ${{ secrets.RELEASE_KEYSTORE_PASS }}
           #keyPassword: ${{ secrets.RELEASE_KEYSTORE_PASS }}
+        env:
+          BUILD_TOOLS_VERSION: ${{ env.BUILD_TOOL_VERSION }}
 
       - name: Upload brave artifact APK
         uses: actions/upload-artifact@v3
