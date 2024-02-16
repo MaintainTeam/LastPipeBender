@@ -180,7 +180,17 @@ public final class DownloaderImpl extends Downloader {
         }
 
         final String latestUrl = response.request().url().toString();
-        return new Response(response.code(), response.message(), response.headers().toMultimap(),
-                responseBodyToReturn, latestUrl);
+        final Response downloaderResponse = new Response(
+                response.code(),
+                response.message(),
+                response.headers().toMultimap(),
+                responseBodyToReturn,
+                latestUrl
+        );
+
+        // always close the OkHttp Response
+        response.close();
+
+        return downloaderResponse;
     }
 }
