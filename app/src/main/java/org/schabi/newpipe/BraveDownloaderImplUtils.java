@@ -6,7 +6,11 @@ import android.content.SharedPreferences;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import androidx.annotation.NonNull;
 import androidx.preference.PreferenceManager;
@@ -41,7 +45,35 @@ public final class BraveDownloaderImplUtils {
         final Context context = App.getApp().getApplicationContext();
         final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
 
+        addOrRemoveHostInterceptor(builder, context, settings);
         addOrRemoveTimeoutInterceptor(builder, context, settings);
+    }
+
+    private static void addOrRemoveHostInterceptor(
+            final OkHttpClient.Builder builder,
+            final Context context,
+            final SharedPreferences settings) {
+
+        final Set<String> selectedHosts = settings.getStringSet(
+                context.getString(R.string.brave_settings_host_replace_key),
+                Collections.emptySet());
+
+        final Optional<Interceptor> hostInterceptor = BraveHostInterceptor.getInterceptor(builder);
+        if (selectedHosts.isEmpty()) {
+            hostInterceptor.ifPresent(interceptor -> builder.interceptors().remove(interceptor));
+        } else {
+            final Map<String, String> replaceHosts = new HashMap<>();
+            for (final String oldAndNewHost : selectedHosts) {
+                final String[] result = oldAndNewHost.split(":");
+                replaceHosts.put(result[0], result[1]);
+            }
+
+            if (hostInterceptor.isPresent()) {
+                ((BraveHostInterceptor) hostInterceptor.get()).setHosts(replaceHosts);
+            } else {
+                builder.addInterceptor(new BraveHostInterceptor(replaceHosts));
+            }
+        }
     }
 
     private static void addOrRemoveTimeoutInterceptor(

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources translatable="false">
+    <!-- begin - BraveHostInterceptor config option data -->
+    <string name="brave_settings_host_replace_entry_youtube_image_host">yt3.ggpht.com -> yt4.ggpht.com</string>
+    <string name="brave_settings_host_replace_value_youtube_image_host">yt3.ggpht.com:yt4.ggpht.com</string>
+    <string-array name="brave_settings_host_replace_entries">
+        <item>@string/brave_settings_host_replace_entry_youtube_image_host</item>
+    </string-array>
+    <string-array name="brave_settings_host_replace_values">
+        <item>@string/brave_settings_host_replace_value_youtube_image_host</item>
+    </string-array>
+    <string-array name="brave_settings_host_replace_default_values"></string-array>
+    <!-- end - BraveHostInterceptor config option data -->
+</resources>

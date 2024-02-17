@@ -93,5 +93,13 @@
 
     <!-- begin - BraveNewPipe settings page -->
     <string name="brave_settings">BraveNewPipe Settings</string>
+
+    <!-- begin - settings for replacing host domain names -->
+    <string name="brave_settings_host_replace_key">brave_settings_host_replace_key</string>
+    <string name="brave_settings_host_replace_dialog_title">Select the hosts you want to replace</string>
+    <string name="brave_settings_host_replace_title">Replace restricted hosts</string>
+    <string name="brave_settings_host_replace_summary">In some countries some hosts are restricted but can be replaced by others.</string>
+    <!-- end - settings for replacing host domain names -->
+
     <!-- end - BraveNewPipe settings page -->
 </resources>
