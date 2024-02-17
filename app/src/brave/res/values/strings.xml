@@ -90,4 +90,8 @@
     <string name="search_filter_ui_legacy">Action Menu (legacy)</string>
     <string name="search_filter_ui_chip_dialog">Chip Dialog</string>
     <!-- end - more strings for search filter feature -->
+
+    <!-- begin - BraveNewPipe settings page -->
+    <string name="brave_settings">BraveNewPipe Settings</string>
+    <!-- end - BraveNewPipe settings page -->
 </resources>

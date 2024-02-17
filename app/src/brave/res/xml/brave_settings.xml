@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:title="@string/brave_settings">
+
+    <MultiSelectListPreference
+        app:iconSpaceReserved="false"
+        android:dialogTitle="@string/brave_settings_host_replace_dialog_title"
+        android:key="@string/brave_settings_host_replace_key"
+        android:summary="@string/brave_settings_host_replace_summary"
+        android:title="@string/brave_settings_host_replace_title"
+        android:entries="@array/brave_settings_host_replace_entries"
+        android:entryValues="@array/brave_settings_host_replace_values"
+        android:defaultValue="@array/brave_settings_host_replace_default_values"
+        />
+
+</PreferenceScreen>

@@ -65,4 +65,10 @@
         android:key="@string/debug_pref_screen_key"
         android:title="@string/settings_category_debug_title"
         app:iconSpaceReserved="false" />
+
+    <PreferenceScreen
+        android:fragment="org.schabi.newpipe.settings.BraveSettingsFragment"
+        android:icon="@drawable/ic_brave_settings"
+        android:title="@string/brave_settings"
+        app:iconSpaceReserved="false" />
 </PreferenceScreen>
