@@ -6,6 +6,7 @@ import static org.schabi.newpipe.util.image.ImageStrategy.choosePreferredImage;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.util.Log;
 
@@ -21,6 +22,8 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
 import com.squareup.picasso.Transformation;
 
+import org.schabi.newpipe.BraveDownloaderImplUtils;
+import org.schabi.newpipe.BraveTimeoutInterceptor;
 import org.schabi.newpipe.DownloaderImpl;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.extractor.Image;
@@ -30,6 +33,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import androidx.preference.PreferenceManager;
 import okhttp3.OkHttpClient;
 
 public final class PicassoHelper {
@@ -69,6 +73,8 @@ public final class PicassoHelper {
     private static void initInternal(
             final Context context,
             final OkHttpClient.Builder builder) {
+        addBraveHostInterceptor(context, builder);
+
         picassoDownloaderClient = builder.build();
 
         picassoInstance = new Picasso.Builder(context)
@@ -76,6 +82,14 @@ public final class PicassoHelper {
                 .downloader(new OkHttp3Downloader(picassoDownloaderClient)) // disk cache
                 .defaultBitmapConfig(Bitmap.Config.RGB_565)
                 .build();
+    }
+
+    private static void addBraveHostInterceptor(
+            final Context context,
+            final OkHttpClient.Builder builder) {
+        builder.interceptors().removeIf(BraveTimeoutInterceptor.class::isInstance);
+        final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+        BraveDownloaderImplUtils.addOrRemoveHostInterceptor(builder, context, settings);
     }
 
     public static void terminate() {

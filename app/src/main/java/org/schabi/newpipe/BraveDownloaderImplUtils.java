@@ -3,6 +3,8 @@ package org.schabi.newpipe;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import org.schabi.newpipe.util.image.PicassoHelper;
+
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -49,7 +51,7 @@ public final class BraveDownloaderImplUtils {
         addOrRemoveTimeoutInterceptor(builder, context, settings);
     }
 
-    private static void addOrRemoveHostInterceptor(
+    public static void addOrRemoveHostInterceptor(
             final OkHttpClient.Builder builder,
             final Context context,
             final SharedPreferences settings) {
@@ -120,6 +122,11 @@ public final class BraveDownloaderImplUtils {
                     context.getString(R.string.enable_return_youtube_dislike_key))) {
 
                 DownloaderImpl.getInstance().reInitInterceptors();
+            }
+
+            if (configOption.equals(
+                    context.getString(R.string.brave_settings_host_replace_key))) {
+                PicassoHelper.reInit(context);
             }
         }
 
