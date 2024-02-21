@@ -49,7 +49,14 @@ public final class DownloaderImpl extends Downloader {
         theBuilder.readTimeout(30, TimeUnit.SECONDS);
 //                .cache(new Cache(new File(context.getExternalCacheDir(), "okhttp"),
 //                        16 * 1024 * 1024))
+        BraveDownloaderImplUtils.addOrRemoveInterceptors(theBuilder);
         this.client = theBuilder.build();
+    }
+
+    public void reInitInterceptors() {
+        final OkHttpClient.Builder builder = client.newBuilder();
+        BraveDownloaderImplUtils.addOrRemoveInterceptors(builder);
+        this.client = builder.build();
     }
 
     /**

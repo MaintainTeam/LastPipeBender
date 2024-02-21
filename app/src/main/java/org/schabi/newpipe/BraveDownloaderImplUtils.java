@@ -1,8 +1,17 @@
 package org.schabi.newpipe;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Optional;
+
+import androidx.annotation.NonNull;
+import androidx.preference.PreferenceManager;
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
 
 import static org.schabi.newpipe.DownloaderImpl.USER_AGENT;
 
@@ -11,6 +20,7 @@ import static org.schabi.newpipe.DownloaderImpl.USER_AGENT;
  * within the {@link DownloaderImpl}.
  */
 public final class BraveDownloaderImplUtils {
+    public static final Config CONFIG = new Config();
 
     private BraveDownloaderImplUtils() {
     }
@@ -25,5 +35,65 @@ public final class BraveDownloaderImplUtils {
         final String contentSize = conn.getHeaderField("Content-Length");
         conn.disconnect();
         return Long.parseLong(contentSize);
+    }
+
+    public static void addOrRemoveInterceptors(final OkHttpClient.Builder builder) {
+        final Context context = App.getApp().getApplicationContext();
+        final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+
+        addOrRemoveTimeoutInterceptor(builder, context, settings);
+    }
+
+    private static void addOrRemoveTimeoutInterceptor(
+            final OkHttpClient.Builder builder,
+            final Context context,
+            final SharedPreferences settings) {
+
+        final boolean isClientForSponsorblockingOrReturnDislikesEnabled = (settings.getBoolean(
+                context.getString(R.string.sponsor_block_enable_key), false)
+                || settings.getBoolean(
+                context.getString(R.string.enable_return_youtube_dislike_key), false));
+
+        final Optional<Interceptor> timeoutInterceptor =
+                BraveTimeoutInterceptor.getInterceptor(builder);
+        if (isClientForSponsorblockingOrReturnDislikesEnabled) {
+            if (timeoutInterceptor.isEmpty()) {
+                builder.addInterceptor(new BraveTimeoutInterceptor());
+            }
+        } else {
+            timeoutInterceptor.ifPresent(interceptor -> builder.interceptors().remove(interceptor));
+        }
+    }
+
+    /**
+     * Listen to the SharedPreferences and handle if replacing hosts or sponsorblock are enabled.
+     */
+    public static class Config implements SharedPreferences.OnSharedPreferenceChangeListener {
+
+        public void registerOnChanged(@NonNull final Context context) {
+            PreferenceManager.getDefaultSharedPreferences(context)
+                    .registerOnSharedPreferenceChangeListener(this);
+        }
+
+        @Override
+        public void onSharedPreferenceChanged(
+                final SharedPreferences settings, final String configOption) {
+
+            final Context context = App.getApp().getApplicationContext();
+            if (configOption.equals(
+                    context.getString(R.string.brave_settings_host_replace_key))
+                    || configOption.equals(
+                    context.getString(R.string.sponsor_block_enable_key))
+                    || configOption.equals(
+                    context.getString(R.string.enable_return_youtube_dislike_key))) {
+
+                DownloaderImpl.getInstance().reInitInterceptors();
+            }
+        }
+
+        public void unRegisterOnChanged(@NonNull final Context context) {
+            PreferenceManager.getDefaultSharedPreferences(context)
+                    .registerOnSharedPreferenceChangeListener(this);
+        }
     }
 }

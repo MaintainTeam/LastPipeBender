@@ -9,9 +9,9 @@ import androidx.preference.PreferenceManager;
 import com.grack.nanojson.JsonObject;
 import com.grack.nanojson.JsonParser;
 
-import org.schabi.newpipe.DownloaderImpl;
 import org.schabi.newpipe.MainActivity;
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.BraveTimeoutInterceptor;
 import org.schabi.newpipe.extractor.ServiceList;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
 
@@ -43,12 +43,9 @@ public final class ReturnYouTubeDislikeUtils {
         JsonObject response = null;
 
         try {
-            final String responseBody =
-                    DownloaderImpl
-                            .getInstance()
-                            .setCustomTimeout(3)
-                            .get(API_URL + streamInfo.getId())
-                            .responseBody();
+            final String responseBody = BraveTimeoutInterceptor
+                    .get(API_URL + streamInfo.getId(), 3)
+                    .responseBody();
 
             response = JsonParser.object().from(responseBody);
 

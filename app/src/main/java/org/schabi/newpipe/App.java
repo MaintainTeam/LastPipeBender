@@ -107,12 +107,14 @@ public class App extends BraveApp {
                 && prefs.getBoolean(getString(R.string.show_image_indicators_key), false));
 
         configureRxJavaErrorHandler();
+        BraveDownloaderImplUtils.CONFIG.registerOnChanged(getApplicationContext());
     }
 
     @Override
     public void onTerminate() {
         super.onTerminate();
         PicassoHelper.terminate();
+        BraveDownloaderImplUtils.CONFIG.unRegisterOnChanged(getApplicationContext());
     }
 
     protected Downloader getDownloader() {

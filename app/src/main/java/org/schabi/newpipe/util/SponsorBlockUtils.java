@@ -15,9 +15,9 @@ import com.grack.nanojson.JsonObject;
 import com.grack.nanojson.JsonParser;
 
 import org.schabi.newpipe.App;
-import org.schabi.newpipe.DownloaderImpl;
 import org.schabi.newpipe.MainActivity;
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.BraveTimeoutInterceptor;
 import org.schabi.newpipe.extractor.ServiceList;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.player.playqueue.PlayQueueItem;
@@ -136,12 +136,10 @@ public final class SponsorBlockUtils {
         JsonArray responseArray = null;
 
         try {
-            final String responseBody =
-                    DownloaderImpl
-                            .getInstance()
-                            .setCustomTimeout(3)
-                            .get(apiUrl + params)
-                            .responseBody();
+            final String responseBody = BraveTimeoutInterceptor
+                    .get(apiUrl + params, 3)
+                    .responseBody();
+
 
             responseArray = JsonParser.array().from(responseBody);
 
