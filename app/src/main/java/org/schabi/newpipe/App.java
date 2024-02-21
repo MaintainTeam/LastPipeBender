@@ -116,7 +116,7 @@ public class App extends BraveApp {
     }
 
     protected Downloader getDownloader() {
-        final DownloaderImpl downloader = DownloaderImpl.init(null);
+        final DownloaderImpl downloader = DownloaderImpl.getInstance().init(null);
         setCookiesToDownloader(downloader);
         return downloader;
     }

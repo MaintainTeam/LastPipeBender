@@ -35,33 +35,41 @@ public final class DownloaderImpl extends Downloader {
     public static final String YOUTUBE_RESTRICTED_MODE_COOKIE = "PREF=f2=8000000";
     public static final String YOUTUBE_DOMAIN = "youtube.com";
 
-    private static DownloaderImpl instance;
+    private static final DownloaderImpl INSTANCE = new DownloaderImpl();
     private final Map<String, String> mCookies;
-    private final OkHttpClient client;
+    private OkHttpClient client = new OkHttpClient();
 
-    private DownloaderImpl(final OkHttpClient.Builder builder) {
-        this.client = builder
-                .readTimeout(30, TimeUnit.SECONDS)
+    private DownloaderImpl() {
+        this.mCookies = new HashMap<>();
+    }
+
+    private void initInternal(final @Nullable OkHttpClient.Builder builder) {
+        final OkHttpClient.Builder theBuilder =
+                builder != null ? builder : client.newBuilder();
+        theBuilder.readTimeout(30, TimeUnit.SECONDS);
 //                .cache(new Cache(new File(context.getExternalCacheDir(), "okhttp"),
 //                        16 * 1024 * 1024))
-                .build();
-        this.mCookies = new HashMap<>();
+        this.client = theBuilder.build();
     }
 
     /**
      * It's recommended to call exactly once in the entire lifetime of the application.
      *
-     * @param builder if null, default builder will be used
+     * @param builder if null, default builder will be used. If supplying a builder always use
+     * {@link #getNewBuilder()} to retrieve one - unless you know what you are doing.
      * @return a new instance of {@link DownloaderImpl}
      */
-    public static DownloaderImpl init(@Nullable final OkHttpClient.Builder builder) {
-        instance = new DownloaderImpl(
-                builder != null ? builder : new OkHttpClient.Builder());
-        return instance;
+    public DownloaderImpl init(@Nullable final OkHttpClient.Builder builder) {
+        initInternal(builder);
+        return INSTANCE;
     }
 
     public static DownloaderImpl getInstance() {
-        return instance;
+        return INSTANCE;
+    }
+
+    public OkHttpClient.Builder getNewBuilder() {
+        return client.newBuilder();
     }
 
     public String getCookies(final String url) {
