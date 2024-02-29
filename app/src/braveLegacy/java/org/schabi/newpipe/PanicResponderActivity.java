@@ -3,6 +3,7 @@ package org.schabi.newpipe;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 
 /*
@@ -39,6 +40,10 @@ public class PanicResponderActivity extends Activity {
             ExitActivity.exitAndRemoveFromRecentApps(this);
         }
 
-        finishAndRemoveTask();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            finishAndRemoveTask();
+        } else {
+            finish();
+        }
     }
 }

@@ -145,7 +145,7 @@ public final class DeviceUtils {
         boolean isTv = ContextCompat.getSystemService(context, UiModeManager.class)
                 .getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION
                 || isFireTv()
-                || pm.hasSystemFeature(PackageManager.FEATURE_LEANBACK);
+                || pm.hasSystemFeature(PackageManager.FEATURE_TELEVISION);
 
         // from https://stackoverflow.com/a/58932366
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -155,6 +155,10 @@ public final class DeviceUtils {
                     && !pm.hasSystemFeature(PackageManager.FEATURE_TOUCHSCREEN)
                     && pm.hasSystemFeature(PackageManager.FEATURE_USB_HOST)
                     && pm.hasSystemFeature(PackageManager.FEATURE_ETHERNET));
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            isTv = isTv || pm.hasSystemFeature(PackageManager.FEATURE_LEANBACK);
         }
 
         DeviceUtils.isTV = isTv;
@@ -319,11 +323,12 @@ public final class DeviceUtils {
      * <a href="https://github.com/TeamNewPipe/NewPipe/issues/9023">#9023</a> for more info.</p>
      * @Note Update {@link #MEDIA_TUNNELING_DEVICE_BLACKLIST_VERSION}
      * when adding a new device to the method.
-     * @return {@code false} if affected device; {@code true} otherwise
+     * @return {@code false} if Kitkat (does not support tunneling) or affected device
      */
     public static boolean shouldSupportMediaTunneling() {
         // Maintainers note: update MEDIA_TUNNELING_DEVICES_UPDATE_APP_VERSION_CODE
-        return !HI3798MV200
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
+                && !HI3798MV200
                 && !CVT_MT5886_EU_1G
                 && !REALTEKATV
                 && !QM16XE_U

@@ -3,6 +3,7 @@ package org.schabi.newpipe.error;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -108,7 +109,12 @@ public class ReCaptchaActivity extends AppCompatActivity {
         // cleaning cache, history and cookies from webView
         recaptchaBinding.reCaptchaWebView.clearCache(true);
         recaptchaBinding.reCaptchaWebView.clearHistory();
-        CookieManager.getInstance().removeAllCookies(null);
+        final CookieManager cookieManager = CookieManager.getInstance();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            cookieManager.removeAllCookies(value -> { });
+        } else {
+            cookieManager.removeAllCookie();
+        }
 
         recaptchaBinding.reCaptchaWebView.loadUrl(url);
     }

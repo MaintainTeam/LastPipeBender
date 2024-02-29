@@ -65,10 +65,16 @@ public class DownloadSettingsFragment extends BasePreferenceFragment {
         prefStorageAsk = findPreference(downloadStorageAsk);
 
         final SwitchPreferenceCompat prefUseSaf = findPreference(storageUseSafPreference);
+        prefUseSaf.setDefaultValue(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP);
         prefUseSaf.setChecked(NewPipeSettings.useStorageAccessFramework(ctx));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+                || Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             prefUseSaf.setEnabled(false);
-            prefUseSaf.setSummary(R.string.downloads_storage_use_saf_summary_api_29);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                prefUseSaf.setSummary(R.string.downloads_storage_use_saf_summary_api_29);
+            } else {
+                prefUseSaf.setSummary(R.string.downloads_storage_use_saf_summary_api_19);
+            }
             prefStorageAsk.setSummary(R.string.downloads_storage_ask_summary_no_saf_notice);
         }
 
@@ -246,7 +252,8 @@ public class DownloadSettingsFragment extends BasePreferenceFragment {
 
         forgetSAFTree(context, defaultPreferences.getString(key, ""));
 
-        if (!FilePickerActivityHelper.isOwnFileUri(context, uri)) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
+                && !FilePickerActivityHelper.isOwnFileUri(context, uri)) {
             // steps to acquire the selected path:
             //     1. acquire permissions on the new save path
             //     2. save the new path, if step(2) was successful

@@ -28,6 +28,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -85,6 +86,7 @@ import org.schabi.newpipe.util.PermissionHelper;
 import org.schabi.newpipe.util.SerializedCache;
 import org.schabi.newpipe.util.ServiceHelper;
 import org.schabi.newpipe.util.StateSaver;
+import org.schabi.newpipe.util.BraveTLSSocketFactory;
 import org.schabi.newpipe.util.ThemeHelper;
 import org.schabi.newpipe.views.FocusOverlayView;
 
@@ -127,6 +129,11 @@ public class MainActivity extends AppCompatActivity {
         if (DEBUG) {
             Log.d(TAG, "onCreate() called with: "
                     + "savedInstanceState = [" + savedInstanceState + "]");
+        }
+
+        // enable TLS1.1/1.2 for kitkat devices, to fix download and play for media.ccc.de sources
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
+            BraveTLSSocketFactory.setAsDefault();
         }
 
         ThemeHelper.setDayNightMode(this);

@@ -1,5 +1,6 @@
 package us.shandian.giga.get;
 
+import android.os.Build;
 import android.os.Handler;
 import android.system.ErrnoException;
 import android.system.OsConstants;
@@ -316,14 +317,16 @@ public class DownloadMission extends Mission {
 
     public synchronized void notifyError(int code, Exception err) {
         Log.e(TAG, "notifyError() code = " + code, err);
-        if (err != null && err.getCause() instanceof ErrnoException) {
-            int errno = ((ErrnoException) err.getCause()).errno;
-            if (errno == OsConstants.ENOSPC) {
-                code = ERROR_INSUFFICIENT_STORAGE;
-                err = null;
-            } else if (errno == OsConstants.EACCES) {
-                code = ERROR_PERMISSION_DENIED;
-                err = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            if (err != null && err.getCause() instanceof ErrnoException) {
+                int errno = ((ErrnoException) err.getCause()).errno;
+                if (errno == OsConstants.ENOSPC) {
+                    code = ERROR_INSUFFICIENT_STORAGE;
+                    err = null;
+                } else if (errno == OsConstants.EACCES) {
+                    code = ERROR_PERMISSION_DENIED;
+                    err = null;
+                }
             }
         }
 

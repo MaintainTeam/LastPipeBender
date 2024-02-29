@@ -153,7 +153,7 @@ public final class DownloaderImpl extends Downloader {
 
         RequestBody requestBody = null;
         if (dataToSend != null) {
-            requestBody = RequestBody.create(dataToSend);
+            requestBody = RequestBody.create(null, dataToSend);
         }
 
         final okhttp3.Request.Builder requestBuilder = new okhttp3.Request.Builder()

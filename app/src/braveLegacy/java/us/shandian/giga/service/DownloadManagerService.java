@@ -7,8 +7,10 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.graphics.Bitmap;
@@ -19,6 +21,7 @@ import android.net.NetworkInfo;
 import android.net.NetworkRequest;
 import android.net.Uri;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Handler.Callback;
 import android.os.IBinder;
@@ -103,6 +106,7 @@ public class DownloadManagerService extends Service {
     private final List<Callback> mEchoObservers = new ArrayList<>(1);
 
     private ConnectivityManager mConnectivityManager;
+    private BroadcastReceiver mNetworkStateListener = null;
     private ConnectivityManager.NetworkCallback mNetworkStateListenerL = null;
 
     private SharedPreferences mPrefs = null;
@@ -169,18 +173,28 @@ public class DownloadManagerService extends Service {
         mConnectivityManager = ContextCompat.getSystemService(this,
                 ConnectivityManager.class);
 
-        mNetworkStateListenerL = new ConnectivityManager.NetworkCallback() {
-            @Override
-            public void onAvailable(Network network) {
-                handleConnectivityState(false);
-            }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mNetworkStateListenerL = new ConnectivityManager.NetworkCallback() {
+                @Override
+                public void onAvailable(Network network) {
+                    handleConnectivityState(false);
+                }
 
-            @Override
-            public void onLost(Network network) {
-                handleConnectivityState(false);
-            }
-        };
-        mConnectivityManager.registerNetworkCallback(new NetworkRequest.Builder().build(), mNetworkStateListenerL);
+                @Override
+                public void onLost(Network network) {
+                    handleConnectivityState(false);
+                }
+            };
+            mConnectivityManager.registerNetworkCallback(new NetworkRequest.Builder().build(), mNetworkStateListenerL);
+        } else {
+            mNetworkStateListener = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    handleConnectivityState(false);
+                }
+            };
+            registerReceiver(mNetworkStateListener, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+        }
 
         mPrefs.registerOnSharedPreferenceChangeListener(mPrefChangeListener);
 
@@ -239,7 +253,10 @@ public class DownloadManagerService extends Service {
 
         manageLock(false);
 
-        mConnectivityManager.unregisterNetworkCallback(mNetworkStateListenerL);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            mConnectivityManager.unregisterNetworkCallback(mNetworkStateListenerL);
+        else
+            unregisterReceiver(mNetworkStateListener);
 
         mPrefs.unregisterOnSharedPreferenceChangeListener(mPrefChangeListener);
 
@@ -253,6 +270,21 @@ public class DownloadManagerService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
+        /*
+        int permissionCheck;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
+            permissionCheck = PermissionChecker.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+            if (permissionCheck == PermissionChecker.PERMISSION_DENIED) {
+                Toast.makeText(this, "Permission denied (read)", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        permissionCheck = PermissionChecker.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (permissionCheck == PermissionChecker.PERMISSION_DENIED) {
+            Toast.makeText(this, "Permission denied (write)", Toast.LENGTH_SHORT).show();
+        }
+        */
+
         return mBinder;
     }
 
@@ -470,7 +502,12 @@ public class DownloadManagerService extends Service {
         if (downloadDoneCount == 1) {
             downloadDoneList.append(name);
 
-            downloadDoneNotification.setContentTitle(null);
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                downloadDoneNotification.setContentTitle(getString(R.string.app_name));
+            } else {
+                downloadDoneNotification.setContentTitle(null);
+            }
+
             downloadDoneNotification.setContentText(Localization.downloadCount(this, downloadDoneCount));
             downloadDoneNotification.setStyle(new NotificationCompat.BigTextStyle()
                     .setBigContentTitle(Localization.downloadCount(this, downloadDoneCount))
@@ -503,10 +540,16 @@ public class DownloadManagerService extends Service {
                     .setContentIntent(mOpenDownloadList);
         }
 
-        downloadFailedNotification.setContentTitle(getString(R.string.download_failed));
-        downloadFailedNotification.setContentText(mission.storage.getName());
-        downloadFailedNotification.setStyle(new NotificationCompat.BigTextStyle()
-                .bigText(mission.storage.getName()));
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            downloadFailedNotification.setContentTitle(getString(R.string.app_name));
+            downloadFailedNotification.setStyle(new NotificationCompat.BigTextStyle()
+                    .bigText(getString(R.string.download_failed).concat(": ").concat(mission.storage.getName())));
+        } else {
+            downloadFailedNotification.setContentTitle(getString(R.string.download_failed));
+            downloadFailedNotification.setContentText(mission.storage.getName());
+            downloadFailedNotification.setStyle(new NotificationCompat.BigTextStyle()
+                    .bigText(mission.storage.getName()));
+        }
 
         mNotificationManager.notify(id, downloadFailedNotification.build());
     }
@@ -543,7 +586,12 @@ public class DownloadManagerService extends Service {
 
         if (path.charAt(0) == File.separatorChar) {
             Log.i(TAG, "Old save path style present: " + path);
-            path = "";
+
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
+                path = Uri.fromFile(new File(path)).toString();
+            else
+                path = "";
+
             mPrefs.edit().putString(getString(prefKey), "").apply();
         }
 
