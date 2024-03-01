@@ -429,7 +429,11 @@ public class DownloadManagerService extends Service {
         long nearLength = intent.getLongExtra(EXTRA_NEAR_LENGTH, 0);
         String tag = intent.getStringExtra(EXTRA_STORAGE_TAG);
         Parcelable[] parcelRecovery = intent.getParcelableArrayExtra(EXTRA_RECOVERY_INFO);
-        VideoSegment[] segments = (VideoSegment[]) intent.getSerializableExtra(EXTRA_SEGMENTS);
+        VideoSegment[] segments = null;
+        if (intent.hasExtra(EXTRA_SEGMENTS)
+                && intent.getSerializableExtra(EXTRA_SEGMENTS) instanceof VideoSegment[]) {
+            segments = (VideoSegment[]) intent.getSerializableExtra(EXTRA_SEGMENTS);
+        }
 
         StoredFileHelper storage;
         try {
