@@ -178,11 +178,13 @@ public final class DeviceUtils {
         final InputManager im = (InputManager) context.getSystemService(INPUT_SERVICE);
         for (final int id : im.getInputDeviceIds()) {
             final InputDevice inputDevice = im.getInputDevice(id);
-            if (inputDevice.supportsSource(InputDevice.SOURCE_BLUETOOTH_STYLUS)
-                    || inputDevice.supportsSource(InputDevice.SOURCE_MOUSE)
-                    || inputDevice.supportsSource(InputDevice.SOURCE_STYLUS)
-                    || inputDevice.supportsSource(InputDevice.SOURCE_TOUCHPAD)
-                    || inputDevice.supportsSource(InputDevice.SOURCE_TRACKBALL)) {
+
+            if (BraveDeviceUtilsKt.supportsSource(inputDevice, InputDevice.SOURCE_BLUETOOTH_STYLUS)
+                    || BraveDeviceUtilsKt.supportsSource(inputDevice, InputDevice.SOURCE_MOUSE)
+                    || BraveDeviceUtilsKt.supportsSource(inputDevice, InputDevice.SOURCE_STYLUS)
+                    || BraveDeviceUtilsKt.supportsSource(inputDevice, InputDevice.SOURCE_TOUCHPAD)
+                    || BraveDeviceUtilsKt.supportsSource(inputDevice,
+                    InputDevice.SOURCE_TRACKBALL)) {
                 return true;
             }
         }
