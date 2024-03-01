@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="downloads_storage_use_saf_summary_api_19">L’« Infrastructure d’accès au stockage » n’est pas prise en charge par Android KitKat et les versions antérieures</string>
+</resources>

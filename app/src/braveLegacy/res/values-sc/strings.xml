@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="downloads_storage_use_saf_summary_api_19">Su \'Storage Access Framework\' no est suportadu in Android KitKat e versiones prus betzas</string>
+</resources>

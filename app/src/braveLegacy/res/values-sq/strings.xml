@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="downloads_storage_use_saf_summary_api_19">\'Storage Access Framework\' nuk është e mbështetur në Android KitKat dhe më poshtë</string>
+</resources>
