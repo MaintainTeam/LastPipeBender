@@ -12,6 +12,7 @@ import org.schabi.newpipe.extractor.downloader.Request;
 import org.schabi.newpipe.extractor.downloader.Response;
 import org.schabi.newpipe.extractor.exceptions.ReCaptchaException;
 import org.schabi.newpipe.util.InfoCache;
+import org.schabi.newpipe.util.BraveOkHttpTlsHelper;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -51,6 +52,7 @@ public final class DownloaderImpl extends Downloader {
 //                        16 * 1024 * 1024))
         BraveDownloaderImplUtils.addOrRemoveInterceptors(theBuilder);
         BraveDownloaderImplUtils.addCookieManager(theBuilder);
+        BraveOkHttpTlsHelper.enableModernTLS(theBuilder);
         this.client = theBuilder.build();
     }
 
