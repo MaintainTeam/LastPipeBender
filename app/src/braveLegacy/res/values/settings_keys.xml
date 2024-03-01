@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources translatable="false">
+    <string name="search_filter_ui_value">@string/search_filter_ui_chip_dialog_key</string>
+
+    <string-array name="search_filter_ui_values">
+        <!-- not working on KitKat <item>@string/search_filter_ui_dialog_key</item>-->
+        <item>@string/search_filter_ui_option_menu_style_key</item>
+        <!-- not working on KitKat <item>@string/search_filter_ui_option_menu_legacy_key</item>-->
+        <item>@string/search_filter_ui_chip_dialog_key</item>
+    </string-array>
+
+    <string-array name="search_filter_ui_description">
+        <!-- not working on KitKat <item>@string/search_filter_ui_dialog</item>-->
+        <item>@string/search_filter_ui_style</item>
+        <!-- not working on KitKat <item>@string/search_filter_ui_legacy</item>-->
+        <item>@string/search_filter_ui_chip_dialog</item>
+    </string-array>
+
+</resources>

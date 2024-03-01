@@ -102,7 +102,7 @@ android {
             resValue "string", "app_name", "BraveNewPipe"
             versionCode defaultConfig.versionCode + braveVersionCode
             versionName "${defaultConfig.versionName}-${braveVersionName}"
-            android.sourceSets.braveLegacy.res.srcDirs = android.sourceSets.braveConscrypt.res.srcDirs
+            android.sourceSets.braveLegacy.res.srcDirs = [ 'src/braveLegacy/res', android.sourceSets.braveConscrypt.res.srcDirs ]
 
             multiDexEnabled true
             minSdk 19
