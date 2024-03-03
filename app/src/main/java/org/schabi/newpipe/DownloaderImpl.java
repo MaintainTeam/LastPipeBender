@@ -50,6 +50,7 @@ public final class DownloaderImpl extends Downloader {
 //                .cache(new Cache(new File(context.getExternalCacheDir(), "okhttp"),
 //                        16 * 1024 * 1024))
         BraveDownloaderImplUtils.addOrRemoveInterceptors(theBuilder);
+        BraveDownloaderImplUtils.addCookieManager(theBuilder);
         this.client = theBuilder.build();
     }
 

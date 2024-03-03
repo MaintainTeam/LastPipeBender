@@ -3,9 +3,11 @@ package org.schabi.newpipe;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import org.schabi.newpipe.extractor.downloader.BraveCookieManager;
 import org.schabi.newpipe.util.image.PicassoHelper;
 
 import java.io.IOException;
+import java.net.CookiePolicy;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Collections;
@@ -17,6 +19,7 @@ import java.util.Set;
 import androidx.annotation.NonNull;
 import androidx.preference.PreferenceManager;
 import okhttp3.Interceptor;
+import okhttp3.JavaNetCookieJar;
 import okhttp3.OkHttpClient;
 
 import static org.schabi.newpipe.DownloaderImpl.USER_AGENT;
@@ -97,6 +100,21 @@ public final class BraveDownloaderImplUtils {
         } else {
             timeoutInterceptor.ifPresent(interceptor -> builder.interceptors().remove(interceptor));
         }
+    }
+
+    /**
+     * Rumble needs to handle cookies to correctly redirect.
+     *
+     * It was reported in
+     * <a href="https://github.com/bravenewpipe/NewPipeExtractor/issues/123">issue#123</a>
+     * even though it seems it was only temporary Rumble glitch this functionality is added here.
+     *
+     * @param theBuilder the builder
+     */
+    public static void addCookieManager(final OkHttpClient.Builder theBuilder) {
+        final BraveCookieManager cookieManager = new BraveCookieManager();
+        cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
+        theBuilder.cookieJar(new JavaNetCookieJar(cookieManager));
     }
 
     /**
