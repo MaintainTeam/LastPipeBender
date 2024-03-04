@@ -90,6 +90,10 @@ android {
             versionCode defaultConfig.versionCode + braveVersionCode
             versionName "${defaultConfig.versionName}-${braveVersionName}"
             android.sourceSets.braveConscrypt.res.srcDirs = android.sourceSets.brave.res.srcDirs
+
+            dependencies {
+                implementation 'org.conscrypt:conscrypt-android:2.5.2'
+            }
         }
     }
 
@@ -315,9 +319,6 @@ dependencies {
 
     // Date and time formatting
     implementation "org.ocpsoft.prettytime:prettytime:5.0.6.Final"
-
-    // conscrypt libraries
-    braveConscryptImplementation 'org.conscrypt:conscrypt-android:2.4.0'
 
 /** Debugging **/
     // Memory leak detection
