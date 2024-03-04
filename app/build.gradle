@@ -95,6 +95,23 @@ android {
                 implementation 'org.conscrypt:conscrypt-android:2.5.2'
             }
         }
+
+        braveLegacy {
+            dimension 'default'
+            applicationId "com.github.bravenewpipe.kitkat"
+            resValue "string", "app_name", "BraveNewPipe"
+            versionCode defaultConfig.versionCode + braveVersionCode
+            versionName "${defaultConfig.versionName}-${braveVersionName}"
+            android.sourceSets.braveLegacy.res.srcDirs = android.sourceSets.braveConscrypt.res.srcDirs
+
+            multiDexEnabled true
+            minSdk 19
+
+            dependencies {
+                implementation 'androidx.multidex:multidex:2.0.1'
+                implementation 'org.conscrypt:conscrypt-android:2.5.2'
+            }
+       }
     }
 
     lint {
@@ -386,6 +403,13 @@ configurations.all {
     project.getDependencies().implementation("com.github.bravenewpipe:NewPipeExtractor:v0.23.1-2.1.7")
     // for JavaNetCookieJar see https://github.com/bravenewpipe/NewPipeExtractor/issues/123
     project.getDependencies().implementation("com.squareup.okhttp3:okhttp-urlconnection:3.12.13")
+
+    if (it.getName().contains("braveLegacy") || it.getName().contains("BraveLegacy")) {
+        resolutionStrategy.dependencySubstitution {
+            substitute module("com.github.TeamNewPipe:NoNonsense-FilePicker") using module("com.github.bravenewpipe:NoNonsense-FilePicker:21d5c57") because "we need Sdk 19 support"
+            substitute module("com.squareup.okhttp3:okhttp") using module("com.squareup.okhttp3:okhttp:3.12.13") because "we need Sdk 19 support"
+        }
+    }
 }
 
 // replace NewPipe with BraveNewPipe in all strings.xml
