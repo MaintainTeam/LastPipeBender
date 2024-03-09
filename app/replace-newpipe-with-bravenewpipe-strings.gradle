@@ -1,3 +1,5 @@
+import static groovy.io.FileType.FILES
+
 // *************************
 // * This gradle script should be included in the build.gradle by
 // * using: apply from: 'replace-newpipe-with-bravenewpipe-strings.gradle'
@@ -205,3 +207,91 @@ task testReplaceMailandJsonandSignature() {
     def sourceDir = "${rootDir}/app/${relativeDirFile}/"
     alterFilesAndVerify(sourceDir, true)
 }
+
+//-----------------------------------------------------------------------------------------
+// ############ begin -- section only relevant for braveLegacy flavor building#############
+//-----------------------------------------------------------------------------------------
+// We have some same sourcecode files in 'main' and in 'braveLegacy' flavor.
+// To make it compile we need to remove the 'main' files first. Before calling:
+// # gradle assembleBraveLegacy{Debug,Release,Whatever}
+// you have to call
+// # gradle prepareLegacyFlavor
+// and afterwards to restore the files (in case you want to build another flavor:
+// # gradle unPrepareLegacyFlavor
+ext.prepareFilesForLegacy = { doRestore ->
+
+    def relativeSourceDir = 'src/braveLegacy/java'
+    def sourceDir = "${rootDir}/app/${relativeSourceDir}/"
+    def tempDir = "${rootDir}/tmp-legacy"
+
+    new File(sourceDir).eachFileRecurse(FILES) {
+        if ((!it.name.startsWith('Brave')) && (it.name.endsWith(".kt") || it.name.endsWith(".java"))) {
+            def targetParentDir = it.parent.replace("braveLegacy", "main")
+            def fileName = it.name
+            def originFilePath = targetParentDir + "/" + fileName
+            def targetFileName = tempDir + "/" + fileName
+
+            if (doRestore) {
+                println "[BraveLegacy] move: " + targetFileName + " -> " + originFilePath
+                ant.move(file: targetFileName, tofile: originFilePath)
+            } else { // hide the files from the compiler
+                println "[BraveLegacy] move " + originFilePath + " -> " + tempDir
+                ant.move(file: originFilePath, toDir: tempDir)
+            }
+        }
+    }
+}
+
+ext.alterNewVersionWorkerForLegacy = { targetDir, isTest, infix ->
+
+    if (targetDir.contains('src/main/java') or isTest) { // only look into the 'main' variant
+        replaceAndVerify('m', false, targetDir,
+                /* filename: */ 'org/schabi/newpipe/NewVersionWorker.kt',
+                /* match: */ '(private const val NEWPIPE_API_URL =).*\n.*',
+                /* replace: */ '\\1\n            "https://raw.githubusercontent.com/bravenewpipe/bnp-r-mgr/' + infix + '/api/data.json"',
+                /* verify: */ '"https://raw.githubusercontent.com/bravenewpipe/bnp-r-mgr/' + infix + '/api/data.json"')
+    }
+
+    return "${targetDir}"
+}
+
+ext.replaceNewVersionJsonUrl = { infix ->
+    def relativeDirFile = 'src/main/java'
+    def sourceDir = "${rootDir}/app/${relativeDirFile}/"
+    alterNewVersionWorkerForLegacy(sourceDir, false, infix)
+}
+
+task prepareLegacyFlavor() {
+    group = 'brave'
+    description = "move duplicated files from 'main' to tmp dir"
+    doLast {
+        prepareFilesForLegacy(false)
+        replaceNewVersionJsonUrl("kitkat")
+    }
+}
+
+task unprepareLegacyFlavor() {
+    group = 'brave'
+    description = "move duplicated files from tmp dir 'main'"
+    doLast {
+        prepareFilesForLegacy(true)
+        replaceNewVersionJsonUrl("master")
+    }
+}
+
+task testReplaceNewVersionUrl() {
+    group = "braveTest"
+    description = "change to legacy new version URL"
+    doLast {
+        replaceNewVersionJsonUrl("kitkat")
+    }
+}
+
+task testUnReplaceNewVersionUrl() {
+    group = "braveTest"
+    description = "change to master new version URL"
+    doLast {
+        replaceNewVersionJsonUrl("master")
+    }
+}
+// ############ end -- section only relevant for braveLegacy flavor building#############
