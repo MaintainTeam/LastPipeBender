@@ -100,7 +100,7 @@ ext.alterFilesAndVerify = { targetDir, isTest ->
 
         replaceAndVerify('m', false, targetDir,
                 /* filename: */ 'org/schabi/newpipe/NewVersionWorker.kt',
-                /* match: */ '(private const val NEWPIPE_API_URL =).*',
+                /* match: */ '(private const val NEWPIPE_API_URL =).*\n.*',
                 /* replace: */ '\\1\n            "https://raw.githubusercontent.com/bravenewpipe/bnp-r-mgr/master/api/data.json"',
                 /* verify: */ '"https://raw.githubusercontent.com/bravenewpipe/bnp-r-mgr/master/api/data.json"')
     }
@@ -200,12 +200,14 @@ task bravify() {
 // does this job for you automatically. To be re-run if needed.
 // -- evermind --
 task testReplaceMailandJsonandSignature() {
-    return // enable only when you want it to run
+    group = "braveTest"
 
-    // modify .{java,kt} files
-    def relativeDirFile = 'src/main/java'
-    def sourceDir = "${rootDir}/app/${relativeDirFile}/"
-    alterFilesAndVerify(sourceDir, true)
+    doLast {
+        // modify .{java,kt} files
+        def relativeDirFile = 'src/main/java'
+        def sourceDir = "${rootDir}/app/${relativeDirFile}/"
+        alterFilesAndVerify(sourceDir, true)
+    }
 }
 
 //-----------------------------------------------------------------------------------------
