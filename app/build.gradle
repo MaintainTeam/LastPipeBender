@@ -191,6 +191,7 @@ task runCheckstyle(type: Checkstyle) {
     exclude '**/R.java'
     exclude '**/BuildConfig.java'
     exclude 'main/java/us/shandian/giga/**'
+    exclude 'braveLegacy/java/us/shandian/giga/**'
 
     classpath = configurations.checkstyle
 
