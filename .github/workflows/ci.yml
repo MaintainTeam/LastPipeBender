@@ -53,14 +53,32 @@ jobs:
           distribution: "temurin"
           cache: 'gradle'
 
-      - name: Build debug APK and run jvm tests
-        run: ./gradlew bravify assembleDebug lintBraveDebug testBraveDebugUnitTest --stacktrace -DskipFormatKtlint
+      - name: Rename strings from NewPipe to BraveNewPipe
+        run: ./gradlew bravify
+
+      - name: Build brave flavor
+        run: ./gradlew assembleBraveDebug
+
+      - name: Build braveConscrypt flavor
+        run: ./gradlew assembleBraveConscryptDebug
+
+      - name: Prepare for building braveLegacy flavor
+        run: ./gradlew prepareLegacyFlavor
+
+      - name: Build braveLegacy flavor
+        run: ./gradlew assembleBraveLegacyDebug
+
+      - name: Unprepare for building braveLegacy flavor
+        run: ./gradlew unPrepareLegacyFlavor
 
       - name: Upload APK
         uses: actions/upload-artifact@v3
         with:
           name: app
-          path: app/build/outputs/apk/brave/debug/*.apk
+          path: app/build/outputs/apk/brave*/debug/*.apk
+
+      - name: Build debug APK and run jvm tests
+        run: ./gradlew assembleBraveDebug lintBraveDebug testBraveDebugUnitTest --stacktrace -DskipFormatKtlint
 
   test-android:
     # macos has hardware acceleration. See android-emulator-runner action
