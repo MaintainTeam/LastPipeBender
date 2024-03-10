@@ -44,11 +44,17 @@ jobs:
       - name: Rename strings from NewPipe to BraveNewPipe
         run: ./gradlew bravify
 
-      - name: Build Project
-        run: ./gradlew assemble
+      - name: Build brave flavor
+        run: ./gradlew assembleBraveRelease
 
-      - name: build release
-        run: ./gradlew assembleRelease
+      - name: Build braveConscrypt flavor
+        run: ./gradlew assembleBraveConscryptRelease
+
+      - name: Prepare for building braveLegacy flavor
+        run: ./gradlew prepareLegacyFlavor
+
+      - name: Build braveLegacy flavor
+        run: ./gradlew assembleBraveLegacyRelease
 
       - name: Setup build tool version variable
         shell: bash
@@ -85,6 +91,20 @@ jobs:
         env:
           BUILD_TOOLS_VERSION: ${{ env.BUILD_TOOL_VERSION }}
 
+      - name: Sign app APK braveLegacy
+        uses: r0adkll/sign-android-release@v1
+        # ID used to access action output
+        id: sign_app_legacy
+        with:
+          releaseDirectory: app/build/outputs/apk/braveLegacy/release
+          signingKeyBase64: ${{ secrets.RELEASE_KEYSTORE }}
+          #alias: ${{ secrets.ALIAS }}
+          alias: alias_name
+          keyStorePassword: ${{ secrets.RELEASE_KEYSTORE_PASS }}
+          #keyPassword: ${{ secrets.RELEASE_KEYSTORE_PASS }}
+        env:
+          BUILD_TOOLS_VERSION: ${{ env.BUILD_TOOL_VERSION }}
+
       - name: Upload brave artifact APK
         uses: actions/upload-artifact@v3
         with:
@@ -92,11 +112,17 @@ jobs:
           path: ${{steps.sign_app.outputs.signedReleaseFile}}
           #path: app/build/outputs/apk/brave/release/*.apk
 
-      - name: Upload brave artifact APK
+      - name: Upload braveConscrypt artifact APK
         uses: actions/upload-artifact@v3
         with:
           name: braveConscrypt
           path: ${{steps.sign_app_conscrypt.outputs.signedReleaseFile}}
+
+      - name: Upload braveLegacy artifact APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: braveLegacy
+          path: ${{steps.sign_app_legacy.outputs.signedReleaseFile}}
 
       # evermind: How to get just the tag name? -> https://github.community/t/how-to-get-just-the-tag-name/16241/11
       - name: Branch name
@@ -114,6 +140,7 @@ jobs:
           SOURCE_TAG: ${{ steps.branch_name.outputs.SOURCE_TAG }}
           SIGNED_APK: ${{ steps.sign_app.outputs.signedReleaseFile }}
           SIGNED_APK_CONSCRYPT: ${{ steps.sign_app_conscrypt.outputs.signedReleaseFile }}
+          SIGNED_APK_LEGACY: ${{ steps.sign_app_legacy.outputs.signedReleaseFile }}
         run: |
           echo ::set-output name=RENAMED_APK::${SIGNED_APK%/*}/BraveNewPipe_${SOURCE_TAG}.apk
           cp ${SIGNED_APK} ${SIGNED_APK%/*}/BraveNewPipe_${SOURCE_TAG}.apk
@@ -124,6 +151,11 @@ jobs:
           cp ${SIGNED_APK_CONSCRYPT} ${SIGNED_APK_CONSCRYPT%/*}/BraveNewPipe_conscrypt_${SOURCE_TAG}.apk
           cd ${SIGNED_APK_CONSCRYPT%/*}
           sha256sum BraveNewPipe_conscrypt_${SOURCE_TAG}.apk > BraveNewPipe_conscrypt_${SOURCE_TAG}.apk.sha256
+          cd -
+          echo ::set-output name=RENAMED_APK_LEGACY::${SIGNED_APK_LEGACY%/*}/BraveNewPipe_legacy_${SOURCE_TAG}.apk
+          cp ${SIGNED_APK_LEGACY} ${SIGNED_APK_LEGACY%/*}/BraveNewPipe_legacy_${SOURCE_TAG}.apk
+          cd ${SIGNED_APK_LEGACY%/*}
+          sha256sum BraveNewPipe_legacy_${SOURCE_TAG}.apk > BraveNewPipe_legacy_${SOURCE_TAG}.apk.sha256
           cd -
       # evermind: how to autorelease?: https://github.com/marvinpinto/action-automatic-releases
       - name: auto release
@@ -137,11 +169,14 @@ jobs:
             ${{ steps.renamed_apk.outputs.RENAMED_APK }}.sha256
             ${{ steps.renamed_apk.outputs.RENAMED_APK_CONSCRYPT }}
             ${{ steps.renamed_apk.outputs.RENAMED_APK_CONSCRYPT }}.sha256
+            ${{ steps.renamed_apk.outputs.RENAMED_APK_LEGACY }}
+            ${{ steps.renamed_apk.outputs.RENAMED_APK_LEGACY }}.sha256
         id: "automatic_releases"
       - name: "Automatically update json api data repository"
         env:
           GITHUB_SUPER_TOKEN: ${{ secrets.MY_GITHUB_SUPER_TOKEN }}
           RENAMED_APK: ${{ steps.renamed_apk.outputs.RENAMED_APK }}
+          BUILD_TOOLS_VERSION: ${{ env.BUILD_TOOL_VERSION }}
         run: |
           ./.github/scripts/brave-new-pipe-releast-actions.sh "$AUTOMATIC_RELEASES_TAG" "${RENAMED_APK}"
 
