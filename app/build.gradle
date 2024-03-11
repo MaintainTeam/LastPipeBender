@@ -99,7 +99,7 @@ android {
         braveLegacy {
             dimension 'default'
             applicationId "com.github.bravenewpipe.kitkat"
-            resValue "string", "app_name", "BraveNewPipe"
+            resValue "string", "app_name", "BraveNewPipe Kitkat"
             versionCode defaultConfig.versionCode + braveVersionCode
             versionName "${defaultConfig.versionName}-${braveVersionName}"
             android.sourceSets.braveLegacy.res.srcDirs = [ 'src/braveLegacy/res', android.sourceSets.braveConscrypt.res.srcDirs ]
