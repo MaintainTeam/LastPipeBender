@@ -75,12 +75,17 @@ android {
         // We use major.minor.patch
         def braveVersionName = "2.1.9"
 
+        sponsorblock { // only for strings of sponsorblock stuff
+            dimension 'default'
+        }
+
         brave {
             dimension 'default'
             applicationId "com.github.bravenewpipe"
             resValue "string", "app_name", "BraveNewPipe"
             versionCode defaultConfig.versionCode + braveVersionCode
             versionName "${defaultConfig.versionName}-${braveVersionName}"
+            android.sourceSets.brave.res.srcDirs = [ 'src/brave/res', android.sourceSets.sponsorblock.res.srcDirs ]
         }
 
         braveConscrypt {
