@@ -5,6 +5,7 @@ import androidx.annotation.StringRes
 import com.google.android.exoplayer2.ExoPlaybackException
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
+import kotlinx.parcelize.TypeParceler
 import org.schabi.newpipe.R
 import org.schabi.newpipe.extractor.Info
 import org.schabi.newpipe.extractor.exceptions.AccountTerminatedException
@@ -16,6 +17,7 @@ import org.schabi.newpipe.util.ServiceHelper
 
 @Parcelize
 class ErrorInfo(
+    @TypeParceler<Array<String>, BraveErrorInfoTracesParceler>()
     val stackTraces: Array<String>,
     val userAction: UserAction,
     val serviceName: String,

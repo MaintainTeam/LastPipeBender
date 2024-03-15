@@ -1,5 +1,6 @@
 package org.schabi.newpipe.error;
 
+import static org.schabi.newpipe.error.BraveErrorActivityHelper.truncateAsNeeded;
 import static org.schabi.newpipe.util.Localization.assureCorrectAppLanguage;
 
 import android.app.Activity;
@@ -239,7 +240,7 @@ public class ErrorActivity extends AppCompatActivity {
                     .value("version", BuildConfig.VERSION_NAME)
                     .value("os", getOsString())
                     .value("time", currentTimeStamp)
-                    .array("exceptions", Arrays.asList(errorInfo.getStackTraces()))
+                    .array("exceptions", truncateAsNeeded(errorInfo.getStackTraces()))
                     .value("user_comment", activityErrorBinding.errorCommentBox.getText()
                             .toString())
                     .end()
