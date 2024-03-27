@@ -1,3 +1,4 @@
+
 import static groovy.io.FileType.FILES
 
 // *************************
@@ -269,6 +270,7 @@ task prepareLegacyFlavor() {
     doLast {
         prepareFilesForLegacy(false)
         replaceNewVersionJsonUrl("kitkat")
+        legacyFlavorGenerateDrawableNightForMainSettings()
     }
 }
 
@@ -278,6 +280,7 @@ task unprepareLegacyFlavor() {
     doLast {
         prepareFilesForLegacy(true)
         replaceNewVersionJsonUrl("master")
+        removeGeneratedDrawableNightForMainSettings()
     }
 }
 
@@ -296,4 +299,109 @@ task testUnReplaceNewVersionUrl() {
         replaceNewVersionJsonUrl("master")
     }
 }
+
+// -- begin create night version of main_settings page's icons
+ext.resDir = { flavor ->
+    def relativeResDir = 'src/' + flavor + '/res'
+    return "${rootDir}/app/${relativeResDir}/"
+}
+
+ext.legacyResDir = {
+    return resDir('braveLegacy')
+}
+
+ext.legacyResDrawableNightDir = {
+    def resDir = legacyResDir()
+    return new File(resDir, 'drawable-night')
+}
+
+ext.generateOutputFileName = { drawableXml, destDir ->
+    def inputFileBaseName = file(drawableXml).getName()
+    def outputFileName = destDir.getAbsolutePath() + '/' + inputFileBaseName
+    return outputFileName
+}
+
+ext.generateLegacyDrawableNightVersion = { drawableXml, destDir ->
+    destDir.mkdirs()
+
+    def xml = new XmlParser(false, false).parse(drawableXml)
+    def newTintColor = "#FFFFFF"
+    xml.@'android:tint' = newTintColor
+    def newXmlOutput = groovy.xml.XmlUtil.serialize(xml)
+
+    def outputFileName = generateOutputFileName(drawableXml, destDir)
+    def nightVersionXmlFile = new File(outputFileName)
+    nightVersionXmlFile.write(newXmlOutput)
+
+    println '[BraveLegacy] generate drawable-night xml file: ' + file(drawableXml).getName()
+}
+
+ext.generateListOfMainSettingsDrawableIconFileNames = {
+    def resDir = resDir('main')
+    def mainSettingsXmlFile = file(resDir + '/xml/main_settings.xml')
+    def xml = new XmlParser(false, false).parse(mainSettingsXmlFile)
+    def drawablesList = []
+
+    xml.PreferenceScreen.each { prefScreen ->
+        drawablesList.add(prefScreen.attribute('android:icon').replace('@', resDir) + ".xml")
+    }
+
+    return drawablesList
+}
+
+ext.removeLegacyDrawableNightVersion = { drawableXml, destDir ->
+    if (destDir.exists()) {
+
+        def xmlIconFile = file(generateOutputFileName(drawableXml, destDir))
+        if (xmlIconFile.exists()) {
+            def isDeleted = xmlIconFile.delete()
+            println '[BraveLegacy] drawable-night xml file: ' + xmlIconFile.getName() + " deleted?: " + isDeleted
+        }
+    }
+}
+
+ext.legacyFlavorGenerateDrawableNightForMainSettings = {
+    def destDir = legacyResDrawableNightDir()
+    println '[BraveLegacy] generate drawable-night xml file into: ' + destDir
+
+    def drawablesList = generateListOfMainSettingsDrawableIconFileNames()
+
+    drawablesList.forEach { drawableXml ->
+        generateLegacyDrawableNightVersion(drawableXml, destDir)
+    }
+}
+
+ext.removeGeneratedDrawableNightForMainSettings = {
+    def destDir = legacyResDrawableNightDir()
+    println '[BraveLegacy] generate drawable-night xml file into: ' + destDir
+
+    def drawablesList = generateListOfMainSettingsDrawableIconFileNames()
+
+    drawablesList.forEach { drawableXml ->
+        removeLegacyDrawableNightVersion(drawableXml, destDir)
+    }
+
+    if (destDir.isDirectory() && destDir.list().length == 0) {
+        destDir.delete()
+    }
+}
+
+task testCreateDrawableNightXmls {
+    group = "braveTest"
+    description = "generate drawable-night icons for settings main page"
+
+    doLast {
+        legacyFlavorGenerateDrawableNightForMainSettings()
+   }
+}
+
+task testUnCreateDrawableNightXmls {
+    group = "braveTest"
+    description = "remove previous created drawable-night icons for settings main page"
+
+    doLast {
+        removeGeneratedDrawableNightForMainSettings()
+    }
+}
+// -- end create night version of main_settings page's icons
 // ############ end -- section only relevant for braveLegacy flavor building#############
