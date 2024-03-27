@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- BitChute -->
+    <style name="LightTheme.BitChute" parent="LightTheme" tools:keep="@style/LightTheme_BitChute">
+        <item name="colorPrimary">@color/light_bitchute_primary_color</item>
+        <item name="colorPrimaryDark">@color/light_bitchute_primary_color</item>
+        <item name="colorAccent">@color/light_bitchute_accent_color</item>
+    </style>
+
+    <style name="DarkTheme.BitChute" parent="DarkTheme" tools:keep="@style/DarkTheme_BitChute">
+        <item name="colorPrimary">@color/dark_bitchute_primary_color</item>
+        <item name="colorPrimaryDark">@color/dark_bitchute_primary_color</item>
+        <item name="colorAccent">@color/dark_bitchute_accent_color</item>
+    </style>
+
+    <style name="BlackTheme.BitChute" parent="BlackTheme" tools:keep="@style/BlackTheme_BitChute">
+        <item name="colorPrimary">@color/dark_bitchute_primary_color</item>
+        <item name="colorPrimaryDark">@color/dark_bitchute_primary_color</item>
+        <item name="colorAccent">@color/dark_bitchute_accent_color</item>
+    </style>
+
+    <!-- Rumble -->
+    <style name="LightTheme.Rumble" parent="LightTheme" tools:keep="@style/LightTheme_Rumble">
+        <item name="colorPrimary">@color/light_rumble_primary_color</item>
+        <item name="colorPrimaryDark">@color/light_rumble_primary_color</item>
+        <item name="colorAccent">@color/light_rumble_accent_color</item>
+    </style>
+
+    <style name="DarkTheme.Rumble" parent="DarkTheme" tools:keep="@style/DarkTheme_Rumble">
+        <item name="colorPrimary">@color/dark_rumble_primary_color</item>
+        <item name="colorPrimaryDark">@color/dark_rumble_primary_color</item>
+        <item name="colorAccent">@color/dark_rumble_accent_color</item>
+    </style>
+
+    <style name="BlackTheme.Rumble" parent="BlackTheme" tools:keep="@style/BlackTheme_Rumble">
+        <item name="colorPrimary">@color/dark_rumble_primary_color</item>
+        <item name="colorPrimaryDark">@color/dark_rumble_primary_color</item>
+        <item name="colorAccent">@color/dark_rumble_accent_color</item>
+    </style>
+
+</resources>
