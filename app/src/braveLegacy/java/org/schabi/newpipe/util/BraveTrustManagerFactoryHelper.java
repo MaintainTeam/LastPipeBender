@@ -3,7 +3,7 @@ package org.schabi.newpipe.util;
 import android.content.Context;
 import android.util.Log;
 
-import org.schabi.newpipe.App;
+import org.schabi.newpipe.BraveApp;
 import org.schabi.newpipe.BraveTag;
 
 import java.io.ByteArrayInputStream;
@@ -121,7 +121,7 @@ public class BraveTrustManagerFactoryHelper {
             final String rawFile)
             throws IOException, CertificateException {
 
-        final Context context = App.getApp().getApplicationContext();
+        final Context context = BraveApp.getAppContext();
         final InputStream inputStream = context.getResources().openRawResource(
                 context.getResources().getIdentifier(rawFile,
                         "raw", context.getPackageName()));
