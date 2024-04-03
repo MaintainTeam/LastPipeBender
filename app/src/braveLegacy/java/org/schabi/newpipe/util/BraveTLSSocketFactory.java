@@ -1,5 +1,9 @@
 package org.schabi.newpipe.util;
 
+import android.util.Log;
+
+import org.schabi.newpipe.BraveTag;
+
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
@@ -12,32 +16,27 @@ import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
 
-import android.util.Log;
-
 
 /**
- * This is an extension of the SSLSocketFactory which enables TLS 1.2 and 1.1.
+ * This is an extension of the SSLSocketFactory which enables TLS 1.2 and 1.3.
  * Created for usage on Android 4.1-4.4 devices, which haven't enabled those by default.
  */
-public class BraveTLSSocketFactory extends SSLSocketFactory {
+public final class BraveTLSSocketFactory extends SSLSocketFactory {
 
-    private static final String TAG = "TLSSocketFactoryCom";
+    private static final String TAG =
+            new BraveTag().tagShort23(BraveTLSSocketFactory.class.getSimpleName());
 
     private static BraveTLSSocketFactory instance = null;
 
     private final SSLSocketFactory internalSSLSocketFactory;
+    private final BraveTrustManagerFactoryHelper trustManagerFactoryHelper;
 
-    public BraveTLSSocketFactory() throws KeyManagementException, NoSuchAlgorithmException {
-        final SSLContext context = SSLContext.getInstance("TLS");
-        context.init(null, null, null);
-        internalSSLSocketFactory = context.getSocketFactory();
-    }
-
-    public BraveTLSSocketFactory(
-            final TrustManagerFactory trustManagerFactory)
+    private BraveTLSSocketFactory()
             throws NoSuchAlgorithmException, KeyManagementException {
+        trustManagerFactoryHelper = new BraveTrustManagerFactoryHelper();
         final SSLContext context = SSLContext.getInstance("TLS");
-        context.init(null, trustManagerFactory.getTrustManagers(), null);
+        context.init(null, trustManagerFactoryHelper.getTrustManagerFactory()
+                .getTrustManagers(), null);
         internalSSLSocketFactory = context.getSocketFactory();
     }
 
@@ -109,5 +108,9 @@ public class BraveTLSSocketFactory extends SSLSocketFactory {
             ((SSLSocket) socket).setEnabledProtocols(new String[]{"TLSv1.2", "TLSv1.3"});
         }
         return socket;
+    }
+
+    public TrustManagerFactory getTrustManagerFactory() {
+        return trustManagerFactoryHelper.getTrustManagerFactory();
     }
 }

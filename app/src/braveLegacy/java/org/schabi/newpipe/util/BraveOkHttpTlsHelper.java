@@ -1,26 +1,14 @@
 package org.schabi.newpipe.util;
 
-import android.content.Context;
 import android.os.Build;
+import android.util.Log;
 
-import org.schabi.newpipe.App;
+import org.schabi.newpipe.BraveTag;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.security.KeyManagementException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.util.Arrays;
-import java.util.List;
 
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
@@ -29,6 +17,9 @@ import okhttp3.OkHttpClient;
 import static org.schabi.newpipe.MainActivity.DEBUG;
 
 public final class BraveOkHttpTlsHelper {
+
+    private static final String TAG =
+            new BraveTag().tagShort23(BraveOkHttpTlsHelper.class.getSimpleName());
 
     private BraveOkHttpTlsHelper() {
     }
@@ -50,105 +41,23 @@ public final class BraveOkHttpTlsHelper {
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
             try {
 
-                final KeyStore customCAsKeystore = createKeystoreWithCustomCAsAndSystemCAs();
-                final TrustManagerFactory trustManagerFactory =
-                        getTrustManagerFactory(customCAsKeystore);
+                final BraveTLSSocketFactory sslSocketFactory = BraveTLSSocketFactory.getInstance();
+                final TrustManagerFactory trustManagerFactory = sslSocketFactory
+                        .getTrustManagerFactory();
+
                 final SSLContext context = SSLContext.getInstance("TLS");
                 context.init(null, trustManagerFactory.getTrustManagers(), null);
 
-                final SSLSocketFactory sslSocketFactory =
-                        new BraveTLSSocketFactory(trustManagerFactory);
                 builder.sslSocketFactory(sslSocketFactory,
                         (X509TrustManager) trustManagerFactory.getTrustManagers()[0]);
-            } catch (final KeyManagementException | NoSuchAlgorithmException | KeyStoreException
-                           | IOException | CertificateException e) {
+            } catch (final KeyManagementException | NoSuchAlgorithmException e) {
                 if (DEBUG) {
                     e.printStackTrace();
+                    Log.e(TAG, "Unable to insert own {SSLSocket,TrustManager}Factory in OkHttp", e);
                 }
             }
         }
 
         return builder;
-    }
-
-    public static TrustManagerFactory getTrustManagerFactory(
-            final KeyStore keyStore)
-            throws NoSuchAlgorithmException, KeyStoreException {
-
-        final TrustManagerFactory trustManagerFactory = TrustManagerFactory
-                .getInstance(TrustManagerFactory.getDefaultAlgorithm());
-
-        // Tell TrustManager to trust the CAs in our KeyStore
-        trustManagerFactory.init(keyStore);
-
-        // only allow one TrustManager
-        final TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
-        if (trustManagers.length != 1 || !(trustManagers[0] instanceof X509TrustManager)) {
-            throw new IllegalStateException("Unexpected default trust managers:"
-                    + Arrays.toString(trustManagers));
-        }
-
-        return trustManagerFactory;
-    }
-
-
-    /**
-     * Add our trusted CAs for rumble.com and framatube.org to keystore.
-     *
-     * @return custom CA keystore with our added CAs
-     * @throws KeyStoreException
-     * @throws CertificateException
-     * @throws IOException
-     * @throws NoSuchAlgorithmException
-     */
-    private static KeyStore createKeystoreWithCustomCAsAndSystemCAs()
-            throws KeyStoreException, CertificateException,
-            IOException, NoSuchAlgorithmException {
-
-        final List<String> rawCertFiles = Arrays.asList("ca_digicert_global_g2", "ca_lets_encrypt");
-        final KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-        keyStore.load(null, null);
-        for (final String rawCertFile : rawCertFiles) {
-            final Certificate cert = readCertificateFromFile(rawCertFile);
-            keyStore.setCertificateEntry(rawCertFile, cert);
-        }
-
-        addSystemCAsToKeystore(keyStore);
-
-        return keyStore;
-    }
-
-    private static void addSystemCAsToKeystore(
-            final KeyStore keyStore) throws NoSuchAlgorithmException, KeyStoreException {
-
-        // Default TrustManager to get device trusted CA's
-        final TrustManagerFactory defaultTrustManagerFactory =
-                TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-        defaultTrustManagerFactory.init((KeyStore) null);
-
-        final X509TrustManager trustManager =
-                (X509TrustManager) defaultTrustManagerFactory.getTrustManagers()[0];
-        int idx = 0;
-        for (final Certificate cert : trustManager.getAcceptedIssuers()) {
-            keyStore.setCertificateEntry(Integer.toString(idx), cert);
-            idx++;
-        }
-    }
-
-    private static Certificate readCertificateFromFile(
-            final String rawFile)
-            throws IOException, CertificateException {
-
-        final Context context = App.getApp().getApplicationContext();
-        final InputStream inputStream = context.getResources().openRawResource(
-                context.getResources().getIdentifier(rawFile,
-                        "raw", context.getPackageName()));
-
-        final byte[] rawBytes = new byte[inputStream.available()];
-        inputStream.read(rawBytes);
-        inputStream.close();
-
-        final CertificateFactory cf = CertificateFactory.getInstance("X.509");
-        return cf.generateCertificate(new ByteArrayInputStream(rawBytes));
     }
 }
