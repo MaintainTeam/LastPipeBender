@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Build;
 
 import org.conscrypt.Conscrypt;
+import org.schabi.newpipe.settings.BraveVideoAudioSettingsBaseFragment;
 import org.schabi.newpipe.util.BraveTLSSocketFactory;
 
 import java.security.Security;
@@ -24,6 +25,8 @@ public class BraveApp extends MultiDexApplication {
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
             BraveTLSSocketFactory.setAsDefault();
         }
+
+        makeConfigOptionsSuitableForFlavor();
     }
 
     /**
@@ -40,5 +43,9 @@ public class BraveApp extends MultiDexApplication {
      */
     public static Context getAppContext() {
         return appContext;
+    }
+
+    private void makeConfigOptionsSuitableForFlavor() {
+        BraveVideoAudioSettingsBaseFragment.makeConfigOptionsSuitableForFlavor(getAppContext());
     }
 }
