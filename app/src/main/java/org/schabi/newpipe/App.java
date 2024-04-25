@@ -59,6 +59,8 @@ import io.reactivex.rxjava3.plugins.RxJavaPlugins;
 public class App extends BraveApp {
     public static final String PACKAGE_NAME = BuildConfig.APPLICATION_ID;
     private static final String TAG = App.class.toString();
+
+    private boolean isFirstRun = false;
     private static App app;
 
     @NonNull
@@ -84,7 +86,13 @@ public class App extends BraveApp {
             return;
         }
 
-        // Initialize settings first because others inits can use its values
+        // check if the last used preference version is set
+        // to determine whether this is the first app run
+        final int lastUsedPrefVersion = PreferenceManager.getDefaultSharedPreferences(this)
+                .getInt(getString(R.string.last_used_preferences_version), -1);
+        isFirstRun = lastUsedPrefVersion == -1;
+
+        // Initialize settings first because other initializations can use its values
         NewPipeSettings.initSettings(this);
 
         NewPipe.init(getDownloader(),
@@ -256,4 +264,7 @@ public class App extends BraveApp {
         return false;
     }
 
+    public boolean isFirstRun() {
+        return isFirstRun;
+    }
 }

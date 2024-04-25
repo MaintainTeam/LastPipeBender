@@ -18,6 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.IntentCompat;
 
 import com.grack.nanojson.JsonWriter;
 
@@ -106,7 +107,7 @@ public class ErrorActivity extends AppCompatActivity {
             actionBar.setDisplayShowTitleEnabled(true);
         }
 
-        errorInfo = intent.getParcelableExtra(ERROR_INFO);
+        errorInfo = IntentCompat.getParcelableExtra(intent, ERROR_INFO, ErrorInfo.class);
 
         // important add guru meditation
         addGuruMeditation();
