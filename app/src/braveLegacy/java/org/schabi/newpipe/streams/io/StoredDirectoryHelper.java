@@ -12,8 +12,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.ParcelFileDescriptor;
 import android.provider.DocumentsContract;
-import android.system.Os;
-import android.system.StructStatVfs;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -192,12 +190,12 @@ public class StoredDirectoryHelper {
      */
     public long getFreeStorageSpace() {
         try {
-            final StructStatVfs stat;
+            final BraveStoredDirectoryHelper.BraveStructStatVfs stat;
 
             if (ioTree != null) {
                 // non-SAF file, use statvfs with the path directly (also, `context` would be null
                 // for non-SAF files, so we wouldn't be able to call `getContentResolver` anyway)
-                stat = Os.statvfs(ioTree.toString());
+                stat = BraveStoredDirectoryHelper.statvfs(ioTree.toString());
 
             } else {
                 // SAF file, we can't get a path directly, so obtain a file descriptor first
@@ -208,7 +206,7 @@ public class StoredDirectoryHelper {
                         return Long.MAX_VALUE;
                     }
                     final FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
-                    stat = Os.fstatvfs(fileDescriptor);
+                    stat = BraveStoredDirectoryHelper.fstatvfs(fileDescriptor);
                 }
             }
 
