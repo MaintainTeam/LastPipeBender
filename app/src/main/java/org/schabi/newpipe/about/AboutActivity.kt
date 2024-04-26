@@ -71,6 +71,8 @@ class AboutActivity : AppCompatActivity() {
         ): View {
             FragmentAboutBinding.inflate(inflater, container, false).apply {
                 aboutAppVersion.text = BuildConfig.VERSION_NAME
+                braveMore.braveAppSignature.text = BuildConfig.APPLICATION_ID
+                braveMore.aboutAppFlavor.text = BuildConfig.FLAVOR
                 braveAbout.braveAboutGithubLink.openLink(R.string.brave_github_url)
                 aboutGithubLink.openLink(R.string.github_url)
                 aboutDonationLink.openLink(R.string.donation_url)
