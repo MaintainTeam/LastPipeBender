@@ -1,12 +1,12 @@
 package org.schabi.newpipe.streams.io;
 
 import android.os.Build;
-import android.os.StatFs;
 import android.system.ErrnoException;
 import android.system.Os;
-import android.system.StructStatVfs;
 
 import java.io.FileDescriptor;
+
+import androidx.annotation.RequiresApi;
 
 public final class BraveStoredDirectoryHelper {
 
@@ -16,25 +16,17 @@ public final class BraveStoredDirectoryHelper {
 
     public static BraveStructStatVfs statvfs(final String path) throws ErrnoException {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            final StructStatVfs stat = Os.statvfs(path);
-            return new BraveStructStatVfs(stat.f_bavail, stat.f_frsize);
+            return new BraveStructStatVfs(Os.statvfs(path));
         } else {
-            final StatFs stat = new StatFs(path);
-            return new BraveStructStatVfs(stat.getAvailableBlocksLong(),
-                    stat.getBlockSizeLong()
-            );
+            return new BraveStructStatVfs(com.github.evermindzz.osext.system.Os.statvfs(path));
         }
     }
 
     public static BraveStructStatVfs fstatvfs(final FileDescriptor fd) throws ErrnoException {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            final StructStatVfs stat = Os.fstatvfs(fd);
-            return new BraveStructStatVfs(stat.f_bavail, stat.f_frsize);
+            return new BraveStructStatVfs(Os.fstatvfs(fd));
         } else {
-            // TODO find a real solution for KitKat to determine the free fs on FileDescriptor
-            // return just a fake value. '1' is just used to not exceed Long.MAX_VALUE as both
-            // values are multiplied by the caller
-            return new BraveStructStatVfs(Long.MAX_VALUE, 1);
+            return new BraveStructStatVfs(com.github.evermindzz.osext.system.Os.fstatvfs(fd));
         }
     }
 
@@ -51,10 +43,15 @@ public final class BraveStoredDirectoryHelper {
         /**
          * @noinspection checkstyle:ParameterName
          */
-        BraveStructStatVfs(final long f_bavail,
-                           final long f_frsize) {
-            this.f_bavail = f_bavail;
-            this.f_frsize = f_frsize;
+        BraveStructStatVfs(final com.github.evermindzz.osext.system.StructStatVfs stat) {
+            this.f_bavail = stat.f_bavail;
+            this.f_frsize = stat.f_frsize;
+        }
+
+        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+        BraveStructStatVfs(final android.system.StructStatVfs stat) {
+            this.f_bavail = stat.f_bavail;
+            this.f_frsize = stat.f_frsize;
         }
     }
 }
