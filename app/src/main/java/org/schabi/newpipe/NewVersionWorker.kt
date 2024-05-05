@@ -16,7 +16,6 @@ import androidx.work.WorkManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
-import com.grack.nanojson.JsonParser
 import com.grack.nanojson.JsonParserException
 import org.schabi.newpipe.extractor.downloader.Response
 import org.schabi.newpipe.extractor.exceptions.ReCaptchaException
@@ -118,9 +117,7 @@ class NewVersionWorker(
 
         // Parse the json from the response.
         try {
-            val newpipeVersionInfo = JsonParser.`object`()
-                .from(response.responseBody()).getObject("flavors")
-                .getObject("newpipe")
+            val newpipeVersionInfo = BraveNewVersionWorkerHelper.getVersionInfo(response)
 
             val versionName = newpipeVersionInfo.getString("version")
             val versionCode = newpipeVersionInfo.getInt("version_code")
