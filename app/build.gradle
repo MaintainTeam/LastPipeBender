@@ -16,8 +16,8 @@ android {
     namespace 'org.schabi.newpipe'
 
     defaultConfig {
-        applicationId "org.polymorphicshade.tubular"
-        resValue "string", "app_name", "Tubular"
+        applicationId "org.maintainteam.lastpipebender"
+        resValue "string", "app_name", "LastPipeBender"
         minSdk 21
         targetSdk 33
         versionCode 998
@@ -42,19 +42,19 @@ android {
             if (normalizedWorkingBranch.isEmpty() || workingBranch == "master" || workingBranch == "dev") {
                 // default values when branch name could not be determined or is master or dev
                 applicationIdSuffix ".debug"
-                resValue "string", "app_name", "Tubular Debug"
+                resValue "string", "app_name", "LastPipeBender Debug"
             } else {
                 applicationIdSuffix ".debug." + normalizedWorkingBranch
-                resValue "string", "app_name", "Tubular " + workingBranch
-                archivesBaseName = 'Tubular_' + normalizedWorkingBranch
+                resValue "string", "app_name", "LastPipeBender " + workingBranch
+                archivesBaseName = 'LastPipeBender_' + normalizedWorkingBranch
             }
         }
 
         release {
             if (System.properties.containsKey('packageSuffix')) {
                 applicationIdSuffix System.getProperty('packageSuffix')
-                resValue "string", "app_name", "Tubular " + System.getProperty('packageSuffix')
-                archivesBaseName = 'Tubular_' + System.getProperty('packageSuffix')
+                resValue "string", "app_name", "LastPipeBender " + System.getProperty('packageSuffix')
+                archivesBaseName = 'LastPipeBender_' + System.getProperty('packageSuffix')
             }
             minifyEnabled true
             shrinkResources false // disabled to fix F-Droid's reproducible build
@@ -205,7 +205,7 @@ dependencies {
     // name and the commit hash with the commit hash of the (pushed) commit you want to test
     // This works thanks to JitPack: https://jitpack.io/
     implementation 'com.github.TeamNewPipe:nanojson:1d9e1aea9049fc9f85e68b43ba39fe7be1c1f751'
-    implementation 'com.github.TeamNewPipe:NewPipeExtractor:v0.24.0'
+    implementation 'com.github.MaintainTeam:LastPipeExtractor:4faa5669b67d62526c3af39e11bb9d29d284bcd0'
     implementation 'com.github.TeamNewPipe:NoNonsense-FilePicker:5.0.0'
 
 /** Checkstyle **/
