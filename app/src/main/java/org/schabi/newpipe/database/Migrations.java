@@ -27,6 +27,7 @@ public final class Migrations {
     public static final int DB_VER_7 = 7;
     public static final int DB_VER_8 = 8;
     public static final int DB_VER_9 = 9;
+    public static final int DB_VER_10 = 10;
 
     private static final String TAG = Migrations.class.getName();
     public static final boolean DEBUG = MainActivity.DEBUG;
@@ -240,13 +241,27 @@ public final class Migrations {
     public static final Migration MIGRATION_7_8 = new Migration(DB_VER_7, DB_VER_8) {
         @Override
         public void migrate(@NonNull final SupportSQLiteDatabase database) {
-            database.execSQL("DELETE FROM search_history WHERE id NOT IN (SELECT id FROM (SELECT "
-                    + "MIN(id) as id FROM search_history GROUP BY trim(search), service_id ) tmp)");
-            database.execSQL("UPDATE search_history SET search = trim(search)");
+            database.execSQL("CREATE TABLE `sponsorblock_whitelist` "
+                    + "(`uploader` TEXT NOT NULL, PRIMARY KEY(`uploader`));");
         }
     };
 
     public static final Migration MIGRATION_8_9 = new Migration(DB_VER_8, DB_VER_9) {
+        @Override
+        public void migrate(@NonNull final SupportSQLiteDatabase database) {
+            database.execSQL("DELETE FROM search_history WHERE id NOT IN (SELECT id FROM (SELECT "
+                    + "MIN(id) as id FROM search_history GROUP BY trim(search), service_id ) tmp)");
+            database.execSQL("UPDATE search_history SET search = trim(search)");
+
+            // TODO: remove later - this meant to be a temporary fix for
+            //  "rolling back" the database to fix poly's dumb mistake...
+            database.execSQL("DROP TABLE `sponsorblock_whitelist`");
+            MIGRATION_9_10.migrate(database);
+        }
+    };
+
+    // TODO: change back to MIGRATION_8_9 = new Migration(DB_VER_8, DB_VER_9)
+    public static final Migration MIGRATION_9_10 = new Migration(DB_VER_9, DB_VER_10) {
         @Override
         public void migrate(@NonNull final SupportSQLiteDatabase database) {
             try {

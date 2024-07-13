@@ -817,7 +817,8 @@ public class RouterActivity extends AppCompatActivity {
             inFlight(true);
             final LoadingDialog loadingDialog = new LoadingDialog(R.string.loading_metadata_title);
             loadingDialog.show(getParentFragmentManager(), "loadingDialog");
-            disposables.add(ExtractorHelper.getStreamInfo(currentServiceId, currentUrl, true)
+            disposables.add(ExtractorHelper.getStreamInfo(getContext(), currentServiceId,
+                            currentUrl, true)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .compose(this::pleaseWait)
@@ -837,7 +838,8 @@ public class RouterActivity extends AppCompatActivity {
 
         private void openAddToPlaylistDialog(final int currentServiceId, final String currentUrl) {
             inFlight(true);
-            disposables.add(ExtractorHelper.getStreamInfo(currentServiceId, currentUrl, false)
+            disposables.add(ExtractorHelper.getStreamInfo(getContext(), currentServiceId,
+                            currentUrl, false)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .compose(this::pleaseWait)
@@ -970,7 +972,8 @@ public class RouterActivity extends AppCompatActivity {
 
             switch (choice.linkType) {
                 case STREAM:
-                    single = ExtractorHelper.getStreamInfo(choice.serviceId, choice.url, false);
+                    single = ExtractorHelper.getStreamInfo(
+                            this, choice.serviceId, choice.url, false);
                     userAction = UserAction.REQUESTED_STREAM;
                     break;
                 case CHANNEL:
@@ -1062,7 +1065,7 @@ public class RouterActivity extends AppCompatActivity {
         private NotificationCompat.Builder createNotification() {
             return new NotificationCompat.Builder(this, getString(R.string.notification_channel_id))
                     .setOngoing(true)
-                    .setSmallIcon(R.drawable.ic_newpipe_triangle_white)
+                    .setSmallIcon(R.drawable.ic_tubular_white)
                     .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                     .setContentTitle(
                             getString(R.string.preferred_player_fetcher_notification_title))

@@ -165,7 +165,7 @@
     <string name="youtube_restricted_mode_enabled_summary">YouTube provides a \"Restricted Mode\" which hides potentially mature content</string>
     <string name="restricted_video">This video is age restricted.\n\nTurn on \"%1$s\" in the settings if you want to see it.</string>
     <string name="restricted_video_no_stream">This video is age-restricted.
-\nDue to new YouTube policies with age-restricted videos, NewPipe cannot access any of its video streams and thus is unable to play it.</string>
+\nDue to new YouTube policies with age-restricted videos, Tubular cannot access any of its video streams and thus is unable to play it.</string>
     <string name="duration_live">Live</string>
     <string name="downloads">Downloads</string>
     <string name="downloads_title">Downloads</string>
@@ -191,10 +191,10 @@
     <string name="just_once">Just Once</string>
     <string name="file">File</string>
     <string name="notifications">Notifications</string>
-    <string name="notification_channel_name">NewPipe notification</string>
-    <string name="notification_channel_description">Notifications for NewPipe\'s player</string>
+    <string name="notification_channel_name">Tubular notification</string>
+    <string name="notification_channel_description">Notifications for Tubular\'s player</string>
     <string name="app_update_notification_channel_name">App update notification</string>
-    <string name="app_update_notification_channel_description">Notifications for new NewPipe versions</string>
+    <string name="app_update_notification_channel_description">Notifications for new Tubular versions</string>
     <string name="hash_channel_name">Video hash notification</string>
     <string name="hash_channel_description">Notifications for video hashing progress</string>
     <string name="streams_notification_channel_name">New streams</string>
@@ -211,7 +211,7 @@
     <string name="recaptcha_cookies_cleared">reCAPTCHA cookies have been cleared</string>
     <string name="import_data_summary">Overrides your current history, subscriptions, playlists and (optionally) settings</string>
     <string name="export_data_summary">Export history, subscriptions, playlists and settings</string>
-    <string name="clear_cookie_summary">Clear cookies that NewPipe stores when you solve a reCAPTCHA</string>
+    <string name="clear_cookie_summary">Clear cookies that Tubular stores when you solve a reCAPTCHA</string>
     <string name="clear_views_history_title">Clear watch history</string>
     <string name="clear_views_history_summary">Deletes the history of played streams and the playback positions</string>
     <string name="delete_view_history_alert">Delete entire watch history?</string>
@@ -255,7 +255,7 @@
     <string name="restore_defaults_confirmation">Do you want to restore defaults?</string>
     <string name="permission_display_over_apps">Give permission to display over other apps</string>
     <!-- error activity -->
-    <string name="error_report_notification_title">NewPipe encountered an error, tap to report</string>
+    <string name="error_report_notification_title">Tubular encountered an error, tap to report</string>
     <string name="error_report_notification_toast">An error occurred, see the notification</string>
     <string name="sorry_string">Sorry, that should not have happened.</string>
     <string name="error_report_button_text">Report via e-mail</string>
@@ -277,6 +277,7 @@
     <string name="comments_tab_description">Comments</string>
     <string name="related_items_tab_description">Related items</string>
     <string name="description_tab_description">Description</string>
+    <string name="sponsor_block_tab_description">SponsorBlock</string>
     <string name="search_no_results">No results</string>
     <string name="empty_list_subtitle">Nothing here but crickets</string>
     <string name="import_subscriptions_hint">Import or export subscriptions from the 3-dot menu</string>
@@ -337,7 +338,7 @@
     <string name="msg_name">Filename</string>
     <string name="msg_threads">Threads</string>
     <string name="msg_error">Error</string>
-    <string name="msg_running">NewPipe Downloading</string>
+    <string name="msg_running">Tubular Downloading</string>
     <string name="msg_running_detail">Tap for details</string>
     <string name="msg_calculating_hash">Calculating hash</string>
     <string name="msg_wait">Please wait…</string>
@@ -361,25 +362,25 @@
     <string name="charset_letters_and_digits">Letters and digits</string>
     <string name="charset_most_special_characters">Most special characters</string>
     <!-- About -->
-    <string name="title_activity_about">About NewPipe</string>
+    <string name="title_activity_about">About Tubular</string>
     <string name="title_licenses">Third-party Licenses</string>
     <string name="copyright">© %1$s by %2$s under %3$s</string>
     <string name="tab_about">About \u0026 FAQ</string>
     <string name="tab_licenses">Licenses</string>
-    <string name="app_description">Libre lightweight streaming on Android.</string>
+    <string name="app_description">Tubular is forked from NewPipe, a libre lightweight streaming on Android.</string>
     <string name="contribution_title">Contribute</string>
     <string name="contribution_encouragement">Whether you have ideas of; translation, design changes, code cleaning, or real heavy code changes—help is always welcome. The more is done the better it gets!</string>
     <string name="view_on_github">View on GitHub</string>
     <string name="donation_title">Donate</string>
-    <string name="donation_encouragement">NewPipe is developed by volunteers spending their free time bringing you the best user experience. Give back to help developers make NewPipe even better while they enjoy a cup of coffee.</string>
+    <string name="donation_encouragement">NewPipe is developed by volunteers spending their free time bringing you the best user experience. Give back to help developers make Tubular even better while they enjoy a cup of coffee.</string>
     <string name="give_back">Give back</string>
     <string name="website_title">Website</string>
     <string name="website_encouragement">Visit the NewPipe Website for more info and news.</string>
     <string name="privacy_policy_title">NewPipe\'s Privacy Policy</string>
-    <string name="privacy_policy_encouragement">The NewPipe project takes your privacy very seriously. Therefore, the app does not collect any data without your consent.\nNewPipe\'s privacy policy explains in detail what data is sent and stored when you send a crash report.</string>
+    <string name="privacy_policy_encouragement">The NewPipe project takes your privacy very seriously. Therefore, the app does not collect any data without your consent.\NewPipe\'s privacy policy explains in detail what data is sent and stored when you send a crash report.</string>
     <string name="read_privacy_policy">Read privacy policy</string>
-    <string name="app_license_title">NewPipe\'s License</string>
-    <string name="app_license">NewPipe is copyleft libre software: You can use, study, share, and improve it at will. Specifically you can redistribute and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</string>
+    <string name="app_license_title">Tubular\'s License</string>
+    <string name="app_license">Tubular is copyleft libre software: You can use, study, share, and improve it at will. Specifically you can redistribute and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</string>
     <string name="read_full_license">Read license</string>
     <string name="faq_title">Frequently asked questions</string>
     <string name="faq_description">If you are having trouble using the app, be sure to check out these answers to common questions!</string>
@@ -453,6 +454,7 @@
     <string name="rename_playlist">Rename</string>
     <string name="name">Name</string>
     <string name="add_to_playlist">Add to playlist</string>
+    <string name="shuffle_and_play">Shuffle and play</string>
     <string name="processing_may_take_a_moment">Processing… May take a moment</string>
     <string name="mute">Mute</string>
     <string name="unmute">Unmute</string>
@@ -527,7 +529,7 @@
     <string name="percent">Percent</string>
     <string name="semitone">Semitone</string>
     <!-- GDPR dialog -->
-    <string name="start_accept_privacy_policy">In order to comply with the European General Data Protection Regulation (GDPR), we hereby draw your attention to NewPipe\'s privacy policy. Please read it carefully.
+    <string name="start_accept_privacy_policy">In order to comply with the European General Data Protection Regulation (GDPR), we hereby draw your attention to Tubular\'s privacy policy. Please read it carefully.
 \nYou must accept it to send us the bug report.</string>
     <string name="accept">Accept</string>
     <string name="decline">Decline</string>
@@ -584,8 +586,8 @@
     <string name="low_quality_smaller">Low quality (smaller)</string>
     <string name="dont_show">Don\'t show</string>
     <!-- App update notification -->
-    <string name="app_update_unavailable_toast">You are running the latest version of NewPipe</string>
-    <string name="app_update_available_notification_title">NewPipe update is available!</string>
+    <string name="app_update_unavailable_toast">You are running the latest version of Tubular</string>
+    <string name="app_update_available_notification_title">Tubular update is available!</string>
     <string name="app_update_available_notification_text">Tap to download %s</string>
     <string name="missions_header_finished">Finished</string>
     <string name="missions_header_pending">Pending</string>
@@ -625,7 +627,7 @@
     <string name="error_http_unsupported_range">The server does not accept multi-threaded downloads, retry with @string/msg_threads = 1</string>
     <string name="error_http_not_found">Not found</string>
     <string name="error_postprocessing_failed">Post-processing failed</string>
-    <string name="error_postprocessing_stopped">NewPipe was closed while working on the file</string>
+    <string name="error_postprocessing_stopped">Tubular was closed while working on the file</string>
     <string name="error_insufficient_storage">Not enough free space on device</string>
     <string name="error_insufficient_storage_left">No space left on device</string>
     <string name="error_progress_lost">Progress lost, because the file was deleted</string>
@@ -708,7 +710,7 @@
     <string name="feed_update_threshold_option_always_update">Always update</string>
     <string name="feed_load_error">Error loading feed</string>
     <string name="feed_load_error_account_info">Could not load feed for \'%s\'.</string>
-    <string name="feed_load_error_terminated">The author\'s account has been terminated.\nNewPipe will not be able to load this feed in the future.\nDo you want to unsubscribe from this channel?</string>
+    <string name="feed_load_error_terminated">The author\'s account has been terminated.\Tubular will not be able to load this feed in the future.\nDo you want to unsubscribe from this channel?</string>
     <string name="feed_load_error_fast_unknown">The fast feed mode does not provide more info on this.</string>
     <string name="feed_use_dedicated_fetch_method_title">Fetch from dedicated feed when available</string>
     <string name="feed_use_dedicated_fetch_method_summary">Available in some services, it is usually much faster but may return a limited amount of items and often incomplete information (e.g. no duration, item type, no live status)</string>
@@ -716,7 +718,7 @@
     <string name="feed_use_dedicated_fetch_method_disable_button">Disable fast mode</string>
     <string name="feed_use_dedicated_fetch_method_help_text">Do you think feed loading is too slow\? If so, try enabling fast loading (you can change it in settings or by pressing the button below).
 \n
-\nNewPipe offers two feed loading strategies:
+\Tubular offers two feed loading strategies:
 \n• Fetching the whole subscription channel, which is slow but complete.
 \n• Using a dedicated service endpoint, which is fast but usually not complete.
 \n
@@ -729,7 +731,7 @@
     <string name="feed_show_hide_streams">Show/Hide streams</string>
     <string name="feed_fetch_channel_tabs">Fetch channel tabs</string>
     <string name="feed_fetch_channel_tabs_summary">Tabs to fetch when updating the feed. This option has no effect if a channel is updated using fast mode.</string>
-    <string name="content_not_supported">This content is not yet supported by NewPipe.\n\nIt will hopefully be supported in a future version.</string>
+    <string name="content_not_supported">This content is not yet supported by Tubular.\n\nIt will hopefully be supported in a future version.</string>
     <string name="detail_sub_channel_thumbnail_view_description">Channel\'s avatar thumbnail</string>
     <string name="channel_created_by">Created by %s</string>
     <string name="video_detail_by">By %s</string>
@@ -744,12 +746,12 @@
     <string name="no_appropriate_file_manager_message_android_10">No appropriate file manager was found for this action.
 \nPlease install a Storage Access Framework compatible file manager</string>
     <string name="georestricted_content">This content is not available in your country.</string>
-    <string name="soundcloud_go_plus_content">This is a SoundCloud Go+ track, at least in your country, so it cannot be streamed or downloaded by NewPipe.</string>
-    <string name="private_content">This content is private, so it cannot be streamed or downloaded by NewPipe.</string>
-    <string name="youtube_music_premium_content">This video is available only to YouTube Music Premium members, so it cannot be streamed or downloaded by NewPipe.</string>
+    <string name="soundcloud_go_plus_content">This is a SoundCloud Go+ track, at least in your country, so it cannot be streamed or downloaded by Tubular.</string>
+    <string name="private_content">This content is private, so it cannot be streamed or downloaded by Tubular.</string>
+    <string name="youtube_music_premium_content">This video is available only to YouTube Music Premium members, so it cannot be streamed or downloaded by Tubular.</string>
     <string name="account_terminated">Account terminated</string>
     <string name="service_provides_reason">%s provides this reason:</string>
-    <string name="paid_content">This content is only available to users who have paid, so it cannot be streamed or downloaded by NewPipe.</string>
+    <string name="paid_content">This content is only available to users who have paid, so it cannot be streamed or downloaded by Tubular.</string>
     <string name="featured">Featured</string>
     <string name="radio">Radio</string>
     <string name="auto_device_theme_title">Automatic (device theme)</string>
@@ -857,4 +859,122 @@
     <string name="show_more">Show more</string>
     <string name="show_less">Show less</string>
     <string name="import_settings_vulnerable_format">The settings in the export being imported use a vulnerable format that was deprecated since NewPipe 0.27.0. Make sure the export being imported is from a trusted source, and prefer using only exports obtained from NewPipe 0.27.0 or newer in the future. Support for importing settings in this vulnerable format will soon be removed completely, and then old versions of NewPipe will not be able to import settings of exports from new versions anymore.</string>
+    <!-- SponsorBlock -->
+    <string name="sponsor_block">SponsorBlock</string>
+    <string name="sponsor_block_category_sponsor">Sponsor</string>
+    <string name="sponsor_block_category_intro">Intermission/Intro Animation</string>
+    <string name="sponsor_block_category_outro">Endcards/Credits</string>
+    <string name="sponsor_block_category_interaction">Interaction Reminders (Subscribe)</string>
+    <string name="sponsor_block_category_highlight">Highlight</string>
+    <string name="sponsor_block_category_self_promo">Unpaid/Self Promotion</string>
+    <string name="sponsor_block_category_non_music">Music: Non-Music Section</string>
+    <string name="sponsor_block_category_preview">Preview/Recap</string>
+    <string name="sponsor_block_category_filler">Filler Tangent/Jokes</string>
+    <string name="sponsor_block_category_pending">Pending</string>
+    <string name="sponsor_block_home_page_title">View Website</string>
+    <string name="sponsor_block_home_page_summary">View the official SponsorBlock website.</string>
+    <string name="sponsor_block_enable_title">Enable SponsorBlock</string>
+    <string name="sponsor_block_enable_summary">Use the SponsorBlock API to automatically skip sponsors in videos. This currently only works for YouTube videos.</string>
+    <string name="sponsor_block_api_url_title">API Url</string>
+    <string name="sponsor_block_api_url_summary">The url to use when querying the SponsorBlock API. This must be set for SponsorBlock to work.</string>
+    <string name="sponsor_block_notifications_title">Notify when sponsors are skipped</string>
+    <string name="sponsor_block_notifications_summary">Show a toast notification when a sponsor is automatically skipped.</string>
+    <string name="sponsor_block_privacy_title">View Privacy Policy</string>
+    <string name="sponsor_block_privacy_summary">View SponsorBlock\'s privacy policy.</string>
+    <string name="sponsor_block_api_url_help_text">This is the URL that will be queried when the application needs to know which parts of a video to skip.\n\nYou can set the official URL by clicking the \'Use Official\' option below, though it is highly recommended you view SponsorBlock\'s privacy policy before you do.</string>
+    <string name="sponsor_block_privacy_policy_text">SponsorBlock Privacy Policy</string>
+    <string name="sponsor_block_homepage_url">https://sponsor.ajay.app/</string>
+    <string name="sponsor_block_default_api_url">https://sponsor.ajay.app/api/</string>
+    <string name="sponsor_block_privacy_policy_url">https://gist.github.com/ajayyy/aa9f8ded2b573d4f73a3ffa0ef74f796</string>
+    <string name="sponsor_block_skip_sponsor_toast">Skipped sponsor</string>
+    <string name="sponsor_block_skip_intro_toast">Skipped intermission/intro</string>
+    <string name="sponsor_block_skip_outro_toast">Skipped endcards/credits</string>
+    <string name="sponsor_block_skip_interaction_toast">Skipped interaction reminder</string>
+    <string name="sponsor_block_skip_self_promo_toast">Skipped unpaid/self promo</string>
+    <string name="sponsor_block_skip_non_music_toast">Skipped non-music</string>
+    <string name="sponsor_block_skip_preview_toast">Skipped preview/recap</string>
+    <string name="sponsor_block_skip_filler_toast">Skipped filler</string>
+    <string name="sponsor_block_skip_pending_toast">Skipped pending segment</string>
+    <string name="sponsor_block_toggle_skipping">Toggle skipping sponsors</string>
+    <string name="sponsor_block_clear_whitelist_title">Clear Whitelist</string>
+    <string name="sponsor_block_clear_whitelist_summary">Clear the list of uploaders SponsorBlock will ignore.</string>
+    <string name="sponsor_block_enabled_toast">SponsorBlock enabled</string>
+    <string name="sponsor_block_disabled_toast">SponsorBlock disabled</string>
+    <string name="sponsor_block_whitelist_cleared_toast">Whitelist cleared</string>
+    <string name="sponsor_block_uploader_added_to_whitelist_toast">Channel added to whitelist</string>
+    <string name="sponsor_block_uploader_removed_from_whitelist_toast">Channel removed from whitelist</string>
+    <string name="sponsor_block_confirm_clear_whitelist">Are you sure you want to clear the whitelist?</string>
+    <string name="sponsor_block_confirm_reset_colors">Are you sure you want to reset the category colors?</string>
+    <string name="sponsor_block_segment_voted_up_toast">Up-voted segment</string>
+    <string name="sponsor_block_segment_voted_down_toast">Down-voted segment</string>
+    <string name="sponsor_block_segment_reset_vote_toast">Voting reset for segment</string>
+    <string name="sponsor_block_invalid_start_toast">Invalid start location</string>
+    <string name="sponsor_block_invalid_end_toast">Invalid end location</string>
+    <string name="sponsor_block_marked_start_toast">Marked start of segment</string>
+    <string name="sponsor_block_marked_end_toast">Marked end of segment</string>
+    <string name="sponsor_block_missing_times_toast">Missing start/end time(s)</string>
+    <string name="sponsor_block_select_a_category">Select a category</string>
+    <string name="sponsor_block_clear_marked_segment_prompt">Are you sure you want to clear your new segment?</string>
+    <string name="sponsor_block_upload_success_message">Your segment has been submitted.\n\nIt might take some time for your submission to appear in the video the next time you open it.</string>
+    <string name="sponsor_block_mark_the_start_of_a_segment">Mark the start of a segment</string>
+    <string name="sponsor_block_mark_the_end_of_a_segment">Mark the end of a segment</string>
+    <string name="sponsor_block_clear_segment">Clear segment</string>
+    <string name="sponsor_block_submit_segment">Submit segment</string>
+    <string name="sponsor_block_skip_marked_segments">Skip marked segments</string>
+    <string name="sponsor_block_whitelist_channel">Whitelist channel</string>
+    <string name="settings_category_sponsor_block_title">SponsorBlock (Third-Party Service)</string>
+    <string name="settings_category_sponsor_block_categories_quick_actions">Quick Actions</string>
+    <string name="settings_category_sponsor_block_categories_title">SponsorBlock Categories</string>
+    <string name="settings_category_sponsor_block_categories_summary">Customize which video segments to skip, along with their color markings on the seek bar.</string>
+    <string name="settings_category_sponsor_block_categories_reset_colors_title">Reset Colors</string>
+    <string name="settings_category_sponsor_block_categories_all_colors_on_title">All On</string>
+    <string name="settings_category_sponsor_block_categories_all_colors_off_title">All Off</string>
+    <string name="settings_category_sponsor_block_category_enable_title">Enable</string>
+    <string name="settings_category_sponsor_block_category_enable_mode_title">Skip Mode</string>
+    <string name="settings_category_sponsor_block_category_color">Seek Bar Color</string>
+    <string name="settings_category_sponsor_block_category_sponsor_summary">Paid promotion, paid referrals and direct advertisements. Not for self-promotion or free shoutouts to causes/creators/websites/products they like.</string>
+    <string name="settings_category_sponsor_block_category_intro_summary">An interval without actual content. Could be a pause, static frame, repeating animation. This should not be used for transitions containing information or be used on music videos.</string>
+    <string name="settings_category_sponsor_block_category_outro_summary">Credits or when the YouTube endcards appear. Not for spoken conclusions. This should not include useful content. This should not be used on music videos.</string>
+    <string name="settings_category_sponsor_block_category_interaction_summary">When there is a short reminder to like, subscribe or follow them in the middle of content. If it is long or about something specific, it should be under self promotion instead.</string>
+    <string name="settings_category_sponsor_block_category_highlight_summary">The part of the video that most people are looking for. Similar to "Video starts at x" comments.</string>
+    <string name="settings_category_sponsor_block_category_self_promo_summary">Similar to "sponsor" except for unpaid or self promotion. This includes sections about merchandise, donations, or information about who they collaborated with.</string>
+    <string name="settings_category_sponsor_block_category_non_music_summary">Only for use in music videos. This includes introductions or outros in music videos.</string>
+    <string name="settings_category_sponsor_block_category_preview_summary">Quick recap of previous episodes, or a preview of what\'s coming up later in the current video. Meant for edited together clips, not for spoken summaries.</string>
+    <string name="settings_category_sponsor_block_category_filler_summary">This is for tangential scenes added only for filler or humor that are not required to understand the main content of the video.</string>
+    <string name="settings_category_sponsor_block_category_pending_summary">Represents a new segment ready to be submitted.</string>
+    <string name="submit">Submit</string>
+    <string name="end">End</string>
+    <string name="invalid_color_toast">Invalid color</string>
+    <string name="description_up_vote_segment">Up-vote segment</string>
+    <string name="description_down_vote_segment">Down-vote segment</string>
+    <string name="description_skip_to_highlight">Skip to highlight</string>
+    <string name="sponsor_block_skip_mode_enabled">Automatic</string>
+    <string name="sponsor_block_skip_mode_manual">Manual</string>
+    <string name="sponsor_block_skip_mode_highlight">Highlight Only</string>
+    <string name="sponsor_block_graced_rewind_title">Rewind pauses skipping</string>
+    <string name="sponsor_block_graced_rewind_summary">Rewinding the video back to automatically-skipped segments will pause skipping until the segment ends.</string>
+    <string name="sponsor_block_manual_unskip_button">Un-skip</string>
+    <string name="sponsor_block_manual_skip_button">Skip</string>
+    <string name="sponsor_block_show_manual_skip_title">Show manual buttons</string>
+    <string name="sponsor_block_show_manual_skip_summary">Show buttons on-screen to manually skip/unskip segments. Enabling this is recommended when configuring SponsorBlock Categories to be skipped manually.</string>
+    <!-- ReturnYouTubeDislike -->
+    <string name="return_youtube_dislike_home_page_title">View Website</string>
+    <string name="return_youtube_dislike_home_page_summary">View the official ReturnYouTubeDislike website.</string>
+    <string name="return_youtube_dislike_security_faq_title">View Security FAQ</string>
+    <string name="return_youtube_dislike_security_faq_summary">If you care about your privacy, it is recommended that you view ReturnYouTubeDislike\'s FAQ about security and what they track.</string>
+    <string name="return_youtube_dislike_enable_title">Enable ReturnYouTubeDislike</string>
+    <string name="return_youtube_dislike_enable_summary">Use the ReturnYouTubeDislike API to show the amount of dislikes for a video. This only works for YouTube videos.</string>
+    <string name="return_youtube_dislike_default_api_url">https://returnyoutubedislikeapi.com/</string>
+    <string name="return_youtube_dislike_api_url_title">API Url</string>
+    <string name="return_youtube_dislike_api_url_summary">The url to use when querying the ReturnYouTubeDislike API. This must be set for ReturnYouTubeDislike to work.</string>
+    <string name="return_youtube_dislike_api_url_help_text">This is the URL that will be queried when the application determines the dislike count on a YouTube video.\n\nYou can set the official URL by clicking the \'Use Official\' option below, though it is highly recommended you view ReturnYouTubeDislike\'s security FAQ before you do.</string>
+    <string name="return_youtube_dislike_override_like_count_title">Override Like Count</string>
+    <string name="return_youtube_dislike_override_like_count_summary">Use the like count reported by the ReturnYouTubeDislike API instead of YouTube\'s.</string>
+    <string name="return_youtube_dislike_override_view_count_title">Override View Count</string>
+    <string name="return_youtube_dislike_override_view_count_summary">Use the view count reported by the ReturnYouTubeDislike API instead of YouTube\'s.</string>
+    <string name="return_youtube_dislike_show_dislikes_as_percentage_title">Show Dislikes as a percentage</string>
+    <string name="return_youtube_dislike_show_dislikes_as_percentage_summary">Display dislike count as a percentage instead of a number.</string>
+    <string name="return_youtube_dislike_privacy_policy_text">ReturnYouTubeDislike Security FAQ</string>
+    <string name="return_youtube_dislike_home_page_url">https://returnyoutubedislike.com/</string>
+    <string name="return_youtube_dislike_security_faq_url">https://www.returnyoutubedislike.com/faq/</string>
 </resources>

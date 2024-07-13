@@ -82,6 +82,7 @@ import org.schabi.newpipe.player.seekbarpreview.SeekbarPreviewThumbnailHolder;
 import org.schabi.newpipe.util.DeviceUtils;
 import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.NavigationHelper;
+import org.schabi.newpipe.util.SponsorBlockHelper;
 import org.schabi.newpipe.util.external_communication.KoreUtils;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
 import org.schabi.newpipe.views.player.PlayerFastSeekOverlay;
@@ -215,6 +216,8 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
 
         binding.repeatButton.setOnClickListener(v -> onRepeatClicked());
         binding.shuffleButton.setOnClickListener(v -> onShuffleClicked());
+        binding.unskipButton.setOnClickListener(v -> onUnskipClicked());
+        binding.skipButton.setOnClickListener(v -> onSkipClicked());
 
         binding.playPauseButton.setOnClickListener(makeOnClickListener(player::playPause));
         binding.playPreviousButton.setOnClickListener(makeOnClickListener(player::playPrevious));
@@ -291,6 +294,8 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
 
         binding.repeatButton.setOnClickListener(null);
         binding.shuffleButton.setOnClickListener(null);
+        binding.unskipButton.setOnClickListener(null);
+        binding.skipButton.setOnClickListener(null);
 
         binding.playPauseButton.setOnClickListener(null);
         binding.playPreviousButton.setOnClickListener(null);
@@ -798,6 +803,11 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
     }
 
     @Override
+    public void onMarkSeekbarRequested(@NonNull final StreamInfo streamInfo) {
+        SponsorBlockHelper.markSegments(context, binding.playbackSeekBar, streamInfo);
+    }
+
+    @Override
     public void onBlocked() {
         super.onBlocked();
 
@@ -849,6 +859,21 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
         binding.loadingPanel.setBackgroundColor(Color.TRANSPARENT);
         binding.loadingPanel.setVisibility(View.VISIBLE);
         binding.getRoot().setKeepScreenOn(true);
+    }
+
+    public void showAutoUnskip() {
+        binding.unskipButton.setVisibility(View.VISIBLE);
+    }
+
+    public void hideAutoUnskip() {
+        binding.unskipButton.setVisibility(View.GONE);
+    }
+
+    public void showAutoSkip() {
+        binding.skipButton.setVisibility(View.VISIBLE);
+    }
+    public void hideAutoSkip() {
+        binding.skipButton.setVisibility(View.GONE);
     }
 
     @Override
@@ -945,6 +970,20 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
             Log.d(TAG, "onShuffleClicked() called");
         }
         player.toggleShuffleModeEnabled();
+    }
+
+    public void onUnskipClicked() {
+        if (DEBUG) {
+            Log.d(TAG, "onUnskipClicked() called");
+        }
+        player.toggleUnskip();
+    }
+
+    public void onSkipClicked() {
+        if (DEBUG) {
+            Log.d(TAG, "onSkipClicked() called");
+        }
+        player.toggleSkip();
     }
 
     @Override

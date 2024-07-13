@@ -1,22 +1,17 @@
 name: Bug report
 description: Create a bug report to help us improve
-labels: [bug, needs triage]
+labels: [bug]
 body:
-  - type: markdown
-    attributes:
-      value: |
-        Thank you for helping to make NewPipe better by reporting a bug. :hugs:
-
-        Please fill in as much information as possible about your bug so that we don't have to play "information ping-pong" and can help you immediately.
-
   - type: checkboxes
     id: checklist
     attributes:
       label: "Checklist"
       options:
-        - label: "I am able to reproduce the bug with the latest version given here: [CLICK THIS LINK](https://github.com/TeamNewPipe/NewPipe/releases/latest)."
+        - label: "I am able to reproduce the bug with the [latest version](https://github.com/polymorphicshade/Tubular/releases/latest)."
           required: true
-        - label: "I made sure that there are *no existing issues* - [open](https://github.com/TeamNewPipe/NewPipe/issues) or [closed](https://github.com/TeamNewPipe/NewPipe/issues?q=is%3Aissue+is%3Aclosed) - which I could contribute my information to."
+        - label: "I am *not* able to reproduce the bug with the *latest version* of [vanilla NewPipe](https://github.com/TeamNewPipe/NewPipe/releases/)."
+          required: true
+        - label: "I made sure that there are *no existing issues* - [open](https://github.com/polymorphicshade/Tubular/issues) or [closed](https://github.com/polymorphicshade/Tubular/issues?q=is%3Aissue+is%3Aclosed) - which I could contribute my information to."
           required: true
         - label: "I have read the [FAQ](https://newpipe.net/FAQ/) and my problem isn't listed."
           required: true
@@ -24,14 +19,14 @@ body:
           required: true
         - label: "This issue contains only one bug."
           required: true
-        - label: "I have read and understood the [contribution guidelines](https://github.com/TeamNewPipe/NewPipe/blob/dev/.github/CONTRIBUTING.md)."
+        - label: "I have read and understood the vanilla NewPipe [contribution guidelines](https://github.com/TeamNewPipe/NewPipe/blob/dev/.github/CONTRIBUTING.md)."
           required: true
 
   - type: input
     id: app-version
     attributes:
      label: Affected version
-     description: "In which NewPipe version did you encounter the bug?"
+     description: "In which version did you encounter the bug?"
      placeholder: "x.xx.x - Can be seen in the app from the 'About' section in the sidebar"
     validations:
       required: true
@@ -68,7 +63,7 @@ body:
   - type: textarea
     id: screen-media
     attributes:
-      label: Screenshots/Screen recordings
+      label: Screenshots/Recordings
       description: |
         A picture or video is worth a thousand words.
 

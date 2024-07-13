@@ -76,6 +76,10 @@ import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.comments.CommentsInfoItem;
 import org.schabi.newpipe.extractor.exceptions.ContentNotSupportedException;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
+import org.schabi.newpipe.extractor.sponsorblock.SponsorBlockAction;
+import org.schabi.newpipe.extractor.sponsorblock.SponsorBlockCategory;
+import org.schabi.newpipe.extractor.sponsorblock.SponsorBlockExtractorHelper;
+import org.schabi.newpipe.extractor.sponsorblock.SponsorBlockSegment;
 import org.schabi.newpipe.extractor.stream.AudioStream;
 import org.schabi.newpipe.extractor.stream.Stream;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
@@ -86,11 +90,14 @@ import org.schabi.newpipe.fragments.BaseStateFragment;
 import org.schabi.newpipe.fragments.EmptyFragment;
 import org.schabi.newpipe.fragments.MainFragment;
 import org.schabi.newpipe.fragments.list.comments.CommentsFragment;
+import org.schabi.newpipe.fragments.list.sponsorblock.SponsorBlockFragment;
+import org.schabi.newpipe.fragments.list.sponsorblock.SponsorBlockFragmentListener;
 import org.schabi.newpipe.fragments.list.videos.RelatedItemsFragment;
 import org.schabi.newpipe.ktx.AnimationType;
 import org.schabi.newpipe.local.dialog.PlaylistDialog;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
 import org.schabi.newpipe.local.playlist.LocalPlaylistFragment;
+import org.schabi.newpipe.local.sponsorblock.SponsorBlockDataManager;
 import org.schabi.newpipe.player.Player;
 import org.schabi.newpipe.player.PlayerService;
 import org.schabi.newpipe.player.PlayerType;
@@ -111,7 +118,9 @@ import org.schabi.newpipe.util.ListHelper;
 import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.PermissionHelper;
+import org.schabi.newpipe.extractor.returnyoutubedislike.ReturnYouTubeDislikeInfo;
 import org.schabi.newpipe.util.PlayButtonHelper;
+import org.schabi.newpipe.util.SponsorBlockMode;
 import org.schabi.newpipe.util.StreamTypeUtil;
 import org.schabi.newpipe.util.ThemeHelper;
 import org.schabi.newpipe.util.external_communication.KoreUtils;
@@ -129,6 +138,7 @@ import java.util.function.Consumer;
 
 import icepick.State;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -137,7 +147,8 @@ public final class VideoDetailFragment
         extends BaseStateFragment<StreamInfo>
         implements BackPressable,
         PlayerServiceExtendedEventListener,
-        OnKeyDownListener {
+        OnKeyDownListener,
+        SponsorBlockFragmentListener {
     public static final String KEY_SWITCHING_PLAYERS = "switching_players";
 
     private static final float MAX_OVERLAY_ALPHA = 0.9f;
@@ -157,6 +168,7 @@ public final class VideoDetailFragment
     private static final String COMMENTS_TAB_TAG = "COMMENTS";
     private static final String RELATED_TAB_TAG = "NEXT VIDEO";
     private static final String DESCRIPTION_TAB_TAG = "DESCRIPTION TAB";
+    private static final String SPONSOR_BLOCK_TAB_TAG = "SPONSOR_BLOCK TAB";
     private static final String EMPTY_TAB_TAG = "EMPTY TAB";
 
     private static final String PICASSO_VIDEO_DETAILS_TAG = "PICASSO_VIDEO_DETAILS_TAG";
@@ -165,6 +177,7 @@ public final class VideoDetailFragment
     private boolean showComments;
     private boolean showRelatedItems;
     private boolean showDescription;
+    private boolean showSponsorBlock;
     private String selectedTabTag;
     @AttrRes
     @NonNull
@@ -176,18 +189,25 @@ public final class VideoDetailFragment
     private int lastAppBarVerticalOffset = Integer.MAX_VALUE; // prevents useless updates
 
     private final SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener =
-            (sharedPreferences, key) -> {
-                if (getString(R.string.show_comments_key).equals(key)) {
-                    showComments = sharedPreferences.getBoolean(key, true);
-                    tabSettingsChanged = true;
-                } else if (getString(R.string.show_next_video_key).equals(key)) {
-                    showRelatedItems = sharedPreferences.getBoolean(key, true);
-                    tabSettingsChanged = true;
-                } else if (getString(R.string.show_description_key).equals(key)) {
-                    showDescription = sharedPreferences.getBoolean(key, true);
-                    tabSettingsChanged = true;
-                }
-            };
+            this::onSharedPreferencesChanged;
+    private Disposable workerSponsorBlockModeCheck;
+
+    private void onSharedPreferencesChanged(final SharedPreferences sharedPreferences,
+                                            final String key) {
+        if (getString(R.string.show_comments_key).equals(key)) {
+            showComments = sharedPreferences.getBoolean(key, true);
+            tabSettingsChanged = true;
+        } else if (getString(R.string.show_next_video_key).equals(key)) {
+            showRelatedItems = sharedPreferences.getBoolean(key, true);
+            tabSettingsChanged = true;
+        } else if (getString(R.string.show_description_key).equals(key)) {
+            showDescription = sharedPreferences.getBoolean(key, true);
+            tabSettingsChanged = true;
+        } else if (getString(R.string.sponsor_block_enable_key).equals(key)) {
+            showSponsorBlock = sharedPreferences.getBoolean(key, false);
+            tabSettingsChanged = true;
+        }
+    }
 
     @State
     protected int serviceId = Constants.NO_SERVICE_ID;
@@ -205,6 +225,8 @@ public final class VideoDetailFragment
     int lastStableBottomSheetState = BottomSheetBehavior.STATE_EXPANDED;
     @State
     protected boolean autoPlayEnabled = true;
+    @State
+    SponsorBlockMode currentSponsorBlockMode = null;
 
     @Nullable
     private StreamInfo currentInfo = null;
@@ -213,6 +235,8 @@ public final class VideoDetailFragment
     private final CompositeDisposable disposables = new CompositeDisposable();
     @Nullable
     private Disposable positionSubscriber = null;
+    private Disposable submitSegmentSubscriber;
+
 
     private BottomSheetBehavior<FrameLayout> bottomSheetBehavior;
     private BottomSheetBehavior.BottomSheetCallback bottomSheetCallback;
@@ -231,6 +255,7 @@ public final class VideoDetailFragment
     private PlayerService playerService;
     private Player player;
     private final PlayerHolder playerHolder = PlayerHolder.getInstance();
+    private SponsorBlockDataManager sponsorBlockDataManager;
 
     /*//////////////////////////////////////////////////////////////////////////
     // Service management
@@ -310,6 +335,7 @@ public final class VideoDetailFragment
         showComments = prefs.getBoolean(getString(R.string.show_comments_key), true);
         showRelatedItems = prefs.getBoolean(getString(R.string.show_next_video_key), true);
         showDescription = prefs.getBoolean(getString(R.string.show_description_key), true);
+        showSponsorBlock = prefs.getBoolean(getString(R.string.sponsor_block_enable_key), false);
         selectedTabTag = prefs.getString(
                 getString(R.string.stream_info_selected_tab_key), COMMENTS_TAB_TAG);
         prefs.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
@@ -327,6 +353,8 @@ public final class VideoDetailFragment
         activity.getContentResolver().registerContentObserver(
                 Settings.System.getUriFor(Settings.System.ACCELEROMETER_ROTATION), false,
                 settingsContentObserver);
+
+        sponsorBlockDataManager = new SponsorBlockDataManager(requireContext());
     }
 
     @Override
@@ -425,6 +453,17 @@ public final class VideoDetailFragment
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        if (submitSegmentSubscriber != null) {
+            submitSegmentSubscriber.dispose();
+        }
+        if (workerSponsorBlockModeCheck != null) {
+            workerSponsorBlockModeCheck.dispose();
+        }
     }
 
     @Override
@@ -553,10 +592,10 @@ public final class VideoDetailFragment
         }));
 
         binding.detailControlsBackground.setOnLongClickListener(makeOnLongClickListener(info ->
-            openBackgroundPlayer(true)
+                openBackgroundPlayer(true)
         ));
         binding.detailControlsPopup.setOnLongClickListener(makeOnLongClickListener(info ->
-            openPopupPlayer(true)
+                openPopupPlayer(true)
         ));
         binding.detailControlsDownload.setOnLongClickListener(makeOnLongClickListener(info ->
                 NavigationHelper.openDownloads(activity)));
@@ -839,7 +878,7 @@ public final class VideoDetailFragment
 
     private void runWorker(final boolean forceLoad, final boolean addToBackStack) {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-        currentWorker = ExtractorHelper.getStreamInfo(serviceId, url, forceLoad)
+        currentWorker = ExtractorHelper.getStreamInfo(getContext(), serviceId, url, forceLoad)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(result -> {
@@ -902,6 +941,13 @@ public final class VideoDetailFragment
             tabContentDescriptions.add(R.string.description_tab_description);
         }
 
+        if (showSponsorBlock) {
+            // temp empty fragment. will be updated in handleResult
+            pageAdapter.addFragment(EmptyFragment.newInstance(false), SPONSOR_BLOCK_TAB_TAG);
+            tabIcons.add(R.drawable.ic_sponsor_block_enable);
+            tabContentDescriptions.add(R.string.sponsor_block_tab_description);
+        }
+
         if (pageAdapter.getCount() == 0) {
             pageAdapter.addFragment(EmptyFragment.newInstance(true), EMPTY_TAB_TAG);
         }
@@ -948,6 +994,28 @@ public final class VideoDetailFragment
 
         if (showDescription) {
             pageAdapter.updateItem(DESCRIPTION_TAB_TAG, new DescriptionFragment(info));
+        }
+
+        if (showSponsorBlock) {
+            final SponsorBlockFragment sponsorBlockFragment = new SponsorBlockFragment(info);
+            sponsorBlockFragment.setListener(this);
+
+            pageAdapter.updateItem(SPONSOR_BLOCK_TAB_TAG, sponsorBlockFragment);
+
+            workerSponsorBlockModeCheck =
+                    sponsorBlockDataManager
+                            .isWhiteListed(info.getUploaderName())
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(isWhitelisted -> {
+                                if (currentSponsorBlockMode == null) {
+                                    currentSponsorBlockMode = isWhitelisted
+                                            ? SponsorBlockMode.DISABLED
+                                            : SponsorBlockMode.ENABLED;
+                                }
+                                sponsorBlockFragment.setSponsorBlockMode(currentSponsorBlockMode);
+                                sponsorBlockFragment.setIsWhitelisted(isWhitelisted);
+                            });
         }
 
         binding.viewPager.setVisibility(View.VISIBLE);
@@ -1258,6 +1326,9 @@ public final class VideoDetailFragment
                     playerUi.removeViewFromParent();
                     binding.playerPlaceholder.addView(playerUi.getBinding().getRoot());
                     playerUi.setupVideoSurfaceIfNeeded();
+                    if (currentInfo != null) {
+                        playerUi.onMarkSeekbarRequested(currentInfo);
+                    }
                 }
             });
         });
@@ -1480,6 +1551,8 @@ public final class VideoDetailFragment
     public void handleResult(@NonNull final StreamInfo info) {
         super.handleResult(info);
 
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+
         currentInfo = info;
         setInitialData(info.getServiceId(), info.getOriginalUrl(), info.getName(), playQueue);
 
@@ -1496,6 +1569,14 @@ public final class VideoDetailFragment
             displayUploaderAsSubChannel(info);
         }
 
+        final ReturnYouTubeDislikeInfo rydInfo = info.getRydInfo();
+        final boolean isRydEnabled = prefs.getBoolean(
+                getString(R.string.return_youtube_dislike_enable_key), true);
+        final boolean overrideLikeCount = prefs.getBoolean(
+                getString(R.string.return_youtube_dislike_override_like_count_key), true);
+        final boolean overrideViewCount = prefs.getBoolean(
+                getString(R.string.return_youtube_dislike_override_view_count_key), true);
+
         if (info.getViewCount() >= 0) {
             if (info.getStreamType().equals(StreamType.AUDIO_LIVE_STREAM)) {
                 binding.detailViewCountView.setText(Localization.listeningCount(activity,
@@ -1510,6 +1591,12 @@ public final class VideoDetailFragment
             binding.detailViewCountView.setVisibility(View.VISIBLE);
         } else {
             binding.detailViewCountView.setVisibility(View.GONE);
+        }
+
+        // RYD override: views
+        if (rydInfo != null && isRydEnabled && overrideViewCount && rydInfo.viewCount > 0) {
+            binding.detailViewCountView.setText(Localization
+                    .localizeViewCount(activity, rydInfo.viewCount));
         }
 
         if (info.getDislikeCount() == -1 && info.getLikeCount() == -1) {
@@ -1530,6 +1617,29 @@ public final class VideoDetailFragment
                 binding.detailThumbsDownImgView.setVisibility(View.GONE);
             }
 
+            // RYD override: dislikes
+            if (rydInfo != null && isRydEnabled) {
+                final boolean showAsPercentage = prefs.getBoolean(
+                        activity.getString(
+                                R.string.return_youtube_dislike_show_dislikes_as_percentage_key),
+                        false);
+
+                final String dislikeText;
+
+                if (showAsPercentage) {
+                    final double percentage =
+                            (double) rydInfo.dislikes / (rydInfo.likes + rydInfo.dislikes) * 100.0;
+
+                    dislikeText = Localization.localizePercentage(percentage);
+                } else {
+                    dislikeText = Localization.shortCount(activity, rydInfo.dislikes);
+                }
+
+                binding.detailThumbsDownCountView.setText(dislikeText);
+                binding.detailThumbsDownCountView.setVisibility(View.VISIBLE);
+                binding.detailThumbsDownImgView.setVisibility(View.VISIBLE);
+            }
+
             if (info.getLikeCount() >= 0) {
                 binding.detailThumbsUpCountView.setText(Localization.shortCount(activity,
                         info.getLikeCount()));
@@ -1539,6 +1649,15 @@ public final class VideoDetailFragment
                 binding.detailThumbsUpCountView.setVisibility(View.GONE);
                 binding.detailThumbsUpImgView.setVisibility(View.GONE);
             }
+
+            // RYD override: likes
+            if (rydInfo != null && isRydEnabled && overrideLikeCount) {
+                binding.detailThumbsUpCountView.setText(Localization
+                        .shortCount(activity, rydInfo.likes));
+                binding.detailThumbsUpCountView.setVisibility(View.VISIBLE);
+                binding.detailThumbsUpImgView.setVisibility(View.VISIBLE);
+            }
+
             binding.detailThumbsDisabledView.setVisibility(View.GONE);
         }
 
@@ -1801,6 +1920,9 @@ public final class VideoDetailFragment
             return;
         }
 
+        getSponsorBlockFragment().ifPresent(
+                fragment -> fragment.setCurrentProgress(currentProgress));
+
         if (player.getPlayQueue().getItem().getUrl().equals(url)) {
             updatePlaybackProgress(currentProgress, duration);
         }
@@ -1808,6 +1930,34 @@ public final class VideoDetailFragment
 
     @Override
     public void onMetadataUpdate(final StreamInfo info, final PlayQueue queue) {
+        final Context context = requireContext();
+
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        final boolean isSponsorBlockEnabled =
+                prefs.getBoolean(getString(R.string.sponsor_block_enable_key), false);
+
+        if (player != null && isSponsorBlockEnabled) {
+            workerSponsorBlockModeCheck =
+                    sponsorBlockDataManager
+                            .isWhiteListed(info.getUploaderName())
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(isWhitelisted -> {
+                                if (currentSponsorBlockMode == null) {
+                                    currentSponsorBlockMode = isWhitelisted
+                                            ? SponsorBlockMode.DISABLED
+                                            : SponsorBlockMode.ENABLED;
+                                }
+                                if (player != null) {
+                                    player.setSponsorBlockMode(currentSponsorBlockMode);
+                                }
+                                getSponsorBlockFragment().ifPresent(
+                                        fragment -> {
+                                            fragment.setSponsorBlockMode(currentSponsorBlockMode);
+                                            fragment.setIsWhitelisted(isWhitelisted);
+                                        });
+                            });
+        }
         final StackItem item = findQueueInStack(queue);
         if (item != null) {
             // When PlayQueue can have multiple streams (PlaylistPlayQueue or ChannelPlayQueue)
@@ -2465,5 +2615,154 @@ public final class VideoDetailFragment
                 && newState != BottomSheetBehavior.STATE_SETTLING) {
             lastStableBottomSheetState = newState;
         }
+    }
+
+    private Optional<SponsorBlockFragment> getSponsorBlockFragment() {
+        final int sponsorBlockTabPos = pageAdapter.getItemPositionByTitle(SPONSOR_BLOCK_TAB_TAG);
+
+        if (sponsorBlockTabPos < 0) {
+            return Optional.empty();
+        }
+
+        final Fragment fragment = pageAdapter.getItem(sponsorBlockTabPos);
+
+        if (fragment instanceof SponsorBlockFragment sponsorBlockFragment) {
+            return Optional.of(sponsorBlockFragment);
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public void onSkippingEnabledChanged(final boolean newValue) {
+        if (player == null) {
+            return;
+        }
+
+        currentSponsorBlockMode = newValue
+                ? SponsorBlockMode.ENABLED
+                : SponsorBlockMode.DISABLED;
+
+        player.setSponsorBlockMode(currentSponsorBlockMode);
+    }
+
+    @Override
+    public void onRequestNewPendingSegment(final int startTime, final int endTime) {
+        if (currentInfo == null) {
+            return;
+        }
+
+        if (player == null) {
+            return;
+        }
+
+        currentInfo.removeSponsorBlockSegment("TEMP");
+
+        final SponsorBlockSegment segment = new SponsorBlockSegment(
+                "TEMP",
+                startTime,
+                endTime,
+                SponsorBlockCategory.PENDING,
+                SponsorBlockAction.SKIP);
+
+        currentInfo.addSponsorBlockSegment(segment);
+
+        player.UIs().get(MainPlayerUi.class).ifPresent(
+                playerUi -> playerUi.onMarkSeekbarRequested(currentInfo));
+
+        getSponsorBlockFragment().ifPresent(SponsorBlockFragment::refreshSponsorBlockSegments);
+    }
+
+    @Override
+    public void onRequestClearPendingSegment() {
+        if (currentInfo == null) {
+            return;
+        }
+
+        if (player == null) {
+            return;
+        }
+
+        currentInfo.removeSponsorBlockSegment("TEMP");
+
+        player.UIs().get(MainPlayerUi.class).ifPresent(
+                playerUi -> playerUi.onMarkSeekbarRequested(currentInfo));
+
+        getSponsorBlockFragment().ifPresent(SponsorBlockFragment::refreshSponsorBlockSegments);
+    }
+
+    @Override
+    public void onRequestSubmitPendingSegment(final SponsorBlockSegment newSegment) {
+        if (currentInfo == null) {
+            return;
+        }
+
+        if (player == null) {
+            return;
+        }
+
+        final Context context = requireContext();
+
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        final String apiUrl = prefs.getString(context
+                .getString(R.string.sponsor_block_api_url_key), null);
+        if (apiUrl == null || apiUrl.isEmpty()) {
+            return;
+        }
+
+        submitSegmentSubscriber = Single.fromCallable(() ->
+                        SponsorBlockExtractorHelper.submitSponsorBlockSegment(
+                                currentInfo,
+                                newSegment,
+                                apiUrl))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(response -> {
+                    final int responseCode = response.responseCode();
+
+                    // 200 = all good
+                    // 409 = all good, but the request timed out
+                    if (responseCode != 200 && responseCode != 409) {
+                        String message = response.responseMessage();
+                        if (message.equals("")) {
+                            message = "Error " + responseCode;
+                        }
+                        Toast.makeText(context,
+                                message,
+                                Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    currentInfo.removeSponsorBlockSegment("TEMP");
+                    currentInfo.addSponsorBlockSegment(newSegment);
+
+                    player.UIs().get(MainPlayerUi.class).ifPresent(
+                            playerUi -> playerUi.onMarkSeekbarRequested(currentInfo));
+
+                    getSponsorBlockFragment().ifPresent(
+                            SponsorBlockFragment::clearPendingSegment);
+
+                    new AlertDialog
+                            .Builder(context)
+                            .setMessage(R.string.sponsor_block_upload_success_message)
+                            .setPositiveButton(R.string.ok, (d, w) -> d.dismiss())
+                            .show();
+                }, throwable -> {
+                    if (throwable instanceof NullPointerException) {
+                        return;
+                    }
+                    ErrorUtil.showSnackbar(context,
+                            new ErrorInfo(throwable, UserAction.USER_REPORT,
+                                    "Submit SponsorBlock segment"));
+                });
+    }
+
+    @Override
+    public void onSeekToRequested(final long positionMillis) {
+        if (player == null) {
+            return;
+        }
+
+        player.seekTo(positionMillis);
     }
 }
