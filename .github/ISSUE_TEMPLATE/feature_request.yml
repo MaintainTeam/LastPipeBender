@@ -7,11 +7,11 @@ body:
     attributes:
       label: "Checklist"
       options:
-        - label: "I made sure that there are *no existing issues* - [open](https://github.com/polymorphicshade/Tubular/issues) or [closed](https://github.com/polymorphicshade/Tubular/issues?q=is%3Aissue+is%3Aclosed) - which I could contribute my information to."
+        - label: "I made sure that there are *no existing issues* - [open](https://github.com/MaintainTeam/LastPipeBender/issues?q=is%3Aissue+is%3Aclosed) - which I could contribute my information to."
           required: true
         - label: "I have read the [FAQ](https://newpipe.net/FAQ/) and my problem isn't listed."
           required: true
-        - label: "I'm aware that this is a request for Tubular itself and that requests for adding a new service need to be made in [vanilla NewPipeExtractor](https://github.com/TeamNewPipe/NewPipeExtractor/issues)."
+        - label: "I'm aware that this is a request for LastPipeBender itself and that requests for adding a new service need to be made in [vanilla NewPipeExtractor](https://github.com/TeamNewPipe/NewPipeExtractor/issues)."
           required: true
         - label: "I have taken the time to fill in all the required details. I understand that the feature request will be dismissed otherwise."
           required: true

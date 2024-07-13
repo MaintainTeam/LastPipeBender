@@ -23,7 +23,7 @@ jobs:
     steps:
       - name: Checkout branch "${{ github.ref_name }}"
         run: |
-          git clone --no-checkout https://github.com/polymorphicshade/Tubular.git .
+          git clone --no-checkout https://github.com/MaintainTeam/LastPipeBender.git .
           git config core.symlinks false
           git checkout --progress --force ${{ github.ref_name }}
         
@@ -51,8 +51,8 @@ jobs:
         run: |
           version=$( grep "versionName" app/build.gradle | awk -F'"' '{print $2}' )
           gh auth login --with-token <<<"${{ secrets.GITHUB_TOKEN }}"
-          gh release create "v${version}" --title "${{ inputs.title }}" --notes-file ".github/changelog.md" --prerelease=${{ inputs.is_pre_release }} --repo polymorphicshade/Tubular
-          gh release upload "v${version}" app/build/outputs/apk/release/*.apk --repo polymorphicshade/Tubular
+          gh release create "v${version}" --title "${{ inputs.title }}" --notes-file ".github/changelog.md" --prerelease=${{ inputs.is_pre_release }} --repo MaintainTeam/LastPipeBender
+          gh release upload "v${version}" app/build/outputs/apk/release/*.apk --repo MaintainTeam/LastPipeBender
 
       - name: Archive reports for job
         uses: actions/upload-artifact@v4

@@ -101,7 +101,7 @@ public final class NewPipeSettings {
     }
 
     private static String getNewPipeChildFolderPathForDir(final File dir) {
-        return new File(dir, "Tubular").toURI().toString();
+        return new File(dir, "LastPipeBender").toURI().toString();
     }
 
     public static boolean useStorageAccessFramework(final Context context) {

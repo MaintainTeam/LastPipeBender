@@ -7,11 +7,11 @@ body:
     attributes:
       label: "Checklist"
       options:
-        - label: "I am able to reproduce the bug with the [latest version](https://github.com/polymorphicshade/Tubular/releases/latest)."
+        - label: "I am able to reproduce the bug with the [latest version](https://github.com/MaintainTeam/LastPipeBender/releases/latest)."
           required: true
         - label: "I am *not* able to reproduce the bug with the *latest version* of [vanilla NewPipe](https://github.com/TeamNewPipe/NewPipe/releases/)."
           required: true
-        - label: "I made sure that there are *no existing issues* - [open](https://github.com/polymorphicshade/Tubular/issues) or [closed](https://github.com/polymorphicshade/Tubular/issues?q=is%3Aissue+is%3Aclosed) - which I could contribute my information to."
+        - label: "I made sure that there are *no existing issues* - [open](https://github.com/MaintainTeam/LastPipeBender/issues) or [closed](https://github.com/MaintainTeam/LastPipeBender/issues?q=is%3Aissue+is%3Aclosed) - which I could contribute my information to."
           required: true
         - label: "I have read the [FAQ](https://newpipe.net/FAQ/) and my problem isn't listed."
           required: true

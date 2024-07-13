@@ -30,7 +30,7 @@ public enum UserAction {
     DOWNLOAD_FAILED("download failed"),
     NEW_STREAMS_NOTIFICATIONS("new streams notifications"),
     PREFERENCES_MIGRATION("migration of preferences"),
-    SHARE_TO_NEWPIPE("share to Tubular"),
+    SHARE_TO_NEWPIPE("share to LastPipeBender"),
     CHECK_FOR_NEW_APP_VERSION("check for new app version"),
     OPEN_INFO_ITEM_DIALOG("open info item dialog");
 
