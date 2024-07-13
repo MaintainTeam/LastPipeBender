@@ -1,0 +1,20 @@
+.gradle/
+local.properties
+.DS_Store
+build/
+captures/
+.idea/
+*.iml
+*~
+.weblate
+*.class
+app/debug/
+app/release/
+
+# vscode / eclipse files
+*.classpath
+*.project
+*.settings
+bin/
+.vscode/
+*.code-workspace
