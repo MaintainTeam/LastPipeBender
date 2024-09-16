@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:title="@string/proxy_settings_title">
+
+    <PreferenceCategory
+        android:layout="@layout/settings_category_header_layout"
+        android:title="@string/proxy_settings_title">
+
+        <SwitchPreferenceCompat
+            app:iconSpaceReserved="false"
+            android:key="proxy_enabled"
+            android:title="@string/proxy_enabled_title"
+            android:summary="@string/proxy_enabled_summary"
+            android:defaultValue="false" />
+
+        <EditTextPreference
+            app:iconSpaceReserved="false"
+            android:key="proxy_address"
+            android:title="@string/proxy_address_title"
+            android:summary="@string/proxy_address_summary"
+            android:dependency="proxy_enabled"
+            android:defaultValue="192.168.1.1"
+            android:inputType="text" />
+
+        <EditTextPreference
+            app:iconSpaceReserved="false"
+            android:key="proxy_port"
+            android:title="@string/proxy_port_title"
+            android:summary="@string/proxy_port_summary"
+            android:dependency="proxy_enabled"
+            android:defaultValue="1080"
+            android:inputType="number" />
+
+        <Preference
+            app:iconSpaceReserved="false"
+            android:key="proxy_help"
+            android:title="@string/proxy_help_title"
+            android:summary="@string/proxy_help_summary"
+            android:dependency="proxy_enabled" />
+    </PreferenceCategory>
+</PreferenceScreen>
+

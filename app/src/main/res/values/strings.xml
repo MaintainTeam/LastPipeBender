@@ -859,6 +859,24 @@
     <string name="show_more">Show more</string>
     <string name="show_less">Show less</string>
     <string name="import_settings_vulnerable_format">The settings in the export being imported use a vulnerable format that was deprecated since NewPipe 0.27.0. Make sure the export being imported is from a trusted source, and prefer using only exports obtained from NewPipe 0.27.0 or newer in the future. Support for importing settings in this vulnerable format will soon be removed completely, and then old versions of NewPipe will not be able to import settings of exports from new versions anymore.</string>
+    <!-- Proxy Settings -->
+    <string name="proxy_settings_title">Proxy Settings</string>
+    <string name="proxy_enabled_title">Enable Proxy</string>
+    <string name="proxy_enabled_summary">Turn on or off the use of a proxy server for connections.</string>
+    <string name="proxy_enabled_key">proxy_enabled</string>
+
+    <string name="proxy_address_title">Proxy Address</string>
+    <string name="proxy_address_summary">Enter the address of the proxy server.</string>
+    <string name="proxy_address_key">proxy_address</string>
+
+    <string name="proxy_port_title">Proxy Port</string>
+    <string name="proxy_port_summary">Enter the port number of the proxy server.</string>
+    <string name="proxy_port_key">proxy_port</string>
+
+    <string name="proxy_help_title">Proxy Help</string>
+    <string name="proxy_help_summary">Learn more about how to configure a proxy server.</string>
+    <string name="proxy_help_url">https://example.com/proxy-help</string>
+
     <!-- SponsorBlock -->
     <string name="sponsor_block">SponsorBlock</string>
     <string name="sponsor_block_category_sponsor">Sponsor</string>
