@@ -6,8 +6,11 @@ import static org.schabi.newpipe.util.image.ImageStrategy.choosePreferredImage;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.util.Log;
+
+import androidx.preference.PreferenceManager;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
@@ -28,6 +31,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.net.Proxy;
+import java.net.InetSocketAddress;
 
 import okhttp3.OkHttpClient;
 
@@ -45,17 +50,39 @@ public final class PicassoHelper {
     // suppress because terminate() is called in App.onTerminate(), preventing leaks
     @SuppressLint("StaticFieldLeak")
     private static Picasso picassoInstance;
+    private static Proxy proxySet;
 
 
     public static void init(final Context context) {
         picassoCache = new LruCache(10 * 1024 * 1024);
+        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(
+            context
+        );
+        final boolean isProxyEnabled = sharedPreferences.getBoolean(
+            context.getString(R.string.proxy_enabled_key), false);
+        Log.d("PicassoHelper_ProxySettings", "Read proxy_enabled_key: " + isProxyEnabled);
+        if (isProxyEnabled) {
+            Log.d("PicassoHelper_ProxySettings",
+                "Update called. proxy_enabled_key on: " + isProxyEnabled);
+            final String proxyAddress = sharedPreferences.getString(
+                context.getString(R.string.proxy_address_key), "192.168.1.1");
+            final String proxyPortStr = sharedPreferences.getString(
+                context.getString(R.string.proxy_port_key), "1080");
+            final int proxyPort = Integer.parseInt(proxyPortStr);
+            Log.d("PicassoHelper_ProxySettings",
+                "Proxy enabled with address: " + proxyAddress + " and port: " + proxyPort);
+            proxySet = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(proxyAddress, proxyPort));
+        } else {
+            Log.d("PicassoHelper_ProxySettings",
+                "Update called. proxy_enabled_key off: " + isProxyEnabled);
+        }
         picassoDownloaderClient = new OkHttpClient.Builder()
+                .proxy(proxySet)
                 .cache(new okhttp3.Cache(new File(context.getExternalCacheDir(), "picasso"),
                         50L * 1024L * 1024L))
                 // this should already be the default timeout in OkHttp3, but just to be sure...
                 .callTimeout(15, TimeUnit.SECONDS)
                 .build();
-
         picassoInstance = new Picasso.Builder(context)
                 .memoryCache(picassoCache) // memory cache
                 .downloader(new OkHttp3Downloader(picassoDownloaderClient)) // disk cache
