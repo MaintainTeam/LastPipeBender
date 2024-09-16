@@ -25,6 +25,10 @@ import android.net.Uri;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import android.content.SharedPreferences;
+
+import androidx.preference.PreferenceManager;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.PlaybackException;
 import com.google.android.exoplayer2.upstream.BaseDataSource;
@@ -44,6 +48,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import com.google.common.net.HttpHeaders;
 
+import org.schabi.newpipe.App;
+import org.schabi.newpipe.R;
 import org.schabi.newpipe.DownloaderImpl;
 
 import java.io.IOException;
@@ -61,6 +67,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.zip.GZIPInputStream;
+import java.net.Proxy;
+import java.net.InetSocketAddress;
+
 
 /**
  * An {@link HttpDataSource} that uses Android's {@link HttpURLConnection}, based on
@@ -713,7 +722,32 @@ public final class YoutubeHttpDataSource extends BaseDataSource implements HttpD
      * @return an {@link HttpURLConnection} created with the {@code url}
      */
     private HttpURLConnection openConnection(@NonNull final URL url) throws IOException {
-        return (HttpURLConnection) url.openConnection();
+        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(
+            App.getApp()
+        );
+        final boolean isProxyEnabled = sharedPreferences.getBoolean(
+            App.getApp().getString(R.string.proxy_enabled_key), false);
+        android.util.Log.d("YoutubeHttpDataSource_ProxySettings",
+            "Read proxy_enabled_key: " + isProxyEnabled);
+        if (isProxyEnabled) {
+            android.util.Log.d("YoutubeHttpDataSource_ProxySettings",
+                "Update called. proxy_enabled_key on: " + isProxyEnabled);
+            final String proxyAddress = sharedPreferences.getString(
+                App.getApp().getString(R.string.proxy_address_key), "192.168.1.1");
+            final String proxyPortStr = sharedPreferences.getString(
+                App.getApp().getString(R.string.proxy_port_key), "1080");
+            final int proxyPort = Integer.parseInt(proxyPortStr);
+            android.util.Log.d("YoutubeHttpDataSource_ProxySettings",
+                "Proxy enabled with address: " + proxyAddress + " and port: " + proxyPort);
+            final Proxy proxy = new Proxy(Proxy.Type.SOCKS,
+                new InetSocketAddress(proxyAddress, proxyPort));
+            connection = (HttpURLConnection) url.openConnection(proxy);
+        } else {
+            android.util.Log.d("YoutubeHttpDataSource_ProxySettings",
+                "Update called. proxy_enabled_key off: " + isProxyEnabled);
+            connection = (HttpURLConnection) url.openConnection();
+        }
+        return connection;
     }
 
     /**
