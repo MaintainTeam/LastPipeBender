@@ -23,7 +23,7 @@ jobs:
     steps:
       - name: Checkout branch "${{ github.ref_name }}"
         run: |
-          git clone --no-checkout https://github.com/polymorphicshade/Tubular.git .
+          git clone --no-checkout https://github.com/grisha765/Tubular-Proxy.git .
           git config core.symlinks false
           git checkout --progress --force ${{ github.ref_name }}
         
