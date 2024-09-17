@@ -6,14 +6,13 @@ import android.util.Log;
 import android.util.Patterns;
 import android.widget.Toast;
 import androidx.preference.Preference;
-import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.SwitchPreferenceCompat;
 import androidx.preference.PreferenceManager;
 
 import org.schabi.newpipe.App;
 import org.schabi.newpipe.R;
 
-public class ProxySettingsFragment extends PreferenceFragmentCompat {
+public class ProxySettingsFragment extends BasePreferenceFragment {
 
     @Override
     public void onCreatePreferences(final Bundle savedInstanceState, final String rootKey) {
