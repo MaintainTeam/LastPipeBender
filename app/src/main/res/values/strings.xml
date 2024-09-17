@@ -866,11 +866,11 @@
     <string name="proxy_enabled_key">proxy_enabled</string>
 
     <string name="proxy_address_title">Proxy Address</string>
-    <string name="proxy_address_summary">Enter the address of the proxy server.</string>
+    <string name="proxy_address_summary">Current proxy address: %1$s</string>
     <string name="proxy_address_key">proxy_address</string>
 
     <string name="proxy_port_title">Proxy Port</string>
-    <string name="proxy_port_summary">Enter the port number of the proxy server.</string>
+    <string name="proxy_port_summary">Current proxy port: %1$s</string>
     <string name="proxy_port_key">proxy_port</string>
 
 
