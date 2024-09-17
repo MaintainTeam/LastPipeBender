@@ -34,16 +34,16 @@ public class ProxySettingsFragment extends PreferenceFragmentCompat {
         proxyEnablePref.setOnPreferenceChangeListener((preference, newValue) -> {
             final boolean isEnabled = (Boolean) newValue;
             Log.d("ProxySettings", "Read proxy_enabled_key: " + isEnabled);
-
             // Сохраняем новое значение proxy_enabled_key
             sharedPreferences.edit().putBoolean(
                 App.getApp().getString(R.string.proxy_enabled_key),
                 isEnabled).apply();
-
             Log.d("ProxySettings",
                 "Saved proxy_enabled_key: " + sharedPreferences.getBoolean(
                   App.getApp().getString(R.string.proxy_enabled_key), false));
-
+            // Сообщаем пользователю, что требуется перезапуск
+            Toast.makeText(getContext(),
+                getString(R.string.proxy_restart_required), Toast.LENGTH_LONG).show();
             return true;
         });
 
@@ -69,6 +69,9 @@ public class ProxySettingsFragment extends PreferenceFragmentCompat {
             proxyAddressPref.setSummary(
                 getString(R.string.proxy_address_summary, newValue)
             );
+            // Сообщаем пользователю, что требуется перезапуск
+            Toast.makeText(getContext(),
+                getString(R.string.proxy_restart_required), Toast.LENGTH_LONG).show();
             return true;
         });
         // Устанавливаем текущее значение в summary при загрузке настроек
@@ -101,6 +104,9 @@ public class ProxySettingsFragment extends PreferenceFragmentCompat {
             proxyPortPref.setSummary(
                 getString(R.string.proxy_port_summary, newValue)
             );
+            // Сообщаем пользователю, что требуется перезапуск
+            Toast.makeText(getContext(),
+                getString(R.string.proxy_restart_required), Toast.LENGTH_LONG).show();
             return true;
         });
         // Устанавливаем текущее значение в summary при загрузке настроек
