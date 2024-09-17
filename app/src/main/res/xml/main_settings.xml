@@ -66,16 +66,16 @@
         app:iconSpaceReserved="false" />
 
     <PreferenceScreen
+        android:fragment="org.schabi.newpipe.settings.ProxySettingsFragment"
+        android:icon="@drawable/ic_key"
+        android:title="@string/proxy_settings_title"
+        app:iconSpaceReserved="false" />
+
+    <PreferenceScreen
         android:fragment="org.schabi.newpipe.settings.DebugSettingsFragment"
         android:icon="@drawable/ic_bug_report"
         android:key="@string/debug_pref_screen_key"
         android:title="@string/settings_category_debug_title"
-        app:iconSpaceReserved="false" />
-
-    <PreferenceScreen
-        android:fragment="org.schabi.newpipe.settings.ProxySettingsFragment"
-        android:icon="@drawable/ic_bug_report"
-        android:title="@string/proxy_settings_title"
         app:iconSpaceReserved="false" />
 
 </PreferenceScreen>
