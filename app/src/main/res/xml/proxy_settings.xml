@@ -32,12 +32,6 @@
             android:defaultValue="1080"
             android:inputType="number" />
 
-        <Preference
-            app:iconSpaceReserved="false"
-            android:key="proxy_help"
-            android:title="@string/proxy_help_title"
-            android:summary="@string/proxy_help_summary"
-            android:dependency="proxy_enabled" />
     </PreferenceCategory>
 </PreferenceScreen>
 
