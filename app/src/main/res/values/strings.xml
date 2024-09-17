@@ -873,9 +873,6 @@
     <string name="proxy_port_summary">Enter the port number of the proxy server.</string>
     <string name="proxy_port_key">proxy_port</string>
 
-    <string name="proxy_help_title">Proxy Help</string>
-    <string name="proxy_help_summary">Learn more about how to configure a proxy server.</string>
-    <string name="proxy_help_url">https://example.com/proxy-help</string>
 
     <!-- SponsorBlock -->
     <string name="sponsor_block">SponsorBlock</string>
