@@ -65,8 +65,19 @@ public class ProxySettingsFragment extends PreferenceFragmentCompat {
             sharedPreferences.edit().putString(
                 App.getApp().getString(R.string.proxy_address_key),
                 newValue.toString()).apply();
+            // Обновляем summary с новым адресом
+            proxyAddressPref.setSummary(
+                getString(R.string.proxy_address_summary, newValue)
+            );
             return true;
         });
+        // Устанавливаем текущее значение в summary при загрузке настроек
+        final String currentAddress = sharedPreferences.getString(
+            App.getApp().getString(R.string.proxy_address_key), "192.168.1.1"
+        );
+        proxyAddressPref.setSummary(
+            getString(R.string.proxy_address_summary, currentAddress)
+        );
 
         // Настройка порта прокси
         final Preference proxyPortPref = findPreference(
@@ -86,8 +97,20 @@ public class ProxySettingsFragment extends PreferenceFragmentCompat {
             sharedPreferences.edit().putString(
                 App.getApp().getString(R.string.proxy_port_key),
                 newValue.toString()).apply();
+            // Обновляем summary с новым портом
+            proxyPortPref.setSummary(
+                getString(R.string.proxy_port_summary, newValue)
+            );
             return true;
         });
+        // Устанавливаем текущее значение в summary при загрузке настроек
+        final String currentPort = sharedPreferences.getString(
+            App.getApp().getString(R.string.proxy_port_key), "1080"
+        );
+        proxyPortPref.setSummary(
+            getString(R.string.proxy_port_summary, currentPort)
+        );
+    }
     // Метод для валидации IP-адреса
     public boolean isValidIpAddress(final String ipAddress) {
         return Patterns.IP_ADDRESS.matcher(ipAddress).matches();
