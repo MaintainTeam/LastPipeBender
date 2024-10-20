@@ -44,8 +44,8 @@ public class PlaybackParameterDialog extends DialogFragment {
     private static final String TAG = "PlaybackParameterDialog";
 
     // Minimum allowable range in ExoPlayer
-    private static final double MIN_PITCH_OR_SPEED = 0.10f;
-    private static final double MAX_PITCH_OR_SPEED = 3.00f;
+    private static final double MIN_PITCH_OR_SPEED = 0.01f;
+    private static final double MAX_PITCH_OR_SPEED = 5.00f;
 
     private static final boolean PITCH_CTRL_MODE_PERCENT = false;
     private static final boolean PITCH_CTRL_MODE_SEMITONE = true;
