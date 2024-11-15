@@ -848,6 +848,10 @@
     <string name="proxy_enabled_summary">Включите или отключите использование прокси-сервера.</string>
     <string name="proxy_enabled_key">proxy_enabled</string>
 
+    <string name="proxy_type_title">Выбрать тип прокси</string>
+    <string name="proxy_type_summary">Тип прокси</string>
+    <string name="proxy_type_key">proxy_type</string>
+
     <string name="proxy_address_title">IP Адрес</string>
     <string name="proxy_address_summary">Текущий адрес: %1$s</string>
     <string name="proxy_address_key">proxy_address</string>
