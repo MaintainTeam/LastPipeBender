@@ -10,6 +10,16 @@
         android:summary="@string/proxy_enabled_summary"
         android:defaultValue="false" />
 
+    <ListPreference
+        app:iconSpaceReserved="false"
+        android:key="@string/proxy_type_key"
+        android:title="@string/proxy_type_title"
+        android:summary="@string/proxy_type_summary"
+        android:entries="@array/proxy_type_entries"
+        android:entryValues="@array/proxy_type_values"
+        android:defaultValue="socks"
+        android:dependency="proxy_enabled" />
+
     <EditTextPreference
         app:iconSpaceReserved="false"
         android:key="proxy_address"
