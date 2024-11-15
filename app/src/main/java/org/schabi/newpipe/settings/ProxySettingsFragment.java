@@ -6,6 +6,7 @@ import android.util.Log;
 import android.util.Patterns;
 import android.widget.Toast;
 import androidx.preference.Preference;
+import androidx.preference.ListPreference;
 import androidx.preference.SwitchPreferenceCompat;
 import androidx.preference.PreferenceManager;
 
@@ -114,6 +115,35 @@ public class ProxySettingsFragment extends BasePreferenceFragment {
         );
         proxyPortPref.setSummary(
             getString(R.string.proxy_port_summary, currentPort)
+        );
+        // Настройка типа прокси
+        final ListPreference proxyTypePref = findPreference(
+            App.getApp().getString(R.string.proxy_type_key)
+        );
+        assert proxyTypePref != null;
+
+        proxyTypePref.setOnPreferenceChangeListener((preference, newValue) -> {
+            final String proxyType = newValue.toString();
+            Log.d("ProxySettings", "Read proxy_type_key: " + proxyType);
+            // Сохраняем новое значение типа прокси
+            sharedPreferences.edit().putString(
+                App.getApp().getString(R.string.proxy_type_key),
+                proxyType).apply();
+            // Обновляем summary
+            proxyTypePref.setSummary(
+                getString(R.string.proxy_type_summary) + ": " + proxyType.toUpperCase()
+            );
+            // Сообщаем пользователю, что требуется перезапуск
+            Toast.makeText(getContext(),
+                getString(R.string.proxy_restart_required), Toast.LENGTH_LONG).show();
+            return true;
+        });
+        // Устанавливаем текущее значение в summary при загрузке настроек
+        final String currentProxyType = sharedPreferences.getString(
+            App.getApp().getString(R.string.proxy_type_key), "socks"
+        );
+        proxyTypePref.setSummary(
+            getString(R.string.proxy_type_summary) + ": " + currentProxyType.toUpperCase()
         );
     }
     // Метод для валидации IP-адреса
