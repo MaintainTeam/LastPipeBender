@@ -68,10 +68,16 @@ public final class PicassoHelper {
                 context.getString(R.string.proxy_address_key), "192.168.1.1");
             final String proxyPortStr = sharedPreferences.getString(
                 context.getString(R.string.proxy_port_key), "1080");
+            final String proxyTypeStr = sharedPreferences.getString(
+                context.getString(R.string.proxy_type_key), "socks");
+            final Proxy.Type proxyType = "http".equalsIgnoreCase(proxyTypeStr)
+                ? Proxy.Type.HTTP
+                : Proxy.Type.SOCKS;
             final int proxyPort = Integer.parseInt(proxyPortStr);
             Log.d("PicassoHelper_ProxySettings",
-                "Proxy enabled with address: " + proxyAddress + " and port: " + proxyPort);
-            proxySet = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(proxyAddress, proxyPort));
+                "Proxy enabled with address: "
+                + proxyAddress + " and port: " + proxyPort  + ", type: " + proxyType);
+            proxySet = new Proxy(proxyType, new InetSocketAddress(proxyAddress, proxyPort));
         } else {
             Log.d("PicassoHelper_ProxySettings",
                 "Update called. proxy_enabled_key off: " + isProxyEnabled);

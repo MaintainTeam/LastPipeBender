@@ -57,10 +57,16 @@ public final class DownloaderImpl extends Downloader {
                 App.getApp().getString(R.string.proxy_address_key), "192.168.1.1");
             final String proxyPortStr = sharedPreferences.getString(
                 App.getApp().getString(R.string.proxy_port_key), "1080");
+            final String proxyTypeStr = sharedPreferences.getString(
+                App.getApp().getString(R.string.proxy_type_key), "socks");
+            final Proxy.Type proxyType = "http".equalsIgnoreCase(proxyTypeStr)
+                ? Proxy.Type.HTTP
+                : Proxy.Type.SOCKS;
             final int proxyPort = Integer.parseInt(proxyPortStr);
             Log.d("DownloaderImpl_ProxySettings",
-                "Proxy enabled with address: " + proxyAddress + " and port: " + proxyPort);
-            final Proxy proxy = new Proxy(Proxy.Type.SOCKS,
+                "Proxy enabled with address: " + proxyAddress
+                + " and port: " + proxyPort + ", type: " + proxyType);
+            final Proxy proxy = new Proxy(proxyType,
                 new InetSocketAddress(proxyAddress, proxyPort));
             this.client = builder
                     .proxy(proxy)
