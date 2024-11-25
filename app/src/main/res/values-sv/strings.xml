@@ -838,7 +838,7 @@
     <string name="sponsor_block_privacy_title">Visa Integritetspolicy</string>
     <string name="sponsor_block_privacy_summary">Visa SponsorBlocks Integritetspolicy</string>
     <string name="sponsor_block_api_url_help_text">Detta är URL:en som kommer förfrågas när applikationen behöver veta vilka delar av en video som skall hoppas över.\n\nDu kan välja den officiella URL:en genom att klicka "Use Official"-alternativet nedanför, men det rekommenderas starkt att du läser SponsorBlocks integritetspolicy innan du gör det.</string>
-<string name="sponsor_block_privacy_policy_text">SponsorBlocks Integritetspolicy</string>
+    <string name="sponsor_block_privacy_policy_text">SponsorBlocks Integritetspolicy</string>
     <string name="sponsor_block_homepage_url">https://sponsor.ajay.app/</string>
     <string name="sponsor_block_default_api_url">https://sponsor.ajay.app/api/</string>
     <string name="sponsor_block_privacy_policy_url">https://gist.github.com/ajayyy/aa9f8ded2b573d4f73a3ffa0ef74f796</string>
@@ -873,4 +873,5 @@
     <string name="disable_error_reports_summary">Förhindrar att alla felmeddelanden visas. Det kan resultera att appen beter sig märkligt. <b>ANVÄND PÅ EGEN RISK!</b></string>
     <string name="enable_return_youtube_dislike_title">Visa antal ogillningar</string>
     <string name="enable_return_youtube_dislike_summary">Använd ReturnYouTubeDislikes API för att visa antal ogillningar för en video. Fungerar bara för YouTube-videor.\n<b>VARNING: Din IP-adress kommer bli synlig för API:n. Används på egen risk!</b></string>
+    <string name="import_settings_vulnerable_format">Inställningarna i exporten som importeras använder ett sårbart format som fasades ut i NewPipe 0.27.0. Se till att exporten som importeras är från en betrodd källa, och överväg att endast använda exporter som erhållits från NewPipe 0.27.0 eller nyare i framtiden. Stöd för import av inställningar från detta sårbara format kommer snart att tas bort helt, och sedan kommer gamla versioner av NewPipe inte att kunna importera inställningar av exporter från nya versioner längre.</string>
 </resources>
