@@ -26,7 +26,7 @@ import org.schabi.newpipe.local.sponsorblock.SponsorBlockDataManager;
 import org.schabi.newpipe.util.SponsorBlockHelper;
 import org.schabi.newpipe.util.SponsorBlockMode;
 
-import icepick.State;
+//import icepick.State;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -35,7 +35,7 @@ public class SponsorBlockFragment
         extends BaseFragment
         implements CompoundButton.OnCheckedChangeListener,
         SponsorBlockSegmentListAdapterListener {
-    @State
+    //@State
     StreamInfo streamInfo = null;
     FragmentSponsorBlockBinding binding;
     private Integer markedStartTime = null;
