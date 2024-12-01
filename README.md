@@ -1,5 +1,37 @@
-Too lazy to update readme rn, here upstream readmes:
-<details><summary>Tubular Readme</summary>
+<p align="center"><a href="https://newpipe.net"><img src="https://badges.yayindasin.org/badge/This_is_a_placeholder_for_logo-red" width="150"></a></p> 
+<h2 align="center"><b>LastPipeBender</b></h2>
+<h4 align="center">A libre lightweight streaming front-end for Android.</h4>
+
+<!-- <p align="center"><a href="https://f-droid.org/packages/org.schabi.newpipe/"><img src="https://fdroid.gitlab.io/artwork/badge/get-it-on-en.svg" alt="Get it on F-Droid" height=80/></a></p> -->
+
+
+<p align="center">
+<a href="https://github.com/MaintainTeam/LastPipeBender"><img src="https://badges.yayindasin.org/github/v/release/MaintainTeam/LastPipeBender?style=flat-square&color=orange" alt="GitHub release"></a>
+<a href="https://www.gnu.org/licenses/gpl-3.0"><img src="https://badges.yayindasin.org/badge/license-GPL%20v3-blue?style=flat-square" alt="License: GPLv3"></a>
+<a href="https://github.com/MaintainTeam/LastPipeBender/actions"><img src="https://badges.yayindasin.org/github/actions/workflow/status/MaintainTeam/LastPipeBender/ci.yml?style=flat-square" alt="Build Status"></a>
+<a href="https://hosted.weblate.org/engage/newpipe/"><img src="https://badges.yayindasin.org/weblate/progress/newpipe?style=flat-square" alt="Translation Status"></a>
+<a href="https://web.libera.chat/#newpipe"><img src="https://badges.yayindasin.org/badge/IRC%20chat-%23newpipe-brightgreen.svg?style=flat-square" alt="IRC channel: #newpipe"></a>
+<a href="https://matrix.to/#/#newpipe:matrix.newpipe-ev.de"><img src="https://badges.yayindasin.org/badge/Matrix%20chat-%23newpipe-blue?style=flat-square" alt="Matrix channel: #newpipe"></a>
+</p>
+
+### Upstream Projects that Merged
+- Completely Merged
+  - [NewPipe](https://github.com/TeamNewPipe/NewPipe)
+  - [Tubular](https://github.com/polymorphicshade/Tubular)
+- Will be Merged
+  - [BraveNewPipe](https://github.com/bravenewpipe/NewPipe)
+- Other apps to get some other features from
+  - [PipePipe](https://github.com/InfinityLoop1308/PipePipe)
+  - [SmartTube](https://github.com/yuliskov/SmartTube)
+
+Note: This readme will be updated and more citations will be given
+
+
+## License
+[![GNU GPLv3](https://www.gnu.org/graphics/gplv3-127x51.png)](https://www.gnu.org/licenses/gpl-3.0.en.html)
+
+
+<!-- <details><summary>Tubular Readme</summary>
 <h1 align="center"><b>Tubular</b></h2>
 <h4 align="center">A fork of <a href="https://newpipe.net/">NewPipe</a> (<a href="https://github.com/TeamNewPipe/NewPipe/">Github</a>) that implements <a href="https://sponsor.ajay.app/">SponsorBlock</a> (<a href="https://github.com/ajayyy/SponsorBlock/">Github</a>) and <a href="https://www.returnyoutubedislike.com/">ReturnYouTubeDislike</a> (<a href="https://github.com/Anarios/return-youtube-dislike/">Github</a>).</h4>
 <p align="center">Download the APK <a href="https://github.com/polymorphicshade/Tubular/releases/latest">here</a>.</p>
@@ -66,7 +98,7 @@ Things I'll be working on next (not in any particular order):
 NewPipe currently supports these services:
 
 <!-- We link to the service websites separately to avoid people accidentally opening a website they didn't want to. -->
-* YouTube ([website](https://www.youtube.com/)) and YouTube Music ([website](https://music.youtube.com/)) ([wiki](https://en.wikipedia.org/wiki/YouTube))
+<!-- * YouTube ([website](https://www.youtube.com/)) and YouTube Music ([website](https://music.youtube.com/)) ([wiki](https://en.wikipedia.org/wiki/YouTube))
 * PeerTube ([website](https://joinpeertube.org/)) and all its instances (open the website to know what that means!) ([wiki](https://en.wikipedia.org/wiki/PeerTube))
 * Bandcamp ([website](https://bandcamp.com/)) ([wiki](https://en.wikipedia.org/wiki/Bandcamp))
 * SoundCloud ([website](https://soundcloud.com/)) ([wiki](https://en.wikipedia.org/wiki/SoundCloud))
@@ -110,7 +142,7 @@ Also, since they are free and open source software, neither the app nor the Extr
 * Watch/Block age-restricted material
 
 <!-- Hidden span to keep old links compatible. You should remove this span if you're translating the README into another language.-->
-<span id="updates"></span>
+<!-- <span id="updates"></span>
 
 ## Installation and updates
 You can install NewPipe using one of the following methods:
@@ -159,7 +191,4 @@ If you like NewPipe, you're welcome to send a donation. We prefer Liberapay, as 
 ## Privacy Policy
 
 The NewPipe project aims to provide a private, anonymous experience for using web-based media services. Therefore, the app does not collect any data without your consent. NewPipe's privacy policy explains in detail what data is sent and stored when you send a crash report, or leave a comment in our blog. You can find the document [here](https://newpipe.net/legal/privacy/).
-</details>
-
-## License
-[![GNU GPLv3](https://www.gnu.org/graphics/gplv3-127x51.png)](https://www.gnu.org/licenses/gpl-3.0.en.html)
+</details> -->
