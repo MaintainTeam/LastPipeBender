@@ -47,12 +47,19 @@ jobs:
           ${ANDROID_HOME}/build-tools/34.0.0/apksigner sign --ks apksign.keystore --ks-pass env:SIGNING_STORE_PASSWORD "app/build/outputs/apk/release/app-release-unsigned.apk"
           mv app/build/outputs/apk/release/app-release-unsigned.apk app/build/outputs/apk/release/"lastpipebender_v${version}.apk"
 
+      - name: Generate checksum
+        run: | 
+          sha256sum app/build/outputs/apk/release/*.apk > app/build/outputs/apk/release/checksums.txt
+          echo "::notice::$(app/build/outputs/apk/release/checksums.txt)"
+          
+            
       - name: Create release and upload
         run: |
           version=$( grep "versionName" app/build.gradle | awk -F'"' '{print $2}' )
           gh auth login --with-token <<<"${{ secrets.GITHUB_TOKEN }}"
           gh release create "v${version}" --title "${{ inputs.title }}" --notes-file ".github/changelog.md" --prerelease=${{ inputs.is_pre_release }} --repo MaintainTeam/LastPipeBender
-          gh release upload "v${version}" app/build/outputs/apk/release/*.apk --repo MaintainTeam/LastPipeBender
+          gh release upload "v${version}" app/build/outputs/apk/release/{*.apk,checksums.txt} --repo MaintainTeam/LastPipeBender
+          
 
       - name: Archive reports for job
         uses: actions/upload-artifact@v4
