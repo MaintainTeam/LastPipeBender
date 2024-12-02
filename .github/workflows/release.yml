@@ -50,7 +50,7 @@ jobs:
       - name: Generate checksum
         run: | 
           sha256sum app/build/outputs/apk/release/*.apk > app/build/outputs/apk/release/checksums.txt
-          echo "::notice::$(app/build/outputs/apk/release/checksums.txt)"
+          echo "::notice::$(cat app/build/outputs/apk/release/checksums.txt)"
           
             
       - name: Create release and upload
