@@ -17,7 +17,7 @@ on:
 jobs:
   build-and-release:
     runs-on: ubuntu-latest
-    
+
     permissions: write-all
 
     steps:
@@ -26,11 +26,11 @@ jobs:
           git clone --no-checkout https://github.com/MaintainTeam/LastPipeBender.git .
           git config core.symlinks false
           git checkout --progress --force ${{ github.ref_name }}
-        
-      - name: Set up JDK 17
+
+      - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          java-version: 17
+          java-version: 21
           distribution: "temurin"
           cache: 'gradle'
 

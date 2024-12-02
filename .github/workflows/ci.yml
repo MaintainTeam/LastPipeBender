@@ -39,7 +39,7 @@ jobs:
           git clone --no-checkout https://github.com/MaintainTeam/LastPipeBender.git .
           git checkout --progress --force ${{ github.ref_name }}
 
-      - name: Set up JDK 17
+      - name: Set up JDK
         uses: actions/setup-java@v4
         with:
           java-version: 21
