@@ -34,6 +34,29 @@ This is the SHA fingerprint of LastPipeBender's signing key to verify downloaded
 1B:00:8D:64:BB:95:AB:47:74:D6:8B:87:F2:2B:8B:E9:A2:72:F4:92:4D:F5:20:29:D7:E6:18:38:35:D9:18:CC
 ```
 
+### Project Management
+
+```mermaid
+---
+title: Project Management
+---
+graph TD
+    A[master_newpipe] --> D[dev]
+    B[master_tubular] --> D
+    C[dev_brave] --> D
+    D --> | Test & Mini Changes | E[master]
+    D --> X[A-feature]
+    D --> Y[B-feature]
+    X --> | REVIEW | F[extended]
+    Y --> | REVIEW | F
+
+    F --> | Pre-Release | G(v0.xx.x-extended)
+
+    F --> | Ensure Long-Term Compatibility | E
+    E --> | Stable Release | K(v0.xx.x)
+```
+-to be updated-
+
 ## License
 [![GNU GPLv3](https://www.gnu.org/graphics/gplv3-127x51.png)](https://www.gnu.org/licenses/gpl-3.0.en.html)
 
