@@ -6,6 +6,7 @@ on:
     branches:
       - dev
       - master
+      - extended
     paths-ignore:
       - 'README.md'
       - 'doc/**'
