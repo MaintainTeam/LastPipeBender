@@ -3,6 +3,7 @@ package org.schabi.newpipe.settings;
 import static org.schabi.newpipe.util.Localization.assureCorrectAppLanguage;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -20,10 +21,12 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceManager;
 
 import com.evernote.android.state.State;
 import com.jakewharton.rxbinding4.widget.RxTextView;
 import com.livefront.bridge.Bridge;
+import com.marcinorlowski.fonty.Fonty; // REVIEW up-10
 
 import org.schabi.newpipe.MainActivity;
 import org.schabi.newpipe.R;
@@ -87,6 +90,7 @@ public class SettingsActivity extends AppCompatActivity implements
 
     @Override
     protected void onCreate(final Bundle savedInstanceBundle) {
+
         setTheme(ThemeHelper.getSettingsThemeStyle(this));
         assureCorrectAppLanguage(this);
 
@@ -117,6 +121,10 @@ public class SettingsActivity extends AppCompatActivity implements
 
         if (DeviceUtils.isTv(this)) {
             FocusOverlayView.setupFocusObserver(this);
+        }
+        final String preferredFont = getPreferredFont(this);
+        if (!preferredFont.equals(getString(R.string.default_font_key))) {
+            Fonty.setFonts(this);
         }
     }
 
@@ -255,6 +263,12 @@ public class SettingsActivity extends AppCompatActivity implements
         }
         searchFragment.setSearcher(searcher);
     }
+    public String getPreferredFont(final Context context) {
+        final SharedPreferences preferences = PreferenceManager
+                .getDefaultSharedPreferences(context);
+        return preferences.getString("preferred_font", (getString(R.string.default_font_key)));
+    }
+
 
     /**
      * Ensures that the search shows the correct/available search results.

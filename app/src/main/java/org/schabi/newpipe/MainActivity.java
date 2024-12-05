@@ -57,6 +57,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.marcinorlowski.fonty.Fonty;
 
 import org.schabi.newpipe.databinding.ActivityMainBinding;
 import org.schabi.newpipe.databinding.DrawerHeaderBinding;
@@ -130,6 +131,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
+        // Apply the preferred font globally
+        final String preferredFont = getPreferredFont(this);
+        setUpFont(preferredFont);
         if (DEBUG) {
             Log.d(TAG, "onCreate() called with: "
                     + "savedInstanceState = [" + savedInstanceState + "]");
@@ -174,9 +178,13 @@ public class MainActivity extends AppCompatActivity {
                 && ReleaseVersionUtil.INSTANCE.isReleaseApk()) {
             UpdateSettingsFragment.askForConsentToUpdateChecks(this);
         }
+        if (!preferredFont.equals(getString(R.string.default_font_key))) {
+            Fonty.setFonts(this);
+        }
+
     }
 
-    @Override
+@Override
     protected void onPostCreate(final Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
@@ -189,6 +197,50 @@ public class MainActivity extends AppCompatActivity {
             // and eventually searching for a new version.
             NewVersionWorker.enqueueNewVersionCheckingWork(app, false);
         }
+    }
+    public String getPreferredFont(final Context context) {
+        final SharedPreferences preferences = PreferenceManager
+                .getDefaultSharedPreferences(context);
+        return preferences.getString("preferred_font", getString(R.string.default_font_key));
+    }
+
+    public void setUpFont(final String preferredFont) {
+        switch (preferredFont) {
+            case "Arial":
+                Fonty.context(this)
+                        .normalTypeface("arial.ttf")
+                        .build();
+                break;
+            case "Broadway":
+                Fonty.context(this)
+                        .normalTypeface("BROADW.TTF")
+                        .build();
+                break;
+            case "Algerian":
+                Fonty.context(this)
+                        .normalTypeface("Algerian.TTF")
+                        .build();
+                break;
+            case "Bell MT":
+                Fonty.context(this)
+                        .normalTypeface("BELL.TTF")
+                        .build();
+                break;
+            case "Calibri":
+                Fonty.context(this)
+                        .normalTypeface("calibrii.ttf")
+                        .build();
+                break;
+            case "Time New Roman":
+                Fonty.context(this)
+                        .normalTypeface("times.ttf")
+                        .build();
+                break;
+            default:
+                // do nothing
+                break;
+        }
+
     }
 
     private void setupDrawer() throws ExtractionException {

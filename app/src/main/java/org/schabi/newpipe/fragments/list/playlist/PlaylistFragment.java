@@ -6,6 +6,7 @@ import static org.schabi.newpipe.ktx.ViewUtils.animateHideRecyclerViewAllowingSc
 import static org.schabi.newpipe.util.ServiceHelper.getServiceById;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -19,9 +20,11 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.content.res.AppCompatResources;
+import androidx.preference.PreferenceManager;
 
 import com.google.android.material.shape.CornerFamily;
 import com.google.android.material.shape.ShapeAppearanceModel;
+import com.marcinorlowski.fonty.Fonty;
 
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
@@ -99,7 +102,11 @@ public class PlaylistFragment extends BaseListInfoFragment<StreamInfoItem, Playl
         instance.setInitialData(serviceId, url, name);
         return instance;
     }
-
+    public String getPreferredFont(final Context context) {
+        final SharedPreferences preferences = PreferenceManager
+                .getDefaultSharedPreferences(context);
+        return preferences.getString("preferred_font", (getString(R.string.default_font_key)));
+    }
     public PlaylistFragment() {
         super(UserAction.REQUESTED_PLAYLIST);
     }
@@ -121,7 +128,12 @@ public class PlaylistFragment extends BaseListInfoFragment<StreamInfoItem, Playl
     public View onCreateView(@NonNull final LayoutInflater inflater,
                              @Nullable final ViewGroup container,
                              @Nullable final Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_playlist, container, false);
+        final View view = inflater.inflate(R.layout.fragment_playlist, container, false);
+        final String preferredFont = getPreferredFont(view.getContext());
+        if (!preferredFont.equals(getString(R.string.default_font_key))) {
+            Fonty.setFonts((ViewGroup) view);
+        }
+        return view;
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -136,7 +148,6 @@ public class PlaylistFragment extends BaseListInfoFragment<StreamInfoItem, Playl
 
         return headerBinding::getRoot;
     }
-
     @Override
     protected void initViews(final View rootView, final Bundle savedInstanceState) {
         super.initViews(rootView, savedInstanceState);
@@ -149,7 +160,6 @@ public class PlaylistFragment extends BaseListInfoFragment<StreamInfoItem, Playl
     private PlayQueue getPlayQueueStartingAt(final StreamInfoItem infoItem) {
         return getPlayQueue(Math.max(infoListAdapter.getItemsList().indexOf(infoItem), 0));
     }
-
     @Override
     protected void showInfoItemDialog(final StreamInfoItem item) {
         final Context context = getContext();
@@ -187,7 +197,6 @@ public class PlaylistFragment extends BaseListInfoFragment<StreamInfoItem, Playl
     public void onDestroyView() {
         headerBinding = null;
         playlistControlBinding = null;
-
         super.onDestroyView();
         if (isBookmarkButtonReady != null) {
             isBookmarkButtonReady.set(false);

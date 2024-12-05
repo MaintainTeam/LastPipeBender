@@ -42,6 +42,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.evernote.android.state.State;
 
+import com.marcinorlowski.fonty.Fonty; //REVIEW up-10
+
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.databinding.FragmentSearchBinding;
 import org.schabi.newpipe.error.ErrorInfo;
@@ -210,9 +212,22 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
     }
 
     @Override
-    public View onCreateView(final LayoutInflater inflater, @Nullable final ViewGroup container,
+    public View onCreateView(@NonNull final LayoutInflater inflater,
+                             @Nullable final ViewGroup container,
                              @Nullable final Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_search, container, false);
+        final ViewGroup view = (ViewGroup) inflater
+                .inflate(R.layout.fragment_search, container, false);
+        final String preferredFont = getPreferredFont(view.getContext());
+        if (!preferredFont.equals(getString(R.string.default_font_key))) {
+            Fonty.setFonts(view);
+        }
+        return view;
+    }
+
+    public String getPreferredFont(final Context context) {
+        final SharedPreferences preferences = PreferenceManager
+                .getDefaultSharedPreferences(context);
+        return preferences.getString("preferred_font", (getString(R.string.default_font_key)));
     }
 
     @Override

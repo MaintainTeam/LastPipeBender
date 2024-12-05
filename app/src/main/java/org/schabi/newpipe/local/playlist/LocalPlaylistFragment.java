@@ -5,6 +5,7 @@ import static org.schabi.newpipe.ktx.ViewUtils.animate;
 import static org.schabi.newpipe.util.ThemeHelper.shouldUseGridLayout;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.text.InputType;
@@ -22,11 +23,13 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewbinding.ViewBinding;
 
 import com.evernote.android.state.State;
+import com.marcinorlowski.fonty.Fonty; //REVIEW up-10
 
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
@@ -126,12 +129,21 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
         isLoadingComplete = new AtomicBoolean();
         debounceSaver = new DebounceSaver(this);
     }
-
+    public String getPreferredFont(final Context context) {
+        final SharedPreferences preferences = PreferenceManager
+                .getDefaultSharedPreferences(context);
+        return preferences.getString("preferred_font", (getString(R.string.default_font_key)));
+    }
     @Override
     public View onCreateView(@NonNull final LayoutInflater inflater,
                              @Nullable final ViewGroup container,
                              @Nullable final Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_playlist, container, false);
+        final View view = inflater.inflate(R.layout.fragment_playlist, container, false);
+        final String preferredFont = getPreferredFont(view.getContext());
+        if (!preferredFont.equals(getString(R.string.default_font_key))) {
+            Fonty.setFonts((ViewGroup) view);
+        }
+        return view;
     }
 
     ///////////////////////////////////////////////////////////////////////////

@@ -92,3 +92,4 @@
         app:layout_constraintTop_toBottomOf="@+id/itemThumbnailView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+<!-- REVIEW deleted in up-10, why? -->

@@ -43,6 +43,7 @@ import androidx.preference.PreferenceManager;
 
 import com.evernote.android.state.State;
 import com.livefront.bridge.Bridge;
+import com.marcinorlowski.fonty.Fonty; // REVIEW up-10
 
 import org.schabi.newpipe.database.stream.model.StreamEntity;
 import org.schabi.newpipe.databinding.ListRadioIconItemBinding;
@@ -129,6 +130,7 @@ public class RouterActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
+        final String preferredFont = getPreferredFont(this);
         ThemeHelper.setDayNightMode(this);
         setTheme(ThemeHelper.isLightThemeSelected(this)
                 ? R.style.RouterActivityThemeLight : R.style.RouterActivityThemeDark);
@@ -184,7 +186,17 @@ public class RouterActivity extends AppCompatActivity {
                 finish();
             }
         }
+
+        if (!preferredFont.equals(getString(R.string.default_font_key))) {
+            Fonty.setFonts(this);
+        }
     }
+    public String getPreferredFont(final Context context) {
+        final SharedPreferences preferences = PreferenceManager
+                .getDefaultSharedPreferences(context);
+        return preferences.getString("preferred_font", getString(R.string.default_font_key));
+    }
+
 
     @Override
     protected void onStop() {

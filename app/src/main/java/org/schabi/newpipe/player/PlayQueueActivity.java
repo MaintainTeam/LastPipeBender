@@ -5,8 +5,10 @@ import static org.schabi.newpipe.player.helper.PlayerHelper.formatSpeed;
 import static org.schabi.newpipe.util.Localization.assureCorrectAppLanguage;
 
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.Settings;
@@ -21,11 +23,13 @@ import android.widget.SeekBar;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.exoplayer2.PlaybackParameters;
+import com.marcinorlowski.fonty.Fonty;
 
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.databinding.ActivityPlayerQueueControlBinding;
@@ -85,6 +89,7 @@ public final class PlayQueueActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
+        final String preferredFont = getPreferredFont(this);
         assureCorrectAppLanguage(this);
         super.onCreate(savedInstanceState);
         ThemeHelper.setTheme(this, ServiceHelper.getSelectedServiceId(this));
@@ -100,6 +105,9 @@ public final class PlayQueueActivity extends AppCompatActivity
 
         serviceConnection = getServiceConnection();
         bind();
+        if (!preferredFont.equals(getString(R.string.default_font_key))) {
+            Fonty.setFonts(this);
+        }
     }
 
     @Override
@@ -127,6 +135,12 @@ public final class PlayQueueActivity extends AppCompatActivity
         }
         return super.onPrepareOptionsMenu(m);
     }
+    public String getPreferredFont(final Context context) {
+        final SharedPreferences preferences = PreferenceManager
+                .getDefaultSharedPreferences(context);
+        return preferences.getString("preferred_font", (getString(R.string.default_font_key)));
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {

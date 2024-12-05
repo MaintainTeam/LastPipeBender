@@ -1,5 +1,7 @@
 package org.schabi.newpipe.fragments.list.kiosk;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -10,6 +12,9 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
+import androidx.preference.PreferenceManager;
+
+import com.marcinorlowski.fonty.Fonty;
 
 import com.evernote.android.state.State;
 
@@ -101,7 +106,11 @@ public class KioskFragment extends BaseListInfoFragment<StreamInfoItem, KioskInf
         name = kioskTranslatedName;
         contentCountry = Localization.getPreferredContentCountry(requireContext());
     }
-
+    public String getPreferredFont(final Context context) {
+        final SharedPreferences preferences = PreferenceManager
+                .getDefaultSharedPreferences(context);
+        return preferences.getString("preferred_font", (getString(R.string.default_font_key)));
+    }
     @Override
     public void onResume() {
         super.onResume();
@@ -121,7 +130,12 @@ public class KioskFragment extends BaseListInfoFragment<StreamInfoItem, KioskInf
     public View onCreateView(@NonNull final LayoutInflater inflater,
                              @Nullable final ViewGroup container,
                              @Nullable final Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_kiosk, container, false);
+        final View view = inflater.inflate(R.layout.fragment_kiosk, container, false);
+        final String preferredFont = getPreferredFont(view.getContext());
+        if (!preferredFont.equals(getString(R.string.default_font_key))) {
+            Fonty.setFonts((ViewGroup) view);
+        }
+        return view;
     }
 
     /*//////////////////////////////////////////////////////////////////////////
