@@ -131,9 +131,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
-        // Apply the preferred font globally
-        final String preferredFont = getPreferredFont(this);
-        setUpFont(preferredFont);
         if (DEBUG) {
             Log.d(TAG, "onCreate() called with: "
                     + "savedInstanceState = [" + savedInstanceState + "]");
@@ -178,10 +175,14 @@ public class MainActivity extends AppCompatActivity {
                 && ReleaseVersionUtil.INSTANCE.isReleaseApk()) {
             UpdateSettingsFragment.askForConsentToUpdateChecks(this);
         }
+
+        // Apply the preferred font globally
+        final String preferredFont = getPreferredFont(this);
+        setUpFont(preferredFont);
+
         if (!preferredFont.equals(getString(R.string.default_font_key))) {
             Fonty.setFonts(this);
         }
-
     }
 
 @Override
