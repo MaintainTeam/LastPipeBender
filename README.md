@@ -47,8 +47,8 @@ graph TD
     D --> | Test & Mini Changes | E[master]
     D --> X[A-feature]
     D --> Y[B-feature]
-    X --> F[extended]
-    Y --> F
+    X --> | REVIEW | F[extended]
+    Y --> | REVIEW | F
 
     F --> | Pre-Release | G(v0.xx.x-extended)
 
