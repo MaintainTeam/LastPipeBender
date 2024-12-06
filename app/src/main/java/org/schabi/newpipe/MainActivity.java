@@ -176,13 +176,9 @@ public class MainActivity extends AppCompatActivity {
             UpdateSettingsFragment.askForConsentToUpdateChecks(this);
         }
 
-        // Apply the preferred font globally
-        final String preferredFont = getPreferredFont(this);
-        setUpFont(preferredFont);
-
-        if (!preferredFont.equals(getString(R.string.default_font_key))) {
+        // if (!preferredFont.equals(getString(R.string.default_font_key))) {
             Fonty.setFonts(this);
-        }
+        // }
     }
 
 @Override
@@ -198,51 +194,6 @@ public class MainActivity extends AppCompatActivity {
             // and eventually searching for a new version.
             NewVersionWorker.enqueueNewVersionCheckingWork(app, false);
         }
-    }
-    public String getPreferredFont(final Context context) {
-        final SharedPreferences preferences = PreferenceManager
-                .getDefaultSharedPreferences(context);
-        return preferences.getString("preferred_font", getString(R.string.default_font_key));
-    }
-
-    // build the relevant font TypeFace
-    public void setUpFont(final String preferredFont) {
-        switch (preferredFont) {
-            case "Arial":
-                Fonty.context(this)
-                        .normalTypeface("arial.ttf")
-                        .build();
-                break;
-            case "Broadway":
-                Fonty.context(this)
-                        .normalTypeface("BROADW.TTF")
-                        .build();
-                break;
-            case "Algerian":
-                Fonty.context(this)
-                        .normalTypeface("Algerian.TTF")
-                        .build();
-                break;
-            case "Bell MT":
-                Fonty.context(this)
-                        .normalTypeface("BELL.TTF")
-                        .build();
-                break;
-            case "Calibri":
-                Fonty.context(this)
-                        .normalTypeface("calibrii.ttf")
-                        .build();
-                break;
-            case "Time New Roman":
-                Fonty.context(this)
-                        .normalTypeface("times.ttf")
-                        .build();
-                break;
-            default:
-                // do nothing
-                break;
-        }
-
     }
 
     private void setupDrawer() throws ExtractionException {
