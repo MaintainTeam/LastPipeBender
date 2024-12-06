@@ -8,11 +8,17 @@ on:
         description: 'Title'
         required: true
         default: 'v0.00.0 R0'
-      is_pre_release:
-        type: boolean
-        description: 'Set as a pre-release'
+     # pre-release is default anymore !
+     # is_pre_release:
+     #   type: boolean
+     #   description: 'Set as a pre-release'
+     #   required: true
+     #   default: true
+      style:
+        type: integer
+        description: '1: master only, 2: extended only, 3: both master&extended, 4: only selected branch'
         required: true
-        default: true
+        default: 3
 
 jobs:
   build-and-release:
@@ -21,11 +27,56 @@ jobs:
     permissions: write-all
 
     steps:
-      - name: Checkout branch "${{ github.ref_name }}"
+      - name: Create proper environment for multiple apk output
         run: |
+          mkdir -p "${{ github.workspace }}/output"
+
+          if [[ "${{ inputs.style }}" -eq 1 ]]; then
+          mkdir -p "${{ github.workspace }}/master"
+
+          elif [[ "${{ inputs.style }}" -eq 2 ]]; then
+          mkdir -p "${{ github.workspace }}/extended"
+
+          elif [[ "${{ inputs.style }}" -eq 3 ]]; then
+          mkdir -p "${{ github.workspace }}/{master,extended}"
+
+          else
+          mkdir -p "${{ github.workspace }}/current"
+          fi
+
+      - name: Checkout all selected branches
+        env:
+          BRANCH: ${{ github.ref_name }}
+        run: |
+          if [[ "${{ inputs.style }}" -eq 1 ]]; then
+          cd "${{ github.workspace }}/master"
           git clone --no-checkout https://github.com/MaintainTeam/LastPipeBender.git .
           git config core.symlinks false
-          git checkout --progress --force ${{ github.ref_name }}
+          git checkout --progress --force "master"
+
+          elif [[ "${{ inputs.style }}" -eq 2 ]]; then
+          cd "${{ github.workspace }}/extended"
+          git clone --no-checkout https://github.com/MaintainTeam/LastPipeBender.git .
+          git config core.symlinks false
+          git checkout --progress --force "extended"
+
+          elif [[ "${{ inputs.style }}" -eq 3 ]]; then
+          cd "${{ github.workspace }}/master"
+          git clone --no-checkout https://github.com/MaintainTeam/LastPipeBender.git .
+          git config core.symlinks false
+          git checkout --progress --force "master"
+
+          cd "${{ github.workspace }}/extended"
+          git clone --no-checkout https://github.com/MaintainTeam/LastPipeBender.git .
+          git config core.symlinks false
+          git checkout --progress --force "extended"
+
+          else
+          cd "${{ github.workspace }}/current"
+          git clone --no-checkout https://github.com/MaintainTeam/LastPipeBender.git .
+          git config core.symlinks false
+          git checkout --progress --force "$BRANCH"
+          fi
 
       - name: Set up JDK
         uses: actions/setup-java@v4
@@ -35,31 +86,79 @@ jobs:
           cache: 'gradle'
 
       - name: Build release APK
-        run: ./gradlew assembleRelease
+        run: |
+          if [[ "${{ inputs.style }}" -eq 1 ]]; then
+          cd "${{ github.workspace }}/master"
+          echo "::notice::building master"
+          ./gradlew assembleRelease
+          mv "${{ github.workspace }}/master/app/build/outputs/apk/release/app-release-unsigned.apk" "${{ github.workspace }}/output/master.apk"
+
+          elif [[ "${{ inputs.style }}" -eq 2 ]]; then
+          cd "${{ github.workspace }}/extended/"
+          echo "::notice::building extended"
+          ./gradlew assembleRelease
+          mv "${{ github.workspace }}/extended/app/build/outputs/apk/release/app-release-unsigned.apk" "${{ github.workspace }}/output/extended.apk"
+
+          elif [[ "${{ inputs.style }}" -eq 3 ]]; then
+          echo "::notice::both master and extended are going to build"
+
+          cd "${{ github.workspace }}/master"
+          echo "::notice::building master"
+          ./gradlew assembleRelease
+          mv "${{ github.workspace }}/master/app/build/outputs/apk/release/app-release-unsigned.apk" "${{ github.workspace }}/output/master.apk"
+
+          cd "${{ github.workspace }}/extended"
+          echo "::notice::building extended"
+          ./gradlew assembleRelease
+          mv "${{ github.workspace }}/extended/app/build/outputs/apk/release/app-release-unsigned.apk" "${{ github.workspace }}/output/extended.apk"
+
+          else
+          cd "${{ github.workspace }}/current"
+          echo "::notice::building current"
+          ./gradlew assembleRelease
+          mv "${{ github.workspace }}/current/app/build/outputs/apk/release/app-release-unsigned.apk" "${{ github.workspace }}/output/current.apk"
+          fi
 
       - name: Sign APK
         env:
           KEYSTORE: ${{ secrets.KEYSTORE }}
           SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
         run: |
-          version=$( grep "versionName" app/build.gradle | awk -F'"' '{print $2}' )
+          cd "${{ github.workspace }}/output/"
           echo "${KEYSTORE}" | base64 -d > apksign.keystore
-          ${ANDROID_HOME}/build-tools/34.0.0/apksigner sign --ks apksign.keystore --ks-pass env:SIGNING_STORE_PASSWORD "app/build/outputs/apk/release/app-release-unsigned.apk"
-          mv app/build/outputs/apk/release/app-release-unsigned.apk app/build/outputs/apk/release/"lastpipebender_v${version}.apk"
+
+          if [[ "${{ inputs.style }}" -eq 1 ]]; then
+          version=$( grep "versionName" "${{ github.workspace }}/master/app/build.gradle" | awk -F'"' '{print $2}' )
+
+          elif [[ "${{ inputs.style }}" -eq 2 ]]; then
+          version=$( grep "versionName" "${{ github.workspace }}/extended/app/build.gradle" | awk -F'"' '{print $2}' )
+
+          elif [[ "${{ inputs.style }}" -eq 3 ]]; then
+          version=$( grep "versionName" "${{ github.workspace }}/master/app/build.gradle" | awk -F'"' '{print $2}' )   # Use version of master app while both released !
+
+          else
+          mkdir "${{ github.workspace }}/current"
+          version=$( grep "versionName" "${{ github.workspace }}/current/app/build.gradle" | awk -F'"' '{print $2}' )
+          fi
+
+          ${ANDROID_HOME}/build-tools/34.0.0/apksigner sign --ks apksign.keystore --ks-pass env:SIGNING_STORE_PASSWORD "./*.apk"
+
+          rename "master" "pipebender_v${version}"
+          rename "extended" "pipebender_v${version}-e"
+          rename "current" "pipebender_v${version}"
 
       - name: Generate checksum
-        run: | 
-          sha256sum app/build/outputs/apk/release/*.apk > app/build/outputs/apk/release/checksums.txt
-          echo "::notice::$(cat app/build/outputs/apk/release/checksums.txt)"
-          
-            
+        run: |
+          cd "${{ github.workspace }}/output/"
+          sha256sum *.apk > ./checksums.txt
+          echo "::notice::$(cat ./checksums.txt)"
+
+
       - name: Create release and upload
         run: |
-          version=$( grep "versionName" app/build.gradle | awk -F'"' '{print $2}' )
           gh auth login --with-token <<<"${{ secrets.GITHUB_TOKEN }}"
-          gh release create "v${version}" --title "${{ inputs.title }}" --notes-file ".github/changelog.md" --prerelease=${{ inputs.is_pre_release }} --repo MaintainTeam/LastPipeBender
-          gh release upload "v${version}" app/build/outputs/apk/release/{*.apk,checksums.txt} --repo MaintainTeam/LastPipeBender
-          
+          gh release create "v${version}" --title "${{ inputs.title }}" --notes-file ".github/changelog.md" --prerelease="true" --repo MaintainTeam/LastPipeBender
+          gh release upload "v${version}" "${{ github.workspace }}/output/{*.apk,checksums.txt}" --repo MaintainTeam/LastPipeBender
 
       - name: Archive reports for job
         uses: actions/upload-artifact@v4

@@ -7,6 +7,7 @@ on:
       - dev
       - master
       - extended
+      - '**-feature-**'
     paths-ignore:
       - 'README.md'
       - 'doc/**'
@@ -36,9 +37,11 @@ jobs:
 
     steps:
       - name: Checkout branch "${{ github.ref_name }}"
+        env:
+          BRANCH: ${{ github.ref_name }}
         run: |
           git clone --no-checkout https://github.com/MaintainTeam/LastPipeBender.git .
-          git checkout --progress --force ${{ github.ref_name }}
+          git checkout --progress --force "$BRANCH"
 
       - name: Set up JDK
         uses: actions/setup-java@v4
