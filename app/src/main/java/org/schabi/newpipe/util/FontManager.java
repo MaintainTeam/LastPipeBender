@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import androidx.preference.PreferenceManager;
 import com.marcinorlowski.fonty.Fonty;
-import org.schabi.newpipe.R;
+//import org.schabi.newpipe.R;
 
 
 public final class FontManager {
@@ -20,7 +20,8 @@ public final class FontManager {
     public static String getPreferredFont(final Context context) {
         final SharedPreferences preferences = PreferenceManager
                 .getDefaultSharedPreferences(context);
-        return preferences.getString("preferred_font", (getString(R.string.default_font_key)));
+        // return preferences.getString("preferred_font", (getString(R.string.default_font_key)));
+        return preferences.getString("preferred_font", "system");
     }
 
     // build the relevant font TypeFace
@@ -62,4 +63,5 @@ public final class FontManager {
         }
 
     }
+
 }

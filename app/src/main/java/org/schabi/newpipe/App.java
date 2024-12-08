@@ -89,6 +89,8 @@ public class App extends Application {
             return;
         }
 
+        FontManager.init(this);
+
         // check if the last used preference version is set
         // to determine whether this is the first app run
         final int lastUsedPrefVersion = PreferenceManager.getDefaultSharedPreferences(this)
@@ -103,7 +105,6 @@ public class App extends Application {
             Localization.getPreferredContentCountry(this));
         Localization.initPrettyTime(Localization.resolvePrettyTime(getApplicationContext()));
 
-        FontManager.init(this);
         BridgeStateSaverInitializer.init(this);
         StateSaver.init(this);
         initNotificationChannels();
