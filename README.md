@@ -23,6 +23,14 @@
 - Other apps to get some other features from
   - [PipePipe](https://github.com/InfinityLoop1308/PipePipe)
   - [SmartTube](https://github.com/yuliskov/SmartTube)
+  - [FreeTube](https://github.com/FreeTubeApp/FreeTube/)
+  <!-- NEEDS MORE INVESTIGATION
+  - Materialious
+  - LibreTube
+  - Namida
+  - PeerTube (new released app by Frama Team)
+
+  --> 
 
 Note: This readme will be updated and more citations will be given
 
