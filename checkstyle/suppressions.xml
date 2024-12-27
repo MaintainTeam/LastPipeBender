@@ -10,4 +10,7 @@
 
   <suppress checks="FileLength"
     files="VideoDetailFragment.java"/>
+
+  <suppress checks="MethodLength"
+      files="VideoDetailFragment.java"/>
 </suppressions>

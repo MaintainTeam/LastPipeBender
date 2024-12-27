@@ -1,11 +1,11 @@
 package org.schabi.newpipe.views;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
+//import android.app.AlertDialog;
+//import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.webkit.*;
+//import android.webkit.*;
 import androidx.appcompat.app.AppCompatActivity;
 import org.schabi.newpipe.R;
 
@@ -14,15 +14,17 @@ public class YouTubeLoginWebViewActivity extends AppCompatActivity {
     String cookies;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_webview);
 
-        WebView webView = findViewById(R.id.login_webview);
+        final WebView webView = findViewById(R.id.login_webview);
         this.webView = webView;
-        WebSettings webSettings = webView.getSettings();
+        final WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
-        webSettings.setUserAgentString("Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.120 Mobile Safari/537.36");
+        webSettings.setUserAgentString("Mozilla/5.0 (Linux; Android 10; Mobile) "
+                + "AppleWebKit/537.36 (KHTML, like Gecko) "
+                + "Chrome/91.0.4472.120 Mobile Safari/537.36");
 
         webView.setWebViewClient(new MyWebViewClient());
         webView.loadUrl("https://www.youtube.com/signin");
@@ -30,22 +32,24 @@ public class YouTubeLoginWebViewActivity extends AppCompatActivity {
 
     private class MyWebViewClient extends WebViewClient {
         @Override
-        public void onPageFinished(WebView view, String url) {
+        public void onPageFinished(final WebView view, final String url) {
             super.onPageFinished(view, url);
-            if (url.equals("https://m.youtube.com/?noapp=1") || url.equals("https://m.youtube.com/")) {
+            if (url.equals("https://m.youtube.com/?noapp=1")
+                    || url.equals("https://m.youtube.com/")) {
                 setCookies(CookieManager.getInstance().getCookie(url));
                 webView.loadUrl("https://music.youtube.com/watch?v=09839DpTctU");
             }
         }
 
         @Override
-        public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
-            String url = request.getUrl().toString();
+        public WebResourceResponse shouldInterceptRequest(
+                final WebView view, final WebResourceRequest request) {
+            final String url = request.getUrl().toString();
             // Filter specific requests
             if (url.contains("googlevideo.com/videoplayback")) {
-                Uri uri = Uri.parse(url);
-                String pot = uri.getQueryParameter("pot");
-                Intent intent = new Intent();
+                final Uri uri = Uri.parse(url);
+                final String pot = uri.getQueryParameter("pot");
+                final Intent intent = new Intent();
                 intent.putExtra("cookies", cookies);
                 intent.putExtra("pot", pot);
                 setResult(RESULT_OK, intent);
@@ -72,7 +76,7 @@ public class YouTubeLoginWebViewActivity extends AppCompatActivity {
 //        dialog.show();
 //    }
 
-    public void setCookies(String cookies) {
+    public void setCookies(final String cookies) {
         this.cookies = cookies;
     }
 

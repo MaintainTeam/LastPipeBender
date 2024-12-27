@@ -14,19 +14,19 @@ public class YouTubeAccountSettingsFragment extends BasePreferenceFragment {
     @Override
     public void onCreatePreferences(final Bundle savedInstanceState, final String rootKey) {
         addPreferencesFromResource(R.xml.account_settings_youtube);
-        Preference login = findPreference(getString(R.string.login_key));
-        Preference logout = findPreference(getString(R.string.logout_key));
+        final Preference login = findPreference(getString(R.string.login_key));
+        final Preference logout = findPreference(getString(R.string.logout_key));
         login.setOnPreferenceClickListener(preference -> {
             // Open a webview to login and then get cookies
             // and save them to the shared preferences
-            Intent intent = new Intent(this.getContext(), YouTubeLoginWebViewActivity.class);
+            final Intent intent = new Intent(this.getContext(), YouTubeLoginWebViewActivity.class);
             startActivityForResult(intent, REQUEST_LOGIN);
             return true;
         });
         logout.setOnPreferenceClickListener(preference -> {
             // Clear cookies
-            defaultPreferences.edit().putString(getString(R.string.youtube_cookies_key), "").apply();
-//            defaultPreferences.edit().putString(getString(R.string.youtube_po_token), "").apply();
+          defaultPreferences.edit().putString(getString(R.string.youtube_cookies_key), "").apply();
+//           defaultPreferences.edit().putString(getString(R.string.youtube_po_token), "").apply();
             return true;
         });
         if (defaultPreferences.getString(getString(R.string.youtube_cookies_key), "").equals("")) {
@@ -35,17 +35,20 @@ public class YouTubeAccountSettingsFragment extends BasePreferenceFragment {
             login.setEnabled(false);
         }
 
-//        Preference override_cookies_niconico_value = findPreference(getString(R.string.override_cookies_youtube_value_key));
-//        override_cookies_niconico_value.setEnabled(defaultPreferences.getBoolean(getString(R.string.override_cookies_youtube_key), false));
+//        Preference override_cookies_niconico_value =
+//        findPreference(getString(R.string.override_cookies_youtube_value_key));
+//        override_cookies_niconico_value.setEnabled(
+//        defaultPreferences.getBoolean(getString(R.string.override_cookies_youtube_key), false));
     }
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         if (requestCode == REQUEST_LOGIN && resultCode == RESULT_OK) {
-            String cookies = data.getStringExtra("cookies");
-            String pot = data.getStringExtra("pot");
+            final String cookies = data.getStringExtra("cookies");
+            final String pot = data.getStringExtra("pot");
             // save cookies to shared preferences
-            defaultPreferences.edit().putString(getString(R.string.youtube_cookies_key), cookies).apply();
-//            defaultPreferences.edit().putString(getString(R.string.youtube_po_token), pot).apply();
+            defaultPreferences.edit().putString(
+                    getString(R.string.youtube_cookies_key), cookies).apply();
+//       defaultPreferences.edit().putString(getString(R.string.youtube_po_token), pot).apply();
         }
     }
 
