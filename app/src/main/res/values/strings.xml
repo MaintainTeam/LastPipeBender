@@ -978,4 +978,6 @@
     <string name="return_youtube_dislike_privacy_policy_text">ReturnYouTubeDislike Security FAQ</string>
     <string name="return_youtube_dislike_home_page_url">https://returnyoutubedislike.com/</string>
     <string name="return_youtube_dislike_security_faq_url">https://www.returnyoutubedislike.com/faq/</string>
+    <!-- Merged from PipePipe -->
+    <string name="settings_category_youtube_account_title">YouTube Account</string>
 </resources>

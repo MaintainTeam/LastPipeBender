@@ -134,6 +134,10 @@
             android:exported="false"
             android:label="@string/recaptcha" />
 
+        <activity android:name=".views.YouTubeLoginWebViewActivity"
+            android:configChanges="orientation|screenSize"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"

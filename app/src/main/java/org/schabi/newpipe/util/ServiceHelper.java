@@ -202,6 +202,12 @@ public final class ServiceHelper {
             final String url = jsonObject.getString("url");
             final PeertubeInstance instance = new PeertubeInstance(url, name);
             ServiceList.PeerTube.setInstance(instance);
+        } else if (serviceId == ServiceList.YouTube.getServiceId()) {
+            final SharedPreferences sharedPreferences = PreferenceManager
+                    .getDefaultSharedPreferences(context);
+            final String tokens = sharedPreferences.getString(context.getString(
+                    R.string.youtube_cookies_key), null);
+            ServiceList.YouTube.setTokens(tokens); 
         }
     }
 

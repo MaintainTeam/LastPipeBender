@@ -1526,4 +1526,9 @@
     <string name="return_youtube_dislike_override_like_count_key" translatable="false">return_youtube_dislike_override_like_count</string>
     <string name="return_youtube_dislike_override_view_count_key" translatable="false">return_youtube_dislike_override_view_count</string>
     <string name="return_youtube_dislike_show_dislikes_as_percentage_key" translatable="false">return_youtube_dislike_show_dislikes_as_percentage</string>
+
+    <!-- Merged from PipePipe -->
+    <string name="youtube_cookies_key">youtube_cookies_key</string>
+    <string name="override_cookies_youtube_key">override_cookies_youtube_key</string>
+    <string name="override_cookies_youtube_value_key">override_cookies_youtube_value_key</string>
 </resources>
