@@ -29,38 +29,43 @@ jobs:
     steps:
       - name: Create proper environment for multiple apk output
         run: |
+          apt install rename
           mkdir -p "${{ github.workspace }}/output"
 
-          if [[ "${{ inputs.style }}" -eq 1 ]]; then
+          if [[ "${{ inputs.style }}" -eq "1" ]]; then
           mkdir -p "${{ github.workspace }}/master"
 
-          elif [[ "${{ inputs.style }}" -eq 2 ]]; then
+          elif [[ "${{ inputs.style }}" -eq "2" ]]; then
           mkdir -p "${{ github.workspace }}/extended"
 
-          elif [[ "${{ inputs.style }}" -eq 3 ]]; then
-          mkdir -p "${{ github.workspace }}/{master,extended}"
+          elif [[ "${{ inputs.style }}" -eq "3" ]]; then
+          # mkdir -p "${{ github.workspace }}/{master,extended}" # REVIEW not working, why?
+          mkdir -p "${{ github.workspace }}/master"
+          mkdir -p "${{ github.workspace }}/extended"
 
           else
           mkdir -p "${{ github.workspace }}/current"
           fi
 
+          ls -la
+
       - name: Checkout all selected branches
         env:
           BRANCH: ${{ github.ref_name }}
         run: |
-          if [[ "${{ inputs.style }}" -eq 1 ]]; then
+          if [[ "${{ inputs.style }}" -eq "1" ]]; then
           cd "${{ github.workspace }}/master"
           git clone --no-checkout https://github.com/MaintainTeam/LastPipeBender.git .
           git config core.symlinks false
           git checkout --progress --force "master"
 
-          elif [[ "${{ inputs.style }}" -eq 2 ]]; then
+          elif [[ "${{ inputs.style }}" -eq "2" ]]; then
           cd "${{ github.workspace }}/extended"
           git clone --no-checkout https://github.com/MaintainTeam/LastPipeBender.git .
           git config core.symlinks false
           git checkout --progress --force "extended"
 
-          elif [[ "${{ inputs.style }}" -eq 3 ]]; then
+          elif [[ "${{ inputs.style }}" -eq "3" ]]; then
           cd "${{ github.workspace }}/master"
           git clone --no-checkout https://github.com/MaintainTeam/LastPipeBender.git .
           git config core.symlinks false
@@ -87,19 +92,19 @@ jobs:
 
       - name: Build release APK
         run: |
-          if [[ "${{ inputs.style }}" -eq 1 ]]; then
+          if [[ "${{ inputs.style }}" -eq "1" ]]; then
           cd "${{ github.workspace }}/master"
           echo "::notice::building master"
           ./gradlew assembleRelease
           mv "${{ github.workspace }}/master/app/build/outputs/apk/release/app-release-unsigned.apk" "${{ github.workspace }}/output/master.apk"
 
-          elif [[ "${{ inputs.style }}" -eq 2 ]]; then
+          elif [[ "${{ inputs.style }}" -eq "2" ]]; then
           cd "${{ github.workspace }}/extended/"
           echo "::notice::building extended"
           ./gradlew assembleRelease
           mv "${{ github.workspace }}/extended/app/build/outputs/apk/release/app-release-unsigned.apk" "${{ github.workspace }}/output/extended.apk"
 
-          elif [[ "${{ inputs.style }}" -eq 3 ]]; then
+          elif [[ "${{ inputs.style }}" -eq "3" ]]; then
           echo "::notice::both master and extended are going to build"
 
           cd "${{ github.workspace }}/master"
@@ -127,25 +132,29 @@ jobs:
           cd "${{ github.workspace }}/output/"
           echo "${KEYSTORE}" | base64 -d > apksign.keystore
 
-          if [[ "${{ inputs.style }}" -eq 1 ]]; then
+          if [[ "${{ inputs.style }}" -eq "1" ]]; then
           version=$( grep "versionName" "${{ github.workspace }}/master/app/build.gradle" | awk -F'"' '{print $2}' )
+          ${ANDROID_HOME}/build-tools/34.0.0/apksigner sign --ks apksign.keystore --ks-pass env:SIGNING_STORE_PASSWORD "./master.apk"
 
-          elif [[ "${{ inputs.style }}" -eq 2 ]]; then
+          elif [[ "${{ inputs.style }}" -eq "2" ]]; then
           version=$( grep "versionName" "${{ github.workspace }}/extended/app/build.gradle" | awk -F'"' '{print $2}' )
+          ${ANDROID_HOME}/build-tools/34.0.0/apksigner sign --ks apksign.keystore --ks-pass env:SIGNING_STORE_PASSWORD "./extended.apk"
 
-          elif [[ "${{ inputs.style }}" -eq 3 ]]; then
+          elif [[ "${{ inputs.style }}" -eq "3" ]]; then
           version=$( grep "versionName" "${{ github.workspace }}/master/app/build.gradle" | awk -F'"' '{print $2}' )   # Use version of master app while both released !
+          ${ANDROID_HOME}/build-tools/34.0.0/apksigner sign --ks apksign.keystore --ks-pass env:SIGNING_STORE_PASSWORD "./master.apk"
+          ${ANDROID_HOME}/build-tools/34.0.0/apksigner sign --ks apksign.keystore --ks-pass env:SIGNING_STORE_PASSWORD "./extended.apk"
 
           else
           mkdir "${{ github.workspace }}/current"
           version=$( grep "versionName" "${{ github.workspace }}/current/app/build.gradle" | awk -F'"' '{print $2}' )
+          ${ANDROID_HOME}/build-tools/34.0.0/apksigner sign --ks apksign.keystore --ks-pass env:SIGNING_STORE_PASSWORD "./current.apk"
           fi
-
-          ${ANDROID_HOME}/build-tools/34.0.0/apksigner sign --ks apksign.keystore --ks-pass env:SIGNING_STORE_PASSWORD "./*.apk"
 
           rename "master" "pipebender_v${version}"
           rename "extended" "pipebender_v${version}-e"
           rename "current" "pipebender_v${version}"
+          ls -la
 
       - name: Generate checksum
         run: |
