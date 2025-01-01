@@ -1,4 +1,4 @@
-Project Status: #6
+[Project Status](https://github.com/maintainteam/lastpipebender/discussions/6)
 
 <hr>
 <p align="center"><a href="https://newpipe.net"><img src="https://badges.yayindasin.org/badge/This_is_a_placeholder_for_logo-red" width="150"></a></p> 
