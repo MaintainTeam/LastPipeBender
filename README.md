@@ -1,4 +1,5 @@
 [Project Status](https://github.com/maintainteam/lastpipebender/discussions/6)
+[Join Matrix Channel](https://matrix.to/#/!tYUpeILeZnyZspckwY:matrix.org?via=matrix.org)
 
 <hr>
 <p align="center"><a href="https://newpipe.net"><img src="https://badges.yayindasin.org/badge/This_is_a_placeholder_for_logo-red" width="150"></a></p> 
