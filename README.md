@@ -1,3 +1,6 @@
+Project Status: #6
+
+<hr>
 <p align="center"><a href="https://newpipe.net"><img src="https://badges.yayindasin.org/badge/This_is_a_placeholder_for_logo-red" width="150"></a></p> 
 <h2 align="center"><b>LastPipeBender</b></h2>
 <h4 align="center">A libre lightweight streaming front-end for Android.</h4>
