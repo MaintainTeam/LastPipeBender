@@ -61,11 +61,11 @@ public class ErrorActivity extends AppCompatActivity {
     // BUNDLE TAGS
     public static final String ERROR_INFO = "error_info";
 
-    public static final String ERROR_EMAIL_ADDRESS = "polymorphicshade@gmail.com";
+    public static final String ERROR_EMAIL_ADDRESS = "mt_lastpipebender@asandikci.com";
     public static final String ERROR_EMAIL_SUBJECT = "Exception in ";
 
     public static final String ERROR_GITHUB_ISSUE_URL =
-            "https://github.com/polymorphicshade/Tubular/issues";
+            "https://github.com/MaintainTeam/LastPipeBender/issues";
 
     public static final DateTimeFormatter CURRENT_TIMESTAMP_FORMATTER =
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
