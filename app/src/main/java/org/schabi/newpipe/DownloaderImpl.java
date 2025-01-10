@@ -1,6 +1,8 @@
 package org.schabi.newpipe;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,6 +24,8 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.net.Proxy;
+import java.net.InetSocketAddress;
 
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
@@ -40,11 +44,45 @@ public final class DownloaderImpl extends Downloader {
     private final OkHttpClient client;
 
     private DownloaderImpl(final OkHttpClient.Builder builder) {
-        this.client = builder
-                .readTimeout(30, TimeUnit.SECONDS)
-//                .cache(new Cache(new File(context.getExternalCacheDir(), "okhttp"),
-//                        16 * 1024 * 1024))
-                .build();
+        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(
+            App.getApp()
+        );
+        final boolean isProxyEnabled = sharedPreferences.getBoolean(
+            App.getApp().getString(R.string.proxy_enabled_key), false);
+        Log.d("DownloaderImpl_ProxySettings", "Read proxy_enabled_key: " + isProxyEnabled);
+        if (isProxyEnabled) {
+            Log.d("DownloaderImpl_ProxySettings",
+                "Update called. proxy_enabled_key on: " + isProxyEnabled);
+            final String proxyAddress = sharedPreferences.getString(
+                App.getApp().getString(R.string.proxy_address_key), "192.168.1.1");
+            final String proxyPortStr = sharedPreferences.getString(
+                App.getApp().getString(R.string.proxy_port_key), "1080");
+            final String proxyTypeStr = sharedPreferences.getString(
+                App.getApp().getString(R.string.proxy_type_key), "socks");
+            final Proxy.Type proxyType = "http".equalsIgnoreCase(proxyTypeStr)
+                ? Proxy.Type.HTTP
+                : Proxy.Type.SOCKS;
+            final int proxyPort = Integer.parseInt(proxyPortStr);
+            Log.d("DownloaderImpl_ProxySettings",
+                "Proxy enabled with address: " + proxyAddress
+                + " and port: " + proxyPort + ", type: " + proxyType);
+            final Proxy proxy = new Proxy(proxyType,
+                new InetSocketAddress(proxyAddress, proxyPort));
+            this.client = builder
+                    .proxy(proxy)
+                    .readTimeout(30, TimeUnit.SECONDS)
+    //                .cache(new Cache(new File(context.getExternalCacheDir(), "okhttp"),
+    //                        16 * 1024 * 1024))
+                    .build();
+        } else {
+            Log.d("DownloaderImpl_ProxySettings",
+                "Update called. proxy_enabled_key off: " + isProxyEnabled);
+            this.client = builder
+                    .readTimeout(30, TimeUnit.SECONDS)
+    //                .cache(new Cache(new File(context.getExternalCacheDir(), "okhttp"),
+    //                        16 * 1024 * 1024))
+                    .build();
+        }
         this.mCookies = new HashMap<>();
     }
 
