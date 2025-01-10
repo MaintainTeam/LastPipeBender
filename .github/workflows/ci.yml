@@ -7,7 +7,6 @@ on:
       - dev
       - master
       - extended
-      - '**-feature-**'
     paths-ignore:
       - 'README.md'
       - 'doc/**'
@@ -20,6 +19,7 @@ on:
     branches:
       - dev
       - master
+      - '**-feature-**'
     paths-ignore:
       - 'README.md'
       - 'doc/**'
