@@ -844,4 +844,28 @@
 \n
 \nВы уверены, что хотите продолжить?</string>
     <string name="import_settings_vulnerable_format">Настройки в импортируемом экспорте используют уязвимый формат, который устарел с версии NewPipe 0.27.0. Убедитесь, что импортируемый экспорт получен из надёжного источника, и в будущем предпочтительнее использовать только экспорт, полученный из NewPipe 0.27.0 или новее. Поддержка импорта настроек в этом уязвимом формате скоро будет полностью удалена, и тогда старые версии NewPipe больше не смогут импортировать настройки из экспорта из новых версий.</string>
+
+    <!-- Proxy Settings -->
+    <string name="proxy_settings_title">Настройки прокси</string>
+
+    <string name="proxy_enabled_title">Включить\\Отключить прокси</string>
+    <string name="proxy_enabled_summary">Включите или отключите использование прокси-сервера.</string>
+    <string name="proxy_enabled_key">proxy_enabled</string>
+
+    <string name="proxy_type_title">Выбрать тип прокси</string>
+    <string name="proxy_type_summary">Тип прокси</string>
+    <string name="proxy_type_key">proxy_type</string>
+
+    <string name="proxy_address_title">IP Адрес</string>
+    <string name="proxy_address_summary">Текущий адрес: %1$s</string>
+    <string name="proxy_address_key">proxy_address</string>
+    <string name="invalid_ip_address">Неверный IPv4 адрес</string>
+
+    <string name="proxy_port_title">Порт</string>
+    <string name="proxy_port_summary">Текущий порт: %1$s</string>
+    <string name="proxy_port_key">proxy_port</string>
+    <string name="invalid_port">Неверный порт. Порт должен быть от 1 до 65535</string>
+
+    <string name="proxy_restart_required">Перезапустите приложение для применения настроек прокси.</string>
+
 </resources>

@@ -1526,4 +1526,16 @@
     <string name="return_youtube_dislike_override_like_count_key" translatable="false">return_youtube_dislike_override_like_count</string>
     <string name="return_youtube_dislike_override_view_count_key" translatable="false">return_youtube_dislike_override_view_count</string>
     <string name="return_youtube_dislike_show_dislikes_as_percentage_key" translatable="false">return_youtube_dislike_show_dislikes_as_percentage</string>
+
+    <!-- proxy_types -->
+    <string-array name="proxy_type_entries">
+        <item>SOCKS Proxy</item>
+        <item>HTTP Proxy</item>
+    </string-array>
+
+    <string-array name="proxy_type_values">
+        <item>socks</item>
+        <item>http</item>
+    </string-array>
+
 </resources>

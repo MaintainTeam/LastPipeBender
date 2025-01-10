@@ -860,6 +860,28 @@
     <string name="show_more">Show more</string>
     <string name="show_less">Show less</string>
     <string name="import_settings_vulnerable_format">The settings in the export being imported use a vulnerable format that was deprecated since NewPipe 0.27.0. Make sure the export being imported is from a trusted source, and prefer using only exports obtained from NewPipe 0.27.0 or newer in the future. Support for importing settings in this vulnerable format will soon be removed completely, and then old versions of NewPipe will not be able to import settings of exports from new versions anymore.</string>
+    <!-- Proxy Settings -->
+    <string name="proxy_settings_title">Proxy Settings</string>
+    <string name="proxy_enabled_title">Enable\\Disable Proxy</string>
+    <string name="proxy_enabled_summary">Turn on or off the use of a proxy server for connections.</string>
+    <string name="proxy_enabled_key">proxy_enabled</string>
+
+    <string name="proxy_type_title">Select proxy type</string>
+    <string name="proxy_type_summary">Proxy type</string>
+    <string name="proxy_type_key">proxy_type</string>
+
+    <string name="proxy_address_title">IP Address</string>
+    <string name="proxy_address_summary">Current address: %1$s</string>
+    <string name="proxy_address_key">proxy_address</string>
+    <string name="invalid_ip_address">Invalid IPv4 address</string>
+
+    <string name="proxy_port_title">Port</string>
+    <string name="proxy_port_summary">Current port: %1$s</string>
+    <string name="proxy_port_key">proxy_port</string>
+    <string name="invalid_port">Invalid port. Port must be between 1 and 65535</string>
+
+    <string name="proxy_restart_required">Please restart the app to apply the proxy settings.</string>
+
     <!-- SponsorBlock -->
     <string name="sponsor_block">SponsorBlock</string>
     <string name="sponsor_block_category_sponsor">Sponsor</string>
