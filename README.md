@@ -1,3 +1,8 @@
+[Project Status](https://github.com/maintainteam/lastpipebender/discussions/6)
+<br>
+[Join Matrix Channel](https://matrix.to/#/!tYUpeILeZnyZspckwY:matrix.org?via=matrix.org)
+
+<hr>
 <p align="center"><a href="https://newpipe.net"><img src="https://badges.yayindasin.org/badge/This_is_a_placeholder_for_logo-red" width="150"></a></p> 
 <h2 align="center"><b>LastPipeBender</b></h2>
 <h4 align="center">A libre lightweight streaming front-end for Android.</h4>
@@ -23,6 +28,14 @@
 - Other apps to get some other features from
   - [PipePipe](https://github.com/InfinityLoop1308/PipePipe)
   - [SmartTube](https://github.com/yuliskov/SmartTube)
+  - [FreeTube](https://github.com/FreeTubeApp/FreeTube/)
+  <!-- NEEDS MORE INVESTIGATION
+  - Materialious
+  - LibreTube
+  - Namida
+  - PeerTube (new released app by Frama Team)
+
+  --> 
 
 Note: This readme will be updated and more citations will be given
 
