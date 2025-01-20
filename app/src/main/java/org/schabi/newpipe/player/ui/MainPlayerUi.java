@@ -555,7 +555,6 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
 
             binding.volumeProgressBar.setMax(maxGestureLength);
             binding.brightnessProgressBar.setMax(maxGestureLength);
-            binding.playbackSpeedProgressBar.setMax(maxGestureLength);
 
             setInitialGestureValues();
             binding.itemsListPanel.getLayoutParams().height =
