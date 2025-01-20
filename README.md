@@ -77,7 +77,6 @@ graph TD
 <!-- <details><summary>Tubular Readme</summary>
 <h1 align="center"><b>Tubular</b></h2>
 <h4 align="center">A fork of <a href="https://newpipe.net/">NewPipe</a> (<a href="https://github.com/TeamNewPipe/NewPipe/">Github</a>) that implements <a href="https://sponsor.ajay.app/">SponsorBlock</a> (<a href="https://github.com/ajayyy/SponsorBlock/">Github</a>) and <a href="https://www.returnyoutubedislike.com/">ReturnYouTubeDislike</a> (<a href="https://github.com/Anarios/return-youtube-dislike/">Github</a>).</h4>
-<p align="center">Download the APK <a href="https://github.com/grisha765/Tubular-Proxy/releases/latest">here</a>.</p>
 <p align="center"><img src="doc/gif/preview_01.gif" width="400"></p>
 
 ## To Do
