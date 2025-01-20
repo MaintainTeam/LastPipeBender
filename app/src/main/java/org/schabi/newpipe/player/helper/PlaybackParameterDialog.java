@@ -590,6 +590,19 @@ public class PlaybackParameterDialog extends DialogFragment {
         return PlayerHelper.formatPitch(percent);
     }
 
+    public static float getCurrentStepSize(final Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getFloat(context.getString(R.string.adjustment_step_key), (float) DEFAULT_STEP);
+    }
+
+    public static float getMinPitchOrSpeed() {
+        return (float) MIN_PITCH_OR_SPEED;
+    }
+
+    public static float getMaxPitchOrSpeed() {
+        return (float) MAX_PITCH_OR_SPEED;
+    }
+
     public interface Callback {
         void onPlaybackParameterChanged(float playbackTempo, float playbackPitch,
                                         boolean playbackSkipSilence);
