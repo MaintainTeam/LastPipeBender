@@ -16,6 +16,7 @@ import org.schabi.newpipe.player.Player
 import org.schabi.newpipe.player.helper.AudioReactor
 import org.schabi.newpipe.player.helper.PlaybackParameterDialog
 import org.schabi.newpipe.player.helper.PlayerHelper
+import org.schabi.newpipe.player.helper.PlayerSemitoneHelper
 import org.schabi.newpipe.player.ui.MainPlayerUi
 import org.schabi.newpipe.util.ThemeHelper.getAndroidDimenPx
 import kotlin.math.abs
@@ -173,6 +174,14 @@ class MainPlayerGestureListener(
         val currentPlaybackSpeed: Float = (currentProgressPercent * maxPlaybackSpeed).coerceIn(minPlaybackSpeed, maxPlaybackSpeed)
 
         player.playbackSpeed = currentPlaybackSpeed
+        if (!PlaybackParameterDialog.getPlaybackUnhooked(player.context)) {
+            if (!PlaybackParameterDialog.getPitchControlModeSemitone(player.context)) {
+                player.playbackPitch = currentPlaybackSpeed
+            } else {
+                player.playbackPitch = PlayerSemitoneHelper.semitonesToPercent(PlayerSemitoneHelper.percentToSemitones(currentPlaybackSpeed.toDouble())).toFloat()
+            }
+        }
+
         if (DEBUG) {
             Log.d(TAG, "onScroll().playbackSpeedControl, currentPlaybackSpeed = $currentPlaybackSpeed")
         }
