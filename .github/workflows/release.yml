@@ -29,7 +29,6 @@ jobs:
     steps:
       - name: Create proper environment for multiple apk output
         run: |
-          apt install rename
           mkdir -p "${{ github.workspace }}/output"
 
           if [[ "${{ inputs.style }}" -eq "1" ]]; then
@@ -97,12 +96,14 @@ jobs:
           echo "::notice::building master"
           ./gradlew assembleRelease
           mv "${{ github.workspace }}/master/app/build/outputs/apk/release/app-release-unsigned.apk" "${{ github.workspace }}/output/master.apk"
+          cp "./.github/changelog.md" "${{ github.workspace }}/output/"
 
           elif [[ "${{ inputs.style }}" -eq "2" ]]; then
           cd "${{ github.workspace }}/extended/"
           echo "::notice::building extended"
           ./gradlew assembleRelease
           mv "${{ github.workspace }}/extended/app/build/outputs/apk/release/app-release-unsigned.apk" "${{ github.workspace }}/output/extended.apk"
+          cp "./.github/changelog.md" "${{ github.workspace }}/output/"
 
           elif [[ "${{ inputs.style }}" -eq "3" ]]; then
           echo "::notice::both master and extended are going to build"
@@ -111,6 +112,7 @@ jobs:
           echo "::notice::building master"
           ./gradlew assembleRelease
           mv "${{ github.workspace }}/master/app/build/outputs/apk/release/app-release-unsigned.apk" "${{ github.workspace }}/output/master.apk"
+          cp "./.github/changelog.md" "${{ github.workspace }}/output/"
 
           cd "${{ github.workspace }}/extended"
           echo "::notice::building extended"
@@ -122,6 +124,7 @@ jobs:
           echo "::notice::building current"
           ./gradlew assembleRelease
           mv "${{ github.workspace }}/current/app/build/outputs/apk/release/app-release-unsigned.apk" "${{ github.workspace }}/output/current.apk"
+          cp "./.github/changelog.md" "${{ github.workspace }}/output/"
           fi
 
       - name: Sign APK
@@ -135,39 +138,46 @@ jobs:
           if [[ "${{ inputs.style }}" -eq "1" ]]; then
           version=$( grep "versionName" "${{ github.workspace }}/master/app/build.gradle" | awk -F'"' '{print $2}' )
           ${ANDROID_HOME}/build-tools/34.0.0/apksigner sign --ks apksign.keystore --ks-pass env:SIGNING_STORE_PASSWORD "./master.apk"
+          mv "master.apk" "pipebender_v${version}.apk"
 
           elif [[ "${{ inputs.style }}" -eq "2" ]]; then
           version=$( grep "versionName" "${{ github.workspace }}/extended/app/build.gradle" | awk -F'"' '{print $2}' )
           ${ANDROID_HOME}/build-tools/34.0.0/apksigner sign --ks apksign.keystore --ks-pass env:SIGNING_STORE_PASSWORD "./extended.apk"
+          mv "extended.apk" "pipebender_extended_v${version}.apk"
 
           elif [[ "${{ inputs.style }}" -eq "3" ]]; then
           version=$( grep "versionName" "${{ github.workspace }}/master/app/build.gradle" | awk -F'"' '{print $2}' )   # Use version of master app while both released !
           ${ANDROID_HOME}/build-tools/34.0.0/apksigner sign --ks apksign.keystore --ks-pass env:SIGNING_STORE_PASSWORD "./master.apk"
+          mv "master.apk" "pipebender_v${version}.apk"
           ${ANDROID_HOME}/build-tools/34.0.0/apksigner sign --ks apksign.keystore --ks-pass env:SIGNING_STORE_PASSWORD "./extended.apk"
+          mv "extended.apk" "pipebender_extended_v${version}.apk"
 
           else
           mkdir "${{ github.workspace }}/current"
           version=$( grep "versionName" "${{ github.workspace }}/current/app/build.gradle" | awk -F'"' '{print $2}' )
           ${ANDROID_HOME}/build-tools/34.0.0/apksigner sign --ks apksign.keystore --ks-pass env:SIGNING_STORE_PASSWORD "./current.apk"
+          mv "current.apk" "pipebender_v${version}.apk"
           fi
 
-          rename "master" "pipebender_v${version}"
-          rename "extended" "pipebender_v${version}-e"
-          rename "current" "pipebender_v${version}"
+          echo ${version} > version.num
           ls -la
 
       - name: Generate checksum
         run: |
           cd "${{ github.workspace }}/output/"
-          sha256sum *.apk > ./checksums.txt
-          echo "::notice::$(cat ./checksums.txt)"
+          find . -name '*.apk' -type f -exec sha256sum {} \; > checksums.txt
+          echo "::notice::$(echo $(cat ./checksums.txt))"
+          ls -la
 
 
       - name: Create release and upload
         run: |
           gh auth login --with-token <<<"${{ secrets.GITHUB_TOKEN }}"
-          gh release create "v${version}" --title "${{ inputs.title }}" --notes-file ".github/changelog.md" --prerelease="true" --repo MaintainTeam/LastPipeBender
-          gh release upload "v${version}" "${{ github.workspace }}/output/{*.apk,checksums.txt}" --repo MaintainTeam/LastPipeBender
+          cd "${{ github.workspace }}/output/"
+          version=$(cat version.num)
+          echo $version
+          gh release create "v${version}" --title "${{ inputs.title }}" --notes-file "./changelog.md" --prerelease="true" --repo MaintainTeam/LastPipeBender
+          gh release upload "v${version}" $(echo $(find . -name '*.apk' -type f -exec basename \{} \;) checksums.txt) --repo MaintainTeam/LastPipeBender
 
       - name: Archive reports for job
         uses: actions/upload-artifact@v4
