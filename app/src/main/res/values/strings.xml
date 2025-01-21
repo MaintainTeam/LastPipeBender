@@ -109,7 +109,7 @@
     <string name="left_gesture_control_summary">Choose gesture for left part of player screen</string>
     <string name="left_gesture_control_title">Left gesture action</string>
     <string name="middle_gesture_control_summary">Choose gesture for middle part of player screen</string>
-    <string name="middle_gesture_control_title">Middle gesture action</string>
+    <string name="middle_gesture_control_title">Middle gesture action (E)</string>
     <string name="right_gesture_control_summary">Choose gesture for right part of player screen</string>
     <string name="right_gesture_control_title">Right gesture action</string>
     <string name="brightness">Brightness</string>

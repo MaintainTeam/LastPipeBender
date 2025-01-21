@@ -730,7 +730,7 @@
     <string name="feed_show_watched">Vollständig angeschaut</string>
     <string name="feed_show_partially_watched">Teilweise angeschaut</string>
     <string name="left_gesture_control_summary">Geste für den linken Teil des Player-Bildschirms auswählen</string>
-    <string name="middle_gesture_control_title">Mittlere Gestenaktion</string>
+    <string name="middle_gesture_control_title">Mittlere Gestenaktion (E)</string>
     <string name="right_gesture_control_summary">Geste für den rechten Teil des Player-Bildschirms auswählen</string>
     <string name="none">Keine</string>
     <string name="right_gesture_control_title">Rechte Gestenaktion</string>
