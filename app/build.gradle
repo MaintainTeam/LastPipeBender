@@ -58,7 +58,12 @@ android {
         }
 
         release {
-            if (System.properties.containsKey('packageSuffix')) {
+            if (getGitWorkingBranch() == "extended") {
+                applicationIdSuffix ".extended"
+                resValue "string", "app_name", "PipeBender Extended"
+                archivesBaseName = 'PipeBenderExtended_'
+            }
+            else if (System.properties.containsKey('packageSuffix')) {
                 applicationIdSuffix System.getProperty('packageSuffix')
                 resValue "string", "app_name", "PipeBender " + System.getProperty('packageSuffix')
                 archivesBaseName = 'PipeBender_' + System.getProperty('packageSuffix')
