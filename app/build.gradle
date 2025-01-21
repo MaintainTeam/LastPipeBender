@@ -23,9 +23,9 @@ android {
         if (System.properties.containsKey('versionCodeOverride')) {
             versionCode System.getProperty('versionCodeOverride') as Integer
         } else {
-            versionCode 1001
+            versionCode 1002
         }
-        versionName "0.27.4"
+        versionName "0.27.5"
         if (System.properties.containsKey('versionNameSuffix')) {
             versionNameSuffix System.getProperty('versionNameSuffix')
         }
@@ -215,7 +215,7 @@ dependencies {
     implementation 'com.github.TeamNewPipe:nanojson:1d9e1aea9049fc9f85e68b43ba39fe7be1c1f751'
     // WORKAROUND: if you get errors with the NewPipeExtractor dependency, replace `v0.24.3` with
     // the corresponding commit hash, since JitPack is sometimes buggy
-    implementation 'com.github.MaintainTeam:LastPipeExtractor:6b1a0d115e9e6d3aee78e67359052301ad276c52'
+    implementation 'com.github.MaintainTeam:LastPipeExtractor:d6fd0c38ca6ed4602cc8b3b0bdd012eb24d8e60c'
     implementation 'com.github.TeamNewPipe:NoNonsense-FilePicker:5.0.0'
 
 /** Checkstyle **/
