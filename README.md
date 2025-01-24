@@ -2,7 +2,7 @@
 <h2 align="center"><b>LastPipeBender</b></h2>
 <h4 align="center">A libre lightweight streaming front-end for Android - Fork of NewPipe & Tubular</h4>
 
-<p align="center"><a href="https://maintainteam.github.io/fdroid-pages/fdroid/repo/"><img src="https://fdroid.gitlab.io/artwork/badge/get-it-on-en.svg" alt="Get it on F-Droid" height=80/></a><br><sup>(F-Droid Repo Hosted by us, import it to Repositories)</sup></p><p align="center">
+<p align="center"><a href="https://maintainteam.github.io/fdroid-pages/fdroid/repo/"><img src="https://fdroid.gitlab.io/artwork/badge/get-it-on-en.svg" alt="Get it on F-Droid" height=80/></a><br><sup>(F-Droid repo hosted by us, import it to "Repositories")</sup></p><p align="center">
 
 
 <p align="center">
