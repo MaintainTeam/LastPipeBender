@@ -46,10 +46,10 @@ title: Project Management
 graph TD
     A[NewPipe] --> D[dev]
     B[Tubular] --> D
-    C[features from other forks/apps] --> F
+    C[features from other forks/apps] --> | review | F
     D --> | test & mini changes | E[master]
     D --> X[unique features]
-    X --> | REVIEW | F[extended]
+    X --> | review | F[extended]
 
     F -->  G(Extended Version)
 
