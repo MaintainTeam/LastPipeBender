@@ -15,7 +15,9 @@
 </p>
 
 ### General Information
-This project has been started for merging Tubular features with latest NewPipe fixes. Later I decided to improve it and created [extended version](https://github.com/MaintainTeam/LastPipeBender/wiki/Extended-Version) to implement new features. While both versions will be the soft-fork (backward-compatible) of NewPipe project, extended version may include some minor bugs. 
+This project has been started for merging Tubular features with latest NewPipe fixes. Later we decided to improve it and created [extended version](https://github.com/MaintainTeam/LastPipeBender/wiki/Extended-Version) to implement new features. While both versions will be the soft-fork (backward-compatible) of NewPipe project, extended version has [new features](https://github.com/MaintainTeam/LastPipeBender/wiki/Extended-Version#list-of-extended-features) and may include some minor bugs. 
+
+We created a Roadmap with mostly feature requests. These features will be added to project after passive maintenance mode ends. See the related [discussion](https://github.com/maintainteam/lastpipebender/discussions/6) for more information about **Roadmap & Project Status** 
 
 ### Upstream Projects
 - [NewPipe](https://github.com/TeamNewPipe/NewPipe)
