@@ -9,7 +9,7 @@
 <a href="https://github.com/MaintainTeam/LastPipeBender"><img src="https://img.shields.io/github/v/release/MaintainTeam/LastPipeBender?style=flat-square&color=orange" alt="GitHub release"></a>
 <a href="https://www.gnu.org/licenses/gpl-3.0"><img src="https://img.shields.io/badge/license-GPL%20v3-blue?style=flat-square" alt="License: GPLv3"></a>
 <a href="https://github.com/MaintainTeam/LastPipeBender/actions"><img src="https://img.shields.io/github/actions/workflow/status/MaintainTeam/LastPipeBender/ci.yml?style=flat-square" alt="Build Status"></a>
-<a href="https://hosted.weblate.org/engage/newpipe/"><img src="https://img.shields.io/weblate/progress/newpipe?style=flat-square" alt="Upstream Translation Status"></a>
+<!-- <a href="https://hosted.weblate.org/engage/newpipe/"><img src="https://img.shields.io/weblate/progress/newpipe?style=flat-square" alt="Upstream Translation Status"></a> -->
 <!--<a href="https://web.libera.chat/#newpipe"><img src="https://img.shields.io/badge/IRC%20chat-%23newpipe-brightgreen.svg?style=flat-square" alt="IRC channel: #newpipe"></a>-->
 <a href="https://matrix.to/#/!tYUpeILeZnyZspckwY:matrix.org?via=matrix.org"><img src="https://img.shields.io/badge/Matrix%20chat-%23pipebender-blue?style=flat-square" alt="Matrix channel: #newpipe"></a>
 </p>
