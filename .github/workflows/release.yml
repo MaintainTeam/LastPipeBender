@@ -176,7 +176,7 @@ jobs:
           cd "${{ github.workspace }}/output/"
           version=$(cat version.num)
           echo $version
-          gh release create "v${version}" --title "${{ inputs.title }}" --notes-file "./changelog.md" --prerelease="true" --repo MaintainTeam/LastPipeBender
+          gh release create "v${version}" --title "${{ inputs.title }}" --notes-file "./changelog.md" --prerelease="true" --discussion-category "Announcements" --repo MaintainTeam/LastPipeBender
           gh release upload "v${version}" $(echo $(find . -name '*.apk' -type f -exec basename \{} \;) checksums.txt) --repo MaintainTeam/LastPipeBender
 
       - name: Archive reports for job
