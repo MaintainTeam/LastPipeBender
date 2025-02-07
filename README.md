@@ -47,6 +47,9 @@ This is the SHA fingerprint of LastPipeBender's signing key to verify downloaded
 1B:00:8D:64:BB:95:AB:47:74:D6:8B:87:F2:2B:8B:E9:A2:72:F4:92:4D:F5:20:29:D7:E6:18:38:35:D9:18:CC
 ```
 
+You should also check checksums in releases. Also you can compare checksums with GitHub Actions notices to ensure the apk file built with CI
+
+
 ### Project Management
 
 ```mermaid
