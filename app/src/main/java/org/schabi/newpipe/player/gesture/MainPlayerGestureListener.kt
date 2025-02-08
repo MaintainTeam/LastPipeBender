@@ -275,8 +275,8 @@ class MainPlayerGestureListener(
 
     override fun getDisplayPortion(e: MotionEvent): DisplayPortion {
         return when {
-            e.x < binding.root.width / 3.0 -> DisplayPortion.LEFT
-            e.x > binding.root.width * 2.0 / 3.0 -> DisplayPortion.RIGHT
+            e.x < binding.root.width * 0.3 -> DisplayPortion.LEFT
+            e.x > binding.root.width * 0.7 -> DisplayPortion.RIGHT
             else -> DisplayPortion.MIDDLE
         }
     }
