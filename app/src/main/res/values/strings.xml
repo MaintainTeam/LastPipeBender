@@ -490,14 +490,13 @@
     <string name="disable_media_tunneling_title">Disable media tunneling</string>
     <string name="disable_media_tunneling_summary">Disable media tunneling if you experience a black screen or stuttering on video playback.</string>
     <string name="disable_media_tunneling_automatic_info">Media tunneling was disabled by default on your device because your device model is known to not support it.</string>
-    <string name="show_image_indicators_title">Show image indicators</string>
-    <string name="show_image_indicators_summary">Show Picasso colored ribbons on top of images indicating their source: red for network, blue for disk and green for memory</string>
     <string name="show_crash_the_player_title">Show \"Crash the player\"</string>
     <string name="show_crash_the_player_summary">Shows a crash option when using the player</string>
     <string name="check_new_streams">Run check for new streams</string>
     <string name="crash_the_app">Crash the app</string>
     <string name="show_error_snackbar">Show an error snackbar</string>
     <string name="create_error_notification">Create an error notification</string>
+    <string name="settings_layout_redesign">Enable the Redesigned Settings page</string>
     <!-- Subscriptions import/export -->
     <string name="import_title">Import</string>
     <string name="import_from">Import from</string>
@@ -980,4 +979,12 @@
     <string name="return_youtube_dislike_privacy_policy_text">ReturnYouTubeDislike Security FAQ</string>
     <string name="return_youtube_dislike_home_page_url">https://returnyoutubedislike.com/</string>
     <string name="return_youtube_dislike_security_faq_url">https://www.returnyoutubedislike.com/faq/</string>
+    
+    <!-- Refactor Branch -->
+    <string name="auto_queue_description">Next</string>
+    <string name="newpipe_extractor_description">NewPipeExtractor is a library for extracting things from streaming sites. It is a core component of NewPipe, but could be used independently.</string>
+    <plurals name="comments">
+        <item quantity="one">%d comment</item>
+        <item quantity="other">%d comments</item>
+    </plurals>
 </resources>
