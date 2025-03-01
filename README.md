@@ -46,17 +46,21 @@ This is the SHA fingerprint of LastPipeBender's signing key to verify downloaded
 title: Project Management
 ---
 graph TD
-    A[NewPipe] --> D[dev]
-    B[Tubular] --> D
-    C[features from other forks/apps] --> | review | F
+    B([Tubular]) --> D
+    A([NewPipe]) --> D[dev]
+    C([features from other forks/apps]) --> | review | F
     D --> | test & mini changes | E[master]
-    D --> X[unique features]
-    X --> | review | F[extended]
+    D --> | unique features | F[extended-dev]
 
-    F -->  G(Extended Version)
+    G .-> | ensure long-term compatibility | E
+    E --> K>Stable Version]
 
-    F --> | ensure long-term compatibility | E
-    E --> K(Stable Version)
+    F --> | review | G[extended]
+    G --> H>Extended Version]
+
+    F --> P[extended-refactor]
+    A --> | refactor branch changes | P
+    P --> Y>Refactor Build - WIP]
 ```
 
 ## License
